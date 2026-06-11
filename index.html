@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharos ExecutionEngine Shield & Regime Gate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
+    <script defer src="js/app.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-brand">
+            <img src="assets/pharos_shield_logo.png" alt="Pharos Shield Logo" width="32" height="32">
+            <span id="app-title">Pharos Execution Shield</span>
+        </div>
+        <div class="header-controls">
+            <div class="mock-mode-container">
+                <span class="toggle-label">Mock Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="mock-mode-toggle" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="wallet-status-indicator">
+                <span id="wallet-status-dot" class="status-dot disconnected"></span>
+                <span id="wallet-account" class="account-text">Disconnected</span>
+            </div>
+            <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Sandbox Control Card -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">Security Control Sandbox</h2>
+                <span class="card-subtitle">Test Execution Engine Gates against custom configurations.</span>
+            </div>
+            <form onsubmit="event.preventDefault();" class="sandbox-form">
+                <div class="form-group">
+                    <label>Interactive Safety Scenario Preset</label>
+                    <select id="sandbox-scenario" class="form-control">
+                        <option value="custom" selected>Manual Configuration</option>
+                        <option value="phishing">Scenario 1: Phishing Target Blacklist Block (GoPlus / Registry)</option>
+                        <option value="regime-panic">Scenario 2: Gate 7 Panic State Active Block</option>
+                        <option value="regime-volatile-bad">Scenario 3: Gate 7 Volatile State - Unverified Block (Low CertiK)</option>
+                        <option value="regime-volatile-good">Scenario 4: Gate 7 Volatile State - Verified Allow (High CertiK)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Contract Address</label>
+                    <input type="text" id="sandbox-target" class="form-control font-mono" placeholder="0x..." value="0x2c692A2291ad46D034bAbF4a5ACF287341B7797a" required>
+                </div>
+                <div class="form-group">
+                    <label>Calldata Hex</label>
+                    <input type="text" id="sandbox-calldata" class="form-control font-mono" value="0x" required>
+                </div>
+                <div class="form-group">
+                    <label>Value (ETH)</label>
+                    <input type="number" id="sandbox-value" class="form-control" value="0" required>
+                </div>
+                <div class="sandbox-actions">
+                    <button type="button" id="btn-verify-simulate" class="btn btn-secondary">Simulate Gates</button>
+                    <button type="button" id="btn-safe-execute" class="btn btn-primary">Execute tx</button>
+                </div>
+            </form>
+            
+            <div class="scanner-container" style="margin-top: 24px;">
+                <div class="shield-display">
+                    <div class="shield-glow"></div>
+                    <div class="shield-icon" id="shield-icon"><i class="fas fa-shield-halved"></i></div>
+                    <div class="shield-status" id="shield-status">READY</div>
+                </div>
+                <div class="pipeline-steps" style="display: flex; gap: 8px; flex: 1; justify-content: space-between;">
+                    <div class="step" id="step-registry"><span class="step-label">1. Registry</span></div>
+                    <div class="step" id="step-approve"><span class="step-label">2. Approve</span></div>
+                    <div class="step" id="step-preview"><span class="step-label">3. Preview</span></div>
+                    <div class="step" id="step-regime"><span class="step-label">4. Regime</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Regime Controls Card -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">Gate 7: Market Regime Controls</h2>
+                <span class="card-subtitle">Set volatility regimes to change gate rules.</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                    <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
+                    <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
+                    <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h3 class="section-title">Verified Protocol Registry & CertiK SkyNet ratings</h3>
+                    <div class="table-container">
+                        <table class="sample-table">
+                            <thead>
+                                <tr>
+                                    <th>Protocol Name / Address</th>
+                                    <th>Registry Status</th>
+                                    <th>CertiK Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div>Uniswap V2 Router</div>
+                                        <div class="sample-address font-mono">0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</div>
+                                    </td>
+                                    <td><span class="badge status-verified">Verified</span></td>
+                                    <td><span class="badge status-verified" style="font-family: var(--font-mono);"><i class="fas fa-shield-halved"></i> 94 / 100</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>Unverified Phishing Target</div>
+                                        <div class="sample-address font-mono">0x1111111254fb6c44bac0bed2854e76f90643097d</div>
+                                    </td>
+                                    <td><span class="badge status-blacklisted">Blacklisted</span></td>
+                                    <td><span class="badge status-blacklisted" style="font-family: var(--font-mono);"><i class="fas fa-triangle-exclamation"></i> 12 / 100</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>Generic Unverified Protocol</div>
+                                        <div class="sample-address font-mono">0x2222222222222222222222222222222222222222</div>
+                                    </td>
+                                    <td><span class="badge status-whitelisted">Unregistered</span></td>
+                                    <td><span class="badge status-whitelisted" style="font-family: var(--font-mono);"><i class="fas fa-circle-question"></i> Unrated</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Console Output Card -->
+        <section class="card card-terminal">
+            <div class="terminal-header">
+                <h2 class="terminal-title">SECURITY GATE LOGGER CONSOLE</h2>
+                <button type="button" id="btn-clear-terminal" class="btn-clear">Clear</button>
+            </div>
+            <div class="terminal">
+                <div id="terminal-output" class="terminal-output">
+                    <div class="terminal-line system-msg">Pharos Execution Security Gate Console active. Ready.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 Pharos Network. Gate 7 Volatility Shield Middleware.</p>
+    </footer>
+</body>
+</html>
