@@ -1,0 +1,22 @@
+{
+  "name": "pharos-execution-engine-regime-gate",
+  "version": "1.2.0",
+  "description": "Composite execution engine with Market Regime Gate for Pharos Chain AI agents.",
+  "main": "index.js",
+  "bin": {
+    "pharos-cli": "./bin/cli.js",
+    "pharos-mcp": "./bin/mcp-server.js"
+  },
+  "scripts": {
+    "demo-web": "npx http-server ./"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.13.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
