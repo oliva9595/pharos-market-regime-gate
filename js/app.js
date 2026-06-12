@@ -31,6 +31,17 @@ let regimeGateContract = null;
 let registryContract = null;
 let regimeGateOwner = null;
 
+// Three.js Shield variables
+let shieldScene, shieldCamera, shieldRenderer;
+let particleSphere, outerRing, innerRing;
+let currentShieldColor = 0x24a107; // Default green
+let targetShieldColor = 0x24a107;
+let baseSpeed = 0.005;
+let rotationSpeedFactor = 1.0;
+
+// Scam Agent dendritic tree variables
+let dendriteGrowth = 0.1;
+
 // Oracle Metrics State
 let metrics = {
     vix: 18.2,
@@ -193,14 +204,20 @@ function updateShieldState(regime) {
     }
     
     if (regime === 0) {
+        targetShieldColor = 0x24a107; // green
+        rotationSpeedFactor = 1.0;
         shieldCore.classList.add('secure-pulse');
         shieldStatusLabel.style.color = 'var(--color-green)';
         if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--color-green)';
     } else if (regime === 1) {
+        targetShieldColor = 0xff761c; // orange
+        rotationSpeedFactor = 2.5;
         shieldCore.classList.add('warning-pulse');
         shieldStatusLabel.style.color = 'var(--primary-accent)';
         if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--primary-accent)';
     } else if (regime === 2) {
+        targetShieldColor = 0xef4444; // red
+        rotationSpeedFactor = 6.0;
         shieldCore.classList.add('danger-pulse');
         shieldStatusLabel.style.color = 'var(--color-red)';
         if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--color-red)';
@@ -503,7 +520,321 @@ mockModeToggle.addEventListener('change', () => {
 
 btnConnectWallet.addEventListener('click', connectWallet);
 
+// --- WebGL Shield Gate & Agent Visualizations ---
+
+let shieldPointLight;
+
+function initThreeShield() {
+    const container = document.getElementById('shield-display-container');
+    const canvas = document.getElementById('shield-3d-canvas');
+    if (!container || !canvas) return;
+
+    const width = container.clientWidth || 300;
+    const height = container.clientHeight || 220;
+
+    // Scene
+    shieldScene = new THREE.Scene();
+
+    // Camera
+    shieldCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    shieldCamera.position.z = 120;
+
+    // Renderer
+    shieldRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    shieldRenderer.setSize(width, height);
+    shieldRenderer.setPixelRatio(window.devicePixelRatio);
+
+    // Particle Sphere Geometry
+    const particleCount = 1000;
+    const sphereGeom = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const radius = 25;
+
+    for (let i = 0; i < particleCount; i++) {
+        // Random points on sphere surface
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phi = Math.acos(2.0 * v - 1.0);
+        positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = radius * Math.cos(phi);
+    }
+    sphereGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Particle Material
+    const pMaterial = new THREE.PointsMaterial({
+        color: currentShieldColor,
+        size: 1.8,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+
+    particleSphere = new THREE.Points(sphereGeom, pMaterial);
+    shieldScene.add(particleSphere);
+
+    // Flat Scanning Rings
+    const innerRingGeom = new THREE.RingGeometry(29, 30, 64);
+    const outerRingGeom = new THREE.RingGeometry(35, 36, 64);
+    
+    const ringMat = new THREE.MeshBasicMaterial({
+        color: currentShieldColor,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.25,
+        blending: THREE.AdditiveBlending
+    });
+
+    innerRing = new THREE.Mesh(innerRingGeom, ringMat);
+    outerRing = new THREE.Mesh(outerRingGeom, ringMat);
+
+    innerRing.rotation.x = Math.PI / 2;
+    outerRing.rotation.x = Math.PI / 2;
+
+    shieldScene.add(innerRing);
+    shieldScene.add(outerRing);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    shieldScene.add(ambientLight);
+    
+    shieldPointLight = new THREE.PointLight(currentShieldColor, 2, 100);
+    shieldPointLight.position.set(0, 0, 50);
+    shieldScene.add(shieldPointLight);
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+        const w = container.clientWidth || 300;
+        const h = container.clientHeight || 220;
+        shieldCamera.aspect = w / h;
+        shieldCamera.updateProjectionMatrix();
+        shieldRenderer.setSize(w, h);
+    });
+
+    animateShield();
+}
+
+function animateShield() {
+    requestAnimationFrame(animateShield);
+
+    // Interpolate colors smoothly
+    const speed = 0.05;
+    const cCurrent = new THREE.Color(currentShieldColor);
+    const cTarget = new THREE.Color(targetShieldColor);
+    cCurrent.lerp(cTarget, speed);
+    currentShieldColor = cCurrent.getHex();
+
+    // Update colors in materials
+    if (particleSphere) particleSphere.material.color.setHex(currentShieldColor);
+    if (innerRing) innerRing.material.color.setHex(currentShieldColor);
+    if (outerRing) outerRing.material.color.setHex(currentShieldColor);
+    if (shieldPointLight) shieldPointLight.color.setHex(currentShieldColor);
+
+    // Rotations
+    if (particleSphere) {
+        particleSphere.rotation.y += baseSpeed * rotationSpeedFactor;
+        particleSphere.rotation.x += baseSpeed * 0.4 * rotationSpeedFactor;
+    }
+    
+    if (innerRing) {
+        innerRing.rotation.z -= baseSpeed * 2.0 * rotationSpeedFactor;
+    }
+    if (outerRing) {
+        outerRing.rotation.z += baseSpeed * 0.8 * rotationSpeedFactor;
+        outerRing.rotation.y = Math.sin(Date.now() * 0.001) * 0.15;
+    }
+
+    if (shieldRenderer && shieldScene && shieldCamera) {
+        shieldRenderer.render(shieldScene, shieldCamera);
+    }
+}
+
+// Canvas metrics drawing hooks
+function drawYieldRadar(regime) {
+    const canvas = document.getElementById('yield-radar-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = canvas.clientWidth || 200;
+    const h = canvas.height = canvas.clientHeight || 90;
+    
+    ctx.clearRect(0, 0, w, h);
+    const cx = w / 2;
+    const cy = h / 2;
+    const maxRadius = Math.min(cx, cy) - 10;
+    
+    // 5-axes: Safety, Yield, Liquidity, Gas, Speed
+    const axesValues = [0.88, 0.94, 0.78, 0.85, 0.90];
+    
+    // Dynamic breathing scale factor
+    const breathe = 1.0 + Math.sin(Date.now() * 0.002) * 0.04;
+    
+    // Draw radar net web (concentric circles/pentagons)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+    ctx.lineWidth = 1;
+    for (let j = 1; j <= 4; j++) {
+        const radius = (maxRadius * (j / 4)) * breathe;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+            const angle = i * (2 * Math.PI / 5) - Math.PI / 2;
+            const x = cx + radius * Math.cos(angle);
+            const y = cy + radius * Math.sin(angle);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
+    // Draw web axis lines
+    for (let i = 0; i < 5; i++) {
+        const angle = i * (2 * Math.PI / 5) - Math.PI / 2;
+        const x = cx + maxRadius * Math.cos(angle) * breathe;
+        const y = cy + maxRadius * Math.sin(angle) * breathe;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    }
+    
+    // Draw active filled value area
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+        const angle = i * (2 * Math.PI / 5) - Math.PI / 2;
+        const val = axesValues[i] * (regime === 2 ? 0.2 : (regime === 1 ? 0.6 : 1.0)); // scale values on panic/volatile
+        const radius = maxRadius * val * breathe;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 118, 28, 0.15)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 118, 28, 0.8)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+}
+
+function drawArbChart(regime) {
+    const canvas = document.getElementById('arb-chart-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = canvas.clientWidth || 200;
+    const h = canvas.height = canvas.clientHeight || 90;
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    const time = Date.now() * 0.003;
+    const amp = regime === 2 ? 4.0 : (regime === 1 ? 16.0 : 8.0); // Spikes on volatile
+    
+    // Draw axes
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(10, h - 15);
+    ctx.lineTo(w - 10, h - 15);
+    ctx.stroke();
+    
+    const pointsA = [];
+    const pointsB = [];
+    
+    for (let x = 10; x < w - 10; x++) {
+        const yA = h / 2 + Math.sin(x * 0.03 + time) * amp;
+        const yB = h / 2 + Math.cos(x * 0.045 + time * 0.8) * amp * 1.2;
+        pointsA.push({ x, y: yA });
+        pointsB.push({ x, y: yB });
+    }
+    
+    // Draw intersection fill area (green profit band)
+    ctx.fillStyle = "rgba(14, 165, 233, 0.08)";
+    ctx.beginPath();
+    ctx.moveTo(pointsA[0].x, pointsA[0].y);
+    for (let i = 0; i < pointsA.length; i++) {
+        ctx.lineTo(pointsA[i].x, pointsA[i].y);
+    }
+    for (let i = pointsB.length - 1; i >= 0; i--) {
+        ctx.lineTo(pointsB[i].x, pointsB[i].y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw DEX line
+    ctx.strokeStyle = "#0ea5e9";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pointsA[0].x, pointsA[0].y);
+    for (let i = 1; i < pointsA.length; i++) {
+        ctx.lineTo(pointsA[i].x, pointsA[i].y);
+    }
+    ctx.stroke();
+    
+    // Draw CEX line
+    ctx.strokeStyle = "var(--primary-accent)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pointsB[0].x, pointsB[0].y);
+    for (let i = 1; i < pointsB.length; i++) {
+        ctx.lineTo(pointsB[i].x, pointsB[i].y);
+    }
+    ctx.stroke();
+}
+
+function drawScamDendrite(regime) {
+    const canvas = document.getElementById('scam-dendrite-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = canvas.clientWidth || 200;
+    const h = canvas.height = canvas.clientHeight || 90;
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    // Increment growth slowly to animate tree branching out
+    dendriteGrowth += 0.005;
+    if (dendriteGrowth > 1.0) dendriteGrowth = 0.1; // reset loop
+    
+    ctx.strokeStyle = "rgba(239, 68, 68, 0.6)";
+    ctx.lineWidth = 1.2;
+    
+    const rootX = w / 2;
+    const rootY = h - 5;
+    
+    function branch(x, y, len, angle, depth) {
+        if (depth <= 0) return;
+        
+        const targetLen = len * dendriteGrowth;
+        const x2 = x + targetLen * Math.cos(angle);
+        const y2 = y + targetLen * Math.sin(angle);
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        
+        // Spawn branches
+        const subBranchCount = regime === 2 ? 3 : 2; // spreads faster in panic regime
+        for (let i = 0; i < subBranchCount; i++) {
+            const spread = regime === 2 ? 0.6 : 0.45;
+            const newAngle = angle + (Math.random() - 0.5) * spread;
+            branch(x2, y2, len * 0.75, newAngle, depth - 1);
+        }
+    }
+    
+    // Draw tree recursively
+    branch(rootX, rootY, 28, -Math.PI / 2, 5);
+}
+
+// Live continuous rendering animation loop for agent cards
+function animateAgentArena() {
+    requestAnimationFrame(animateAgentArena);
+    drawYieldRadar(currentRegime);
+    drawArbChart(currentRegime);
+    drawScamDendrite(currentRegime);
+}
+
 // Initialize
 updateOracleDisplay();
 updateShieldState(0);
+initThreeShield();
+animateAgentArena();
 startSimulationLoop();
