@@ -294,7 +294,7 @@ function runAgentSimulationStep() {
 
     // 1. Phishing Agent: Always gets registry blocked
     dotScam.className = 'agent-status-dot blocked';
-    writeAgentLog('scam', 'Sending 1.5 ETH approve swap...', false);
+    writeAgentLog('scam', 'Sending 1.5 PHRS approve swap...', false);
     writeAgentLog('scam', '❌ Registry Gate: GoPlus Phishing flag detected! Blocked.', false);
     writeLog('🛡️ [GoPlus API] Scam Target Address (0x1111...) intercepted. Blocked transaction.', 'error');
 
@@ -326,7 +326,7 @@ function runAgentSimulationStep() {
     } else {
         dotArb.className = 'agent-status-dot active';
         writeAgentLog('arb', 'Checking pool registry...');
-        writeAgentLog('arb', '✅ Arb trade executed. Profit: 0.12 ETH');
+        writeAgentLog('arb', '✅ Arb trade executed. Profit: 0.12 PHRS');
         writeLog('🛡️ [ExecutionEngine] Arbitrage Agent transaction executed successfully.', 'success');
     }
 }
