@@ -12,6 +12,20 @@ contract ExecutionEngine is Ownable {
     MarketRegimeGate public regimeGate;
     uint256 public defaultMaxSlippageBps = 100; // 1% default
 
+    mapping(address => bool) public authorized;
+
+    event AuthorizedUpdated(address indexed agent, bool status);
+
+    modifier onlyAuthorized() {
+        require(msg.sender == owner() || authorized[msg.sender], "ExecutionEngine: not authorized");
+        _;
+    }
+
+    function setAuthorized(address agent, bool status) external onlyOwner {
+        authorized[agent] = status;
+        emit AuthorizedUpdated(agent, status);
+    }
+
     event ExecutionSuccess(address indexed target, uint256 value, bytes data);
     event ExecutionFailure(address indexed target, uint256 value, bytes data, string reason);
 
@@ -52,7 +66,7 @@ contract ExecutionEngine is Ownable {
         address target,
         bytes calldata data,
         uint256 value
-    ) external payable onlyOwner returns (bytes memory) {
+    ) external payable onlyAuthorized returns (bytes memory) {
         bool isVerified = registry.checkAddress(target);
         slippageGuard.verifySlippage(target, data, defaultMaxSlippageBps);
         regimeGate.verifyRegime(target, isVerified);

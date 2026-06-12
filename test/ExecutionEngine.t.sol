@@ -53,4 +53,36 @@ contract ExecutionEngineTest is Test {
         vm.expectRevert("MarketRegimeGate: panic regime active, all executions halted");
         engine.executeTx(address(target), txData, 0);
     }
+
+    function testVolatileBlocksUnverified() public {
+        regimeGate.setMarketRegime(1); // VOLATILE
+        bytes memory txData = abi.encodeWithSignature("setValue(uint256)", 42);
+        vm.expectRevert("MarketRegimeGate: volatile regime restricts to verified protocols");
+        engine.executeTx(address(target), txData, 0);
+    }
+
+    function testVolatileAllowsVerified() public {
+        registry.setVerified(address(target), true);
+        regimeGate.setMarketRegime(1); // VOLATILE
+        bytes memory txData = abi.encodeWithSignature("setValue(uint256)", 55);
+        engine.executeTx(address(target), txData, 0);
+        assertEq(target.value(), 55);
+    }
+
+    function testAuthorizedAgentCanExecute() public {
+        address agent = address(0xBEEF);
+        engine.setAuthorized(agent, true);
+        bytes memory txData = abi.encodeWithSignature("setValue(uint256)", 77);
+        vm.prank(agent);
+        engine.executeTx(address(target), txData, 0);
+        assertEq(target.value(), 77);
+    }
+
+    function testUnauthorizedCannotExecute() public {
+        address attacker = address(0xDEAD);
+        bytes memory txData = abi.encodeWithSignature("setValue(uint256)", 99);
+        vm.prank(attacker);
+        vm.expectRevert("ExecutionEngine: not authorized");
+        engine.executeTx(address(target), txData, 0);
+    }
 }
