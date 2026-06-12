@@ -1,4 +1,4 @@
-// Addresses on Pharos Atlantic Testnet
+// Deployed Contract configurations on Pharos Atlantic Testnet
 const REGISTRY_ADDRESS = '0x8d87E6b80218a71be0D3DaB452020267c69BC937';
 const ENGINE_ADDRESS = '0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014';
 const REGIME_GATE_ADDRESS = '0x0b72Ed35d27a77a8C1CD32E0eDB7D7326A460243';
@@ -22,6 +22,7 @@ const REGISTRY_ABI = [
   "function isVerified(address addr) view returns (bool)"
 ];
 
+// Global instances
 let provider = null;
 let signer = null;
 let account = null;
@@ -30,364 +31,398 @@ let regimeGateContract = null;
 let registryContract = null;
 let regimeGateOwner = null;
 
-let currentRegime = 0; // 0 = NORMAL, 1 = VOLATILE, 2 = PANIC
-const mockRegistry = {
-  "0x2c692a2291ad46d034babf4a5acf287341b7797a": "Verified",
-  "0x1111111254fb6c44bac0bed2854e76f90643097d": "Blacklisted",
-  "0x2222222222222222222222222222222222222222": "Unregistered"
+// Oracle Metrics State
+let metrics = {
+    vix: 18.2,
+    bridge: 1.2,
+    div: 0.05
 };
 
+// History arrays for drawing SVG sparklines (max 10 points)
+let history = {
+    vix: [18.0, 18.2, 17.9, 18.5, 18.2, 18.1, 18.4, 18.0, 18.3, 18.2],
+    bridge: [1.1, 1.3, 1.2, 1.4, 1.2, 1.1, 1.3, 1.2, 1.1, 1.2],
+    div: [0.04, 0.05, 0.04, 0.06, 0.05, 0.04, 0.05, 0.06, 0.05, 0.05]
+};
+
+// Regime states: 0 = NORMAL, 1 = VOLATILE, 2 = PANIC
+let currentRegime = 0; 
+
+// Elements mapping
 const terminalOutput = document.getElementById('terminal-output');
-const sandboxTarget = document.getElementById('sandbox-target');
-const sandboxCalldata = document.getElementById('sandbox-calldata');
-const sandboxValue = document.getElementById('sandbox-value');
-const sandboxScenario = document.getElementById('sandbox-scenario');
 const mockModeToggle = document.getElementById('mock-mode-toggle');
 const walletStatusDot = document.getElementById('wallet-status-dot');
 const walletAccount = document.getElementById('wallet-account');
 const btnConnectWallet = document.getElementById('btn-connect-wallet');
+const keeperToggle = document.getElementById('keeper-toggle');
+const keeperStatusBadge = document.getElementById('keeper-status-badge');
+const shieldCore = document.getElementById('sentinel-shield-core');
+const shieldStatusLabel = document.getElementById('sentinel-status-label');
+const arenaLoopToggle = document.getElementById('arena-loop-toggle');
 
+// Sparkline elements
+const svgVix = document.getElementById('svg-vix');
+const svgBridge = document.getElementById('svg-bridge');
+const svgDiv = document.getElementById('svg-div');
+
+// Logs terminal helper
 function writeLog(message, type = 'system') {
-  if (!terminalOutput) return;
-  const div = document.createElement('div');
-  div.className = `terminal-line ${type}-msg`;
-  const time = new Date().toTimeString().split(' ')[0];
-  div.innerHTML = `[${time}] ${message}`;
-  terminalOutput.appendChild(div);
-  setTimeout(() => { terminalOutput.scrollTop = terminalOutput.scrollHeight; }, 20);
+    if (!terminalOutput) return;
+    const div = document.createElement('div');
+    div.className = `terminal-line ${type}-msg`;
+    const time = new Date().toTimeString().split(' ')[0];
+    div.innerHTML = `[${time}] ${message}`;
+    terminalOutput.appendChild(div);
+    setTimeout(() => { terminalOutput.scrollTop = terminalOutput.scrollHeight; }, 20);
 }
 
-// Visual updates for active regime buttons
-function updateRegimeButtons(regime) {
-  currentRegime = regime;
-  document.querySelectorAll('[id^="regime-btn-"]').forEach(btn => {
-    btn.classList.remove('btn-primary');
-    btn.classList.add('btn-secondary');
-  });
-  const activeBtn = document.getElementById(`regime-btn-${regime}`);
-  if (activeBtn) {
-    activeBtn.classList.remove('btn-secondary');
-    activeBtn.classList.add('btn-primary');
-  }
+// Draw Sparklines dynamically
+function drawSparkline(svgEl, dataPoints, minVal, maxVal) {
+    if (!svgEl) return;
+    const width = svgEl.clientWidth || 100;
+    const height = svgEl.clientHeight || 45;
+    
+    const padding = 2;
+    const range = maxVal - minVal || 1;
+    
+    const points = dataPoints.map((val, index) => {
+        const x = padding + (index / (dataPoints.length - 1)) * (width - padding * 2);
+        const y = height - padding - ((val - minVal) / range) * (height - padding * 2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    
+    const pathData = `M ${points.join(' L ')}`;
+    const pathEl = svgEl.querySelector('path');
+    if (pathEl) {
+        pathEl.setAttribute('d', pathData);
+    }
 }
 
-// Change regime action (Mock vs Web3)
-async function changeRegime(regime) {
-  const isMock = mockModeToggle.checked;
-  const labels = ["NORMAL", "VOLATILE", "PANIC"];
-  
-  if (isMock) {
-    updateRegimeButtons(regime);
-    writeLog(`[Mock Mode] Market Regime State changed to: ${labels[regime]} Mode`, 'system');
-  } else {
-    if (!regimeGateContract) {
-      writeLog("❌ Web3 Error: Regime Gate contract not connected.", "error");
-      return;
+// Update sparklines and values
+function updateOracleDisplay() {
+    // Set values in HTML
+    document.getElementById('oracle-vix-val').textContent = metrics.vix.toFixed(1);
+    document.getElementById('oracle-bridge-val').innerHTML = `${metrics.bridge.toFixed(1)}M <span style="font-size: 10px; color: var(--text-secondary);">/ hr</span>`;
+    document.getElementById('oracle-div-val').textContent = `${metrics.div.toFixed(2)}%`;
+    
+    // Update history arrays
+    history.vix.push(metrics.vix);
+    history.vix.shift();
+    history.bridge.push(metrics.bridge);
+    history.bridge.shift();
+    history.div.push(metrics.div);
+    history.div.shift();
+    
+    // Draw SVGs
+    drawSparkline(svgVix, history.vix, Math.min(...history.vix), Math.max(...history.vix));
+    drawSparkline(svgBridge, history.bridge, Math.min(...history.bridge), Math.max(...history.bridge));
+    drawSparkline(svgDiv, history.div, Math.min(...history.div), Math.max(...history.div));
+}
+
+// Fluctuate Oracles slowly on regular loop
+setInterval(() => {
+    // Fluctuate metrics only if not recently shocked
+    const isMock = mockModeToggle.checked;
+    if (isMock) {
+        // Add minor noise
+        const noise = () => (Math.random() - 0.5) * 0.2;
+        
+        if (metrics.vix < 25) metrics.vix = Math.max(15.0, metrics.vix + noise());
+        if (metrics.bridge < 5) metrics.bridge = Math.max(0.5, metrics.bridge + noise() * 0.1);
+        if (metrics.div < 0.2) metrics.div = Math.max(0.01, metrics.div + noise() * 0.01);
+        
+        updateOracleDisplay();
+        
+        // Evaluate Auto Keeper logic
+        if (keeperToggle.checked) {
+            evaluateAutoKeeper();
+        }
+    }
+}, 3000);
+
+// Evaluate Auto-Keeper
+function evaluateAutoKeeper() {
+    let targetRegime = 0;
+    if (metrics.bridge > 10.0) {
+        targetRegime = 2; // PANIC
+    } else if (metrics.vix > 30.0 || metrics.div > 1.0) {
+        targetRegime = 1; // VOLATILE
+    } else {
+        targetRegime = 0; // NORMAL
     }
     
-    // Check ownership
-    try {
-      if (regimeGateOwner && account && regimeGateOwner.toLowerCase() !== account.toLowerCase()) {
-        writeLog(`❌ Web3 Error: Only the contract owner (${regimeGateOwner.slice(0,6)}...) can change the regime.`, "error");
-        return;
-      }
-      
-      writeLog(`[Web3] Sending transaction to set Market Regime to: ${labels[regime]}...`, "info");
-      const tx = await regimeGateContract.setMarketRegime(regime);
-      writeLog(`Transaction sent: ${tx.hash}. Waiting for confirmation...`, "info");
-      await tx.wait();
-      updateRegimeButtons(regime);
-      writeLog(`🎉 [Web3] Market Regime state updated successfully on-chain!`, "success");
-    } catch (err) {
-      writeLog(`❌ Web3 Error setting regime: ${err.message}`, "error");
+    if (targetRegime !== currentRegime) {
+        writeLog(`[Auto-Keeper] Volatility anomaly detected. Auto-adjusting Market Regime.`, 'info');
+        changeRegime(targetRegime);
     }
-  }
 }
 
-// Bind regime buttons
+// Visual updater for shield state
+function updateShieldState(regime) {
+    currentRegime = regime;
+    
+    // Clear classes
+    shieldCore.className = 'sentinel-shield-core';
+    const labels = ["NORMAL MODE", "VOLATILE MODE", "PANIC MODE"];
+    shieldStatusLabel.textContent = labels[regime];
+    
+    if (regime === 0) {
+        shieldCore.classList.add('secure-pulse');
+        shieldStatusLabel.style.color = 'var(--color-green)';
+    } else if (regime === 1) {
+        shieldCore.classList.add('warning-pulse');
+        shieldStatusLabel.style.color = 'var(--primary-accent)';
+    } else if (regime === 2) {
+        shieldCore.classList.add('danger-pulse');
+        shieldStatusLabel.style.color = 'var(--color-red)';
+    }
+    
+    // Update override buttons selection state
+    document.querySelectorAll('.regime-buttons-grid .btn').forEach((btn, idx) => {
+        if (idx === regime) {
+            btn.className = 'btn btn-primary';
+        } else {
+            btn.className = 'btn btn-secondary';
+        }
+    });
+}
+
+// Change regime action
+async function changeRegime(regime) {
+    const isMock = mockModeToggle.checked;
+    const labels = ["NORMAL", "VOLATILE", "PANIC"];
+    
+    if (isMock) {
+        updateShieldState(regime);
+        writeLog(`[Market Regime] State updated locally to: ${labels[regime]} Mode`, 'system');
+    } else {
+        if (!regimeGateContract) {
+            writeLog("❌ Web3 Error: Regime Gate contract not connected.", "error");
+            return;
+        }
+        
+        try {
+            if (regimeGateOwner && account && regimeGateOwner.toLowerCase() !== account.toLowerCase()) {
+                writeLog(`❌ Web3 Error: Only the owner (${regimeGateOwner.slice(0,6)}...) can change regime on-chain.`, "error");
+                return;
+            }
+            
+            writeLog(`[Web3] Calling on-chain setMarketRegime(${regime}) [${labels[regime]}]...`, "info");
+            const tx = await regimeGateContract.setMarketRegime(regime);
+            writeLog(`Transaction broadcasted: ${tx.hash}. Waiting for block confirmation...`, "info");
+            await tx.wait();
+            updateShieldState(regime);
+            writeLog(`🎉 [Web3] Market Regime state updated successfully on-chain!`, "success");
+        } catch (err) {
+            writeLog(`❌ Web3 transaction failed: ${err.message}`, "error");
+        }
+    }
+}
+
+// Shock Injector click handlers
+document.getElementById('btn-shock-dex').addEventListener('click', () => {
+    writeLog("⚠️ Triggering DEX Volatility Spike shock parameter!", 'info');
+    metrics.vix = 42.8;
+    metrics.div = 1.85;
+    updateOracleDisplay();
+    if (keeperToggle.checked) evaluateAutoKeeper();
+});
+
+document.getElementById('btn-shock-bridge').addEventListener('click', () => {
+    writeLog("🚨 Outflow Alert: Triggering Bridge Panic net outflow shock!", 'error');
+    metrics.bridge = 14.8;
+    updateOracleDisplay();
+    if (keeperToggle.checked) evaluateAutoKeeper();
+});
+
+document.getElementById('btn-shock-stabilize').addEventListener('click', () => {
+    writeLog("✅ Stabilizing oracles to standard market settings.", 'success');
+    metrics.vix = 18.2;
+    metrics.bridge = 1.2;
+    metrics.div = 0.05;
+    updateOracleDisplay();
+    if (keeperToggle.checked) evaluateAutoKeeper();
+});
+
+// Keeper auto toggle listener
+keeperToggle.addEventListener('change', () => {
+    if (keeperToggle.checked) {
+        keeperStatusBadge.className = 'keeper-status-badge keeper-active';
+        keeperStatusBadge.innerHTML = '<i class="fas fa-robot"></i> Auto-Keeper On';
+        writeLog("Auto-Keeper Bot activated. Scanning security parameters...", 'info');
+        evaluateAutoKeeper();
+    } else {
+        keeperStatusBadge.className = 'keeper-status-badge';
+        keeperStatusBadge.innerHTML = '<i class="fas fa-robot"></i> Auto-Keeper Off';
+        writeLog("Auto-Keeper Bot deactivated.", 'system');
+    }
+});
+
+// Direct buttons
 document.getElementById('regime-btn-0').addEventListener('click', () => changeRegime(0));
 document.getElementById('regime-btn-1').addEventListener('click', () => changeRegime(1));
 document.getElementById('regime-btn-2').addEventListener('click', () => changeRegime(2));
 
-// Scenario preset selector
-sandboxScenario.addEventListener('change', () => {
-  const preset = sandboxScenario.value;
-  if (preset === 'custom') return;
+// --- AI Agent Arena Simulation Loop ---
+let simulationTimer = null;
+const agentLogs = {
+    yield: document.getElementById('agent-yield-logs'),
+    arb: document.getElementById('agent-arb-logs'),
+    scam: document.getElementById('agent-scam-logs')
+};
 
-  if (preset === 'phishing') {
-    sandboxTarget.value = '0x1111111254fb6c44bac0bed2854e76f90643097d';
-    sandboxCalldata.value = '0x';
-    sandboxValue.value = '0';
-    updateRegimeButtons(0);
-    writeLog("Scenario Loaded: Phishing Contract target under Normal Regime.", "info");
-  } else if (preset === 'regime-panic') {
-    sandboxTarget.value = '0x2c692A2291ad46D034bAbF4a5ACF287341B7797a';
-    sandboxCalldata.value = '0x';
-    sandboxValue.value = '0';
-    updateRegimeButtons(2);
-    writeLog("Scenario Loaded: Any contract target under Panic Regime (HALT).", "info");
-  } else if (preset === 'regime-volatile-bad') {
-    sandboxTarget.value = '0x2222222222222222222222222222222222222222';
-    sandboxCalldata.value = '0x';
-    sandboxValue.value = '0';
-    updateRegimeButtons(1);
-    writeLog("Scenario Loaded: Unverified contract target under Volatile Regime (BLOCK).", "info");
-  } else if (preset === 'regime-volatile-good') {
-    sandboxTarget.value = '0x2c692A2291ad46D034bAbF4a5ACF287341B7797a';
-    sandboxCalldata.value = '0x';
-    sandboxValue.value = '0';
-    updateRegimeButtons(1);
-    writeLog("Scenario Loaded: Verified protocol contract target under Volatile Regime (ALLOW).", "info");
-  }
-  
-  simulateGates();
+function writeAgentLog(agentKey, line, isSuccess = true) {
+    const parent = agentLogs[agentKey];
+    if (!parent) return;
+    const div = document.createElement('div');
+    div.className = isSuccess ? 'tx-success' : 'tx-failed';
+    div.textContent = `> ${line}`;
+    parent.appendChild(div);
+    if (parent.children.length > 3) {
+        parent.removeChild(parent.firstChild);
+    }
+    parent.scrollTop = parent.scrollHeight;
+}
+
+function runAgentSimulationStep() {
+    const isMock = mockModeToggle.checked;
+    
+    // Update Agent indicators
+    const dotYield = document.querySelector('#agent-yield .agent-status-dot');
+    const dotArb = document.querySelector('#agent-arb .agent-status-dot');
+    const dotScam = document.querySelector('#agent-scam .agent-status-dot');
+
+    // 1. Phishing Agent: Always gets registry blocked
+    dotScam.className = 'agent-status-dot blocked';
+    writeAgentLog('scam', 'Sending 1.5 ETH approve swap...', false);
+    writeAgentLog('scam', '❌ Registry Gate: GoPlus Phishing flag detected! Blocked.', false);
+    writeLog('🛡️ [GoPlus API] Scam Target Address (0x1111...) intercepted. Blocked transaction.', 'error');
+
+    // 2. DeFi Yield Agent (Uniswap, CertiK 94)
+    if (currentRegime === 2) {
+        dotYield.className = 'agent-status-dot blocked';
+        writeAgentLog('yield', 'Attempting Uniswap swap...', false);
+        writeAgentLog('yield', '❌ Regime Gate: Market panic. Suspended.', false);
+        writeLog('🛡️ [Market Regime Gate] DeFi Yield Agent blocked. PANIC REGIME ACTIVE.', 'error');
+    } else {
+        dotYield.className = 'agent-status-dot active';
+        writeAgentLog('yield', 'Checking Slippage limits...');
+        writeAgentLog('yield', '✅ Uniswap swap executed successfully. (CertiK: 94)');
+        writeLog('🛡️ [ExecutionEngine] DeFi Yield Agent transaction executed successfully.', 'success');
+    }
+
+    // 3. Arbitrage Agent (Unrated Pool, CertiK 0)
+    if (currentRegime === 2) {
+        dotArb.className = 'agent-status-dot blocked';
+        writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
+        writeAgentLog('arb', '❌ Regime Gate: Market panic. Suspended.', false);
+        writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. PANIC REGIME ACTIVE.', 'error');
+    } else if (currentRegime === 1) {
+        dotArb.className = 'agent-status-dot blocked';
+        writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
+        writeAgentLog('arb', '❌ Regime Gate: Volatile Regime restricts unrated targets.', false);
+        writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. Target CertiK rating below Volatile state limit (>80).', 'error');
+        writeLog('💡 [Anvita Flow Fallback] Actionable RevertDiagnose: Redirecting flow to Uniswap V3.', 'info');
+    } else {
+        dotArb.className = 'agent-status-dot active';
+        writeAgentLog('arb', 'Checking pool registry...');
+        writeAgentLog('arb', '✅ Arb trade executed. Profit: 0.12 ETH');
+        writeLog('🛡️ [ExecutionEngine] Arbitrage Agent transaction executed successfully.', 'success');
+    }
+}
+
+// Simulation Arena trigger
+arenaLoopToggle.addEventListener('change', () => {
+    if (arenaLoopToggle.checked) {
+        startSimulationLoop();
+    } else {
+        stopSimulationLoop();
+    }
 });
 
-function resetSteps() {
-  ['step-registry', 'step-approve', 'step-preview', 'step-regime'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.className = 'step';
-  });
-  const shield = document.querySelector('.shield-display');
-  if (shield) shield.className = 'shield-display';
-  const shieldStatus = document.getElementById('shield-status');
-  if (shieldStatus) shieldStatus.textContent = 'READY';
+function startSimulationLoop() {
+    if (simulationTimer) clearInterval(simulationTimer);
+    writeLog("Arena Simulation loop started. Bots dispatching transactions...", 'info');
+    simulationTimer = setInterval(runAgentSimulationStep, 4000);
 }
 
-function setShieldBlocked() {
-  const shield = document.querySelector('.shield-display');
-  if (shield) shield.className = 'shield-display blocked';
-  const shieldStatus = document.getElementById('shield-status');
-  if (shieldStatus) shieldStatus.textContent = 'BLOCKED';
+function stopSimulationLoop() {
+    if (simulationTimer) {
+        clearInterval(simulationTimer);
+        simulationTimer = null;
+    }
+    writeLog("Arena Simulation loop suspended.", 'system');
 }
 
-async function simulateGates() {
-  resetSteps();
-  const target = sandboxTarget.value.trim().toLowerCase();
-  const calldata = sandboxCalldata.value.trim() || '0x';
-  const valText = sandboxValue.value.trim() || '0';
-  const isMock = mockModeToggle.checked;
-  const delay = ms => new Promise(res => setTimeout(res, ms));
-  
-  const shield = document.querySelector('.shield-display');
-  if (shield) shield.className = 'shield-display scanning';
-  const shieldStatus = document.getElementById('shield-status');
-  if (shieldStatus) shieldStatus.textContent = 'SCANNING';
-  
-  writeLog("⚡ Initiating security gate simulation pipeline...", "system");
-  
-  if (isMock) {
-    // Gate 1: Registry verification
-    const stepReg = document.getElementById('step-registry');
-    stepReg.className = 'step active';
-    await delay(500);
-    const status = mockRegistry[target] || 'Unregistered';
-
-    // Simulated GoPlus endpoint check
-    writeLog(`[GoPlus API] Scanning target address ${target} for security flags...`, "info");
-    await delay(300);
-
-    if (status === 'Blacklisted') {
-      stepReg.className = 'step failed';
-      setShieldBlocked();
-      writeLog("🛡️ [Registry Gate] ❌ GoPlus API Alert: Phishing activities flagged!", "error");
-      writeLog("🛡️ [Registry Gate] ❌ TARGET BLACKLISTED on local registry.", "error");
-      return;
-    }
-    stepReg.className = 'step passed';
-    writeLog("🛡️ [Registry Gate] ✅ VALID TARGET: GoPlus API returned clean check. Not blacklisted locally.", "success");
-    
-    // Gate 2: Approve check
-    const stepApp = document.getElementById('step-approve');
-    stepApp.className = 'step active';
-    await delay(500);
-    stepApp.className = 'step passed';
-    writeLog("🛡️ [SafeApprove Gate] ✅ SECURE: No infinite approval requests detected.", "success");
-    
-    // Gate 3: Preview check
-    const stepPrev = document.getElementById('step-preview');
-    stepPrev.className = 'step active';
-    await delay(500);
-    stepPrev.className = 'step passed';
-    writeLog("🛡️ [TxPreview Gate] ✅ SUCCESS: Dry-run static call simulated successfully.", "success");
-    
-    // Gate 4: Market Regime Check
-    const stepRegime = document.getElementById('step-regime');
-    stepRegime.className = 'step active';
-    await delay(500);
-    
-    if (currentRegime === 2) {
-      stepRegime.className = 'step failed';
-      setShieldBlocked();
-      writeLog("🛡️ [Market Regime Gate] ❌ PANIC REGIME ACTIVE. All outbound transactions suspended globally.", "error");
-      writeLog("💡 Actionable Advice: Wait for market state recovery before resubmitting.", "info");
-      return;
-    }
-    
-    if (currentRegime === 1) {
-      writeLog(`🛡️ [Market Regime Gate] Volatile Mode active. Inspecting CertiK ratings...`, "info");
-      await delay(300);
-      if (status !== 'Verified') {
-        stepRegime.className = 'step failed';
-        setShieldBlocked();
-        writeLog("🛡️ [Market Regime Gate] ❌ VOLATILE REGIME. Transaction blocked because target is unverified (Low CertiK Score).", "error");
-        writeLog("💡 Actionable Advice: Select a verified protocol target with high CertiK rating (>80) or contact the owner.", "info");
-        return;
-      } else {
-        writeLog("🛡️ [Market Regime Gate] ✅ Target protocol has active CertiK Score: 94/100 (Safe).", "success");
-      }
-    }
-    
-    stepRegime.className = 'step passed';
-    writeLog("🛡️ [Market Regime Gate] ✅ SUCCESS: Permitted execution path verified.", "success");
-    
-    if (shield) shield.className = 'shield-display secure';
-    if (shieldStatus) shieldStatus.textContent = 'SECURE';
-    writeLog("🎉 PHAROS GATE SHIELD: Safe path verified. Target transaction approved to execute.", "success");
-  } else {
-    // Web3 Mode Execution Checks
-    if (!account || !engineContract || !registryContract) {
-      writeLog("❌ Web3 Error: Wallet not connected.", "error");
-      resetSteps();
-      return;
-    }
-
-    try {
-      // Gate 1: Registry Check
-      const stepReg = document.getElementById('step-registry');
-      stepReg.className = 'step active';
-      writeLog("[Web3] Querying ProtocolRegistry checkAddress...", "info");
-      
-      const isBlacklisted = await registryContract.isBlacklisted(target);
-      if (isBlacklisted) {
-        stepReg.className = 'step failed';
-        setShieldBlocked();
-        writeLog("🛡️ [Registry Gate] ❌ TARGET BLACKLISTED on-chain!", "error");
-        return;
-      }
-      const isVerified = await registryContract.isVerified(target);
-      stepReg.className = 'step passed';
-      writeLog(`🛡️ [Registry Gate] ✅ Target verified status: ${isVerified}`, "success");
-
-      // Gate 2: Approve check
-      const stepApp = document.getElementById('step-approve');
-      stepApp.className = 'step active';
-      await delay(400);
-      stepApp.className = 'step passed';
-      writeLog("🛡️ [SafeApprove Gate] ✅ Check passed.", "success");
-
-      // Gate 3: Preview check
-      const stepPrev = document.getElementById('step-preview');
-      stepPrev.className = 'step active';
-      writeLog("[Web3] Simulating on-chain static call...", "info");
-      const valWei = ethers.parseEther(valText);
-      await provider.call({
-        from: account,
-        to: target,
-        data: calldata,
-        value: valWei
-      });
-      stepPrev.className = 'step passed';
-      writeLog("🛡️ [TxPreview Gate] ✅ Static call dry-run succeeded.", "success");
-
-      // Gate 4: Market Regime Check
-      const stepRegime = document.getElementById('step-regime');
-      stepRegime.className = 'step active';
-      writeLog("[Web3] Querying on-chain execution gate validations...", "info");
-      
-      // Call engine checkTx (which evaluates Slippage, Registry, and Regime)
-      await engineContract.checkTx(target, calldata, valWei);
-      stepRegime.className = 'step passed';
-      writeLog("🛡️ [Market Regime Gate] ✅ All on-chain regime validation gates passed.", "success");
-
-      if (shield) shield.className = 'shield-display secure';
-      if (shieldStatus) shieldStatus.textContent = 'SECURE';
-      writeLog("🎉 PHAROS GATE SHIELD: Web3 validations passed. Ready to broadcast.", "success");
-
-    } catch (err) {
-      setShieldBlocked();
-      // Diagnose Revert reason
-      let errMsg = err.message || "";
-      if (errMsg.includes("panic regime active")) {
-        document.getElementById('step-regime').className = 'step failed';
-        writeLog("🛡️ [Market Regime Gate] ❌ PANIC REGIME ACTIVE. Executions halted on-chain.", "error");
-      } else if (errMsg.includes("volatile regime restricts")) {
-        document.getElementById('step-regime').className = 'step failed';
-        writeLog("🛡️ [Market Regime Gate] ❌ VOLATILE REGIME. Restricts to verified protocols only.", "error");
-      } else {
-        writeLog(`❌ On-chain simulation failed: ${errMsg}`, "error");
-      }
-    }
-  }
-}
-
-// Connect Web3 Wallet
+// --- Wallet & MetaMask connection logic ---
 async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
-    writeLog("❌ Web3 Error: MetaMask not detected.", "error");
-    return;
-  }
-  
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    account = accounts[0];
-    provider = new ethers.BrowserProvider(window.ethereum);
-    signer = await provider.getSigner();
+    if (typeof window.ethereum === 'undefined') {
+        writeLog("❌ Web3 Error: MetaMask extension not detected.", "error");
+        return;
+    }
+    
+    try {
+        writeLog("Connecting Web3 Browser wallet...", "info");
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        account = accounts[0];
+        provider = new ethers.BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
 
-    // Instantiate Contracts
-    engineContract = new ethers.Contract(ENGINE_ADDRESS, ENGINE_ABI, signer);
-    
-    // Fetch related contract addresses dynamically
-    const regimeGateAddr = await engineContract.regimeGate();
-    const registryAddr = await engineContract.registry();
+        engineContract = new ethers.Contract(ENGINE_ADDRESS, ENGINE_ABI, signer);
+        
+        const regimeGateAddr = await engineContract.regimeGate();
+        const registryAddr = await engineContract.registry();
 
-    regimeGateContract = new ethers.Contract(regimeGateAddr, REGIME_GATE_ABI, signer);
-    registryContract = new ethers.Contract(registryAddr, REGISTRY_ABI, signer);
-
-    regimeGateOwner = await regimeGateContract.owner();
-    
-    // Sync current on-chain regime
-    const regimeCode = await regimeGateContract.currentRegime();
-    updateRegimeButtons(Number(regimeCode));
-    
-    mockModeToggle.checked = false;
-    walletStatusDot.className = "status-dot connected";
-    walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
-    
-    writeLog(`🎉 Wallet connected: ${account}`, "success");
-    writeLog(`Connected to MarketRegimeGate at: ${regimeGateAddr}`, "info");
-    
-  } catch (err) {
-    writeLog(`❌ Wallet connection failed: ${err.message}`, "error");
-  }
+        regimeGateContract = new ethers.Contract(regimeGateAddr, REGIME_GATE_ABI, signer);
+        registryContract = new ethers.Contract(registryAddr, REGISTRY_ABI, signer);
+        regimeGateOwner = await regimeGateContract.owner();
+        
+        // Sync regime from contract
+        const chainRegime = await regimeGateContract.currentRegime();
+        updateShieldState(Number(chainRegime));
+        
+        mockModeToggle.checked = false;
+        walletStatusDot.className = "status-dot connected";
+        walletStatusDot.style.backgroundColor = "";
+        walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
+        
+        writeLog(`🎉 Wallet connected: ${account}`, "success");
+        writeLog(`Connected to On-Chain MarketRegimeGate at: ${regimeGateAddr}`, "success");
+        
+        // Disable simulation arena loop on live web3 connection
+        arenaLoopToggle.checked = false;
+        stopSimulationLoop();
+    } catch (err) {
+        writeLog(`❌ Web3 Wallet connection failed: ${err.message}`, "error");
+    }
 }
 
-// Toggle mock mode handling
 mockModeToggle.addEventListener('change', () => {
-  if (mockModeToggle.checked) {
-    walletStatusDot.className = "status-dot connected";
-    walletStatusDot.style.backgroundColor = '#eab308';
-    walletAccount.textContent = "Mock Mode Connected";
-    writeLog("Mock mode activated. Sandbox simulated off-chain.", "info");
-  } else {
-    walletStatusDot.style.backgroundColor = '';
-    if (account) {
-      walletStatusDot.className = "status-dot connected";
-      walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
+    if (mockModeToggle.checked) {
+        walletStatusDot.className = "status-dot connected";
+        walletStatusDot.style.backgroundColor = '#eab308';
+        walletAccount.textContent = "Mock Mode Connected";
+        writeLog("Mock mode active. Sandboxed off-chain logic enabled.", "info");
+        startSimulationLoop();
+        arenaLoopToggle.checked = true;
     } else {
-      walletStatusDot.className = "status-dot disconnected";
-      walletAccount.textContent = "Disconnected";
+        walletStatusDot.style.backgroundColor = '';
+        if (account) {
+            walletStatusDot.className = "status-dot connected";
+            walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
+        } else {
+            walletStatusDot.className = "status-dot disconnected";
+            walletAccount.textContent = "Disconnected";
+        }
+        writeLog("Mock mode deactivated. Switched to Web3 context.", "info");
+        stopSimulationLoop();
+        arenaLoopToggle.checked = false;
     }
-    writeLog("Mock mode deactivated. Switching to Web3 Wallet context.", "info");
-  }
 });
 
 btnConnectWallet.addEventListener('click', connectWallet);
-document.getElementById('btn-verify-simulate').addEventListener('click', simulateGates);
-document.getElementById('btn-clear-terminal').addEventListener('click', () => {
-  if (terminalOutput) terminalOutput.innerHTML = '';
-});
 
-// Setup mock visual styling defaults
-updateRegimeButtons(0);
-walletStatusDot.style.backgroundColor = '#eab308';
+// Initialize
+updateOracleDisplay();
+updateShieldState(0);
+startSimulationLoop();
