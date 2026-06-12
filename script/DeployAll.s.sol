@@ -13,12 +13,12 @@ contract DeployAll is Script {
         
         vm.startBroadcast(deployerPrivateKey);
 
-        ProtocolRegistry registry = new ProtocolRegistry();
+        ProtocolRegistry registry = ProtocolRegistry(0xbe713906E4D5ac544C069Cd16B2233C979b8AB5a);
         SlippageGuard guard = new SlippageGuard();
         MarketRegimeGate regimeGate = new MarketRegimeGate(address(registry));
         ExecutionEngine engine = new ExecutionEngine(address(registry), address(guard), address(regimeGate));
 
-        console.log("Deployed ProtocolRegistry at:", address(registry));
+        console.log("Reusing ProtocolRegistry at:", address(registry));
         console.log("Deployed SlippageGuard at:", address(guard));
         console.log("Deployed MarketRegimeGate at:", address(regimeGate));
         console.log("Deployed ExecutionEngine at:", address(engine));
