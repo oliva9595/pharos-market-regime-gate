@@ -182,8 +182,8 @@ function evaluateAutoKeeper() {
 function updateShieldState(regime) {
     currentRegime = regime;
     
-    // Clear classes
-    shieldCore.className = 'sentinel-shield-core';
+    // Clear classes safely without wiping static Tailwind/styling classes
+    shieldCore.classList.remove('secure-pulse', 'warning-pulse', 'danger-pulse');
     const labels = ["NORMAL MODE", "VOLATILE MODE", "PANIC MODE"];
     const subheaderLabels = ["NORMAL", "VOLATILE", "PANIC"];
     
@@ -206,12 +206,14 @@ function updateShieldState(regime) {
         if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--color-red)';
     }
     
-    // Update override buttons selection state
+    // Update override buttons selection state safely
     document.querySelectorAll('.regime-buttons-grid .btn').forEach((btn, idx) => {
         if (idx === regime) {
-            btn.className = 'btn btn-primary';
+            btn.classList.add('btn-primary');
+            btn.classList.remove('btn-secondary');
         } else {
-            btn.className = 'btn btn-secondary';
+            btn.classList.add('btn-secondary');
+            btn.classList.remove('btn-primary');
         }
     });
 }
@@ -293,12 +295,12 @@ document.getElementById('btn-shock-stabilize').addEventListener('click', () => {
 // Keeper auto toggle listener
 keeperToggle.addEventListener('change', () => {
     if (keeperToggle.checked) {
-        keeperStatusBadge.className = 'keeper-status-badge keeper-active';
+        keeperStatusBadge.classList.add('keeper-active');
         keeperStatusBadge.innerHTML = '<i class="fas fa-robot"></i> Auto-Keeper On';
         writeLog("Auto-Keeper Bot activated. Scanning security parameters...", 'info');
         evaluateAutoKeeper();
     } else {
-        keeperStatusBadge.className = 'keeper-status-badge';
+        keeperStatusBadge.classList.remove('keeper-active');
         keeperStatusBadge.innerHTML = '<i class="fas fa-robot"></i> Auto-Keeper Off';
         writeLog("Auto-Keeper Bot deactivated.", 'system');
     }
@@ -330,6 +332,20 @@ function writeAgentLog(agentKey, line, isSuccess = true) {
     parent.scrollTop = parent.scrollHeight;
 }
 
+// Helper to safely set agent status dot classes without overwriting layout classes
+function setAgentStatus(dotEl, status) {
+    if (!dotEl) return;
+    dotEl.classList.remove('active', 'blocked', 'warning', 'bg-[#24a107]', 'bg-[#ef4444]', 'bg-[#ff761c]');
+    
+    if (status === 'active') {
+        dotEl.classList.add('active', 'bg-[#24a107]');
+    } else if (status === 'blocked') {
+        dotEl.classList.add('blocked', 'bg-[#ef4444]');
+    } else if (status === 'warning') {
+        dotEl.classList.add('warning', 'bg-[#ff761c]');
+    }
+}
+
 function runAgentSimulationStep() {
     const isMock = mockModeToggle.checked;
     
@@ -339,19 +355,19 @@ function runAgentSimulationStep() {
     const dotScam = document.querySelector('#agent-scam .agent-status-dot');
 
     // 1. Phishing Agent: Always gets registry blocked
-    dotScam.className = 'agent-status-dot blocked';
+    setAgentStatus(dotScam, 'blocked');
     writeAgentLog('scam', 'Sending swap approve payload...', false);
     writeAgentLog('scam', '❌ Registry check: Phishing blacklisted!', false);
     writeLog('🛡️ [GoPlus API] Scam Target Address intercepted. Blocked transaction.', 'error');
 
     // 2. DeFi Yield Agent (Uniswap, CertiK 94)
     if (currentRegime === 2) {
-        dotYield.className = 'agent-status-dot blocked';
+        setAgentStatus(dotYield, 'blocked');
         writeAgentLog('yield', 'Attempting Uniswap swap...', false);
         writeAgentLog('yield', '❌ Regime Gate: Market panic. Suspended.', false);
         writeLog('🛡️ [Market Regime Gate] DeFi Yield Agent blocked. PANIC REGIME ACTIVE.', 'error');
     } else {
-        dotYield.className = 'agent-status-dot active';
+        setAgentStatus(dotYield, 'active');
         writeAgentLog('yield', 'Checking Slippage limits...');
         writeAgentLog('yield', '✅ Uniswap swap executed successfully. (CertiK: 94)');
         writeLog('🛡️ [ExecutionEngine] DeFi Yield Agent transaction executed successfully.', 'success');
@@ -359,18 +375,18 @@ function runAgentSimulationStep() {
 
     // 3. Arbitrage Agent (Unrated Pool, CertiK 0)
     if (currentRegime === 2) {
-        dotArb.className = 'agent-status-dot blocked';
+        setAgentStatus(dotArb, 'blocked');
         writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
         writeAgentLog('arb', '❌ Regime Gate: Market panic. Suspended.', false);
         writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. PANIC REGIME ACTIVE.', 'error');
     } else if (currentRegime === 1) {
-        dotArb.className = 'agent-status-dot blocked';
+        setAgentStatus(dotArb, 'blocked');
         writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
         writeAgentLog('arb', '❌ Regime Gate: Volatile restricts unrated targets.', false);
         writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. Target CertiK rating below Volatile state limit (>80).', 'error');
         writeLog('💡 [Anvita Flow Fallback] Actionable RevertDiagnose: Redirecting flow to Uniswap V3.', 'info');
     } else {
-        dotArb.className = 'agent-status-dot active';
+        setAgentStatus(dotArb, 'active');
         writeAgentLog('arb', 'Checking pool registry...');
         writeAgentLog('arb', '✅ Arb trade executed. Profit: 0.12 PHRS');
         writeLog('🛡️ [ExecutionEngine] Arbitrage Agent transaction executed successfully.', 'success');
@@ -439,7 +455,8 @@ async function connectWallet() {
         await queryWalletBalance();
         
         mockModeToggle.checked = false;
-        walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
+        walletStatusDot.style.backgroundColor = "var(--color-green)";
+        walletStatusDot.style.boxShadow = "0 0 6px var(--color-green)";
         walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
         
         writeLog(`🎉 Wallet connected: ${account}`, "success");
@@ -455,7 +472,8 @@ async function connectWallet() {
 
 mockModeToggle.addEventListener('change', () => {
     if (mockModeToggle.checked) {
-        walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
+        walletStatusDot.style.backgroundColor = "var(--color-green)";
+        walletStatusDot.style.boxShadow = "0 0 6px var(--color-green)";
         walletAccount.textContent = "Mock Mode Connected";
         if (liveWalletBalance) {
             liveWalletBalance.textContent = "0.00855 PHRS";
@@ -465,11 +483,11 @@ mockModeToggle.addEventListener('change', () => {
         arenaLoopToggle.checked = true;
     } else {
         if (account) {
-            walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
+            walletStatusDot.style.backgroundColor = "var(--color-green)";
+            walletStatusDot.style.boxShadow = "0 0 6px var(--color-green)";
             walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
             queryWalletBalance();
         } else {
-            walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
             walletStatusDot.style.backgroundColor = "var(--text-muted)";
             walletStatusDot.style.boxShadow = "none";
             walletAccount.textContent = "Disconnected";
