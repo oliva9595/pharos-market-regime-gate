@@ -364,49 +364,54 @@ function setAgentStatus(dotEl, status) {
 }
 
 function runAgentSimulationStep() {
-    const isMock = mockModeToggle.checked;
-    
+    const regimeLabels = ["NORMAL", "VOLATILE", "PANIC"];
+    const regime = regimeLabels[currentRegime];
+
     // Update Agent indicators
     const dotYield = document.querySelector('#agent-yield .agent-status-dot');
     const dotArb = document.querySelector('#agent-arb .agent-status-dot');
     const dotScam = document.querySelector('#agent-scam .agent-status-dot');
 
-    // 1. Phishing Agent: Always gets registry blocked
+    // --- Scam Agent: Multi-gate pipeline ---
     setAgentStatus(dotScam, 'blocked');
-    writeAgentLog('scam', 'Sending swap approve payload...', false);
-    writeAgentLog('scam', '❌ Registry check: Phishing blacklisted!', false);
-    writeLog('🛡️ [GoPlus API] Scam Target Address intercepted. Blocked transaction.', 'error');
+    writeAgentLog('scam', `Gate 1: ProtocolRegistry.checkAddress(0x1111...)`, false);
+    writeAgentLog('scam', `BLOCKED: Target is blacklisted. Execution halted.`, false);
+    writeLog(`[Gate 1] ProtocolRegistry: 0x1111...1254 is BLACKLISTED. GoPlus: phishing_activities=1. Tx rejected.`, 'error');
 
-    // 2. DeFi Yield Agent (Uniswap, CertiK 94)
+    // --- Yield Agent: Multi-gate pipeline ---
+    writeAgentLog('yield', `Gate 1: ProtocolRegistry.checkAddress(0x7a25...) -> Verified`);
     if (currentRegime === 2) {
         setAgentStatus(dotYield, 'blocked');
-        writeAgentLog('yield', 'Attempting Uniswap swap...', false);
-        writeAgentLog('yield', '❌ Regime Gate: Market panic. Suspended.', false);
-        writeLog('🛡️ [Market Regime Gate] DeFi Yield Agent blocked. PANIC REGIME ACTIVE.', 'error');
+        writeAgentLog('yield', `Gate 7: MarketRegimeGate.verifyRegime() -> PANIC`, false);
+        writeAgentLog('yield', `BLOCKED: Panic regime halts all executions.`, false);
+        writeLog(`[Gate 7] MarketRegimeGate: Regime=${regime}. Yield Agent (CertiK:94) execution suspended.`, 'error');
     } else {
         setAgentStatus(dotYield, 'active');
-        writeAgentLog('yield', 'Checking Slippage limits...');
-        writeAgentLog('yield', '✅ Uniswap swap executed successfully. (CertiK: 94)');
-        writeLog('🛡️ [ExecutionEngine] DeFi Yield Agent transaction executed successfully.', 'success');
+        writeAgentLog('yield', `Gate 5: SlippageGuard.verifySlippage() -> 0.8% OK`);
+        writeAgentLog('yield', `Gate 7: MarketRegimeGate.verifyRegime() -> ${regime} PASS`);
+        writeAgentLog('yield', `executeTx() -> Uniswap V2 swap confirmed.`);
+        writeLog(`[ExecutionEngine] Yield Agent pipeline: Registry OK -> Slippage 0.8% OK -> Regime ${regime} OK -> Executed.`, 'success');
     }
 
-    // 3. Arbitrage Agent (Unrated Pool, CertiK 0)
+    // --- Arb Agent: Multi-gate pipeline ---
+    writeAgentLog('arb', `Gate 1: ProtocolRegistry.checkAddress(0xUnrated) -> Not verified`);
     if (currentRegime === 2) {
         setAgentStatus(dotArb, 'blocked');
-        writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
-        writeAgentLog('arb', '❌ Regime Gate: Market panic. Suspended.', false);
-        writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. PANIC REGIME ACTIVE.', 'error');
+        writeAgentLog('arb', `Gate 7: MarketRegimeGate.verifyRegime() -> PANIC`, false);
+        writeAgentLog('arb', `BLOCKED: Panic regime halts all executions.`, false);
+        writeLog(`[Gate 7] MarketRegimeGate: Regime=${regime}. Arb Agent (CertiK:0) execution suspended.`, 'error');
     } else if (currentRegime === 1) {
         setAgentStatus(dotArb, 'blocked');
-        writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
-        writeAgentLog('arb', '❌ Regime Gate: Volatile restricts unrated targets.', false);
-        writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. Target CertiK rating below Volatile state limit (>80).', 'error');
-        writeLog('💡 [Anvita Flow Fallback] Actionable RevertDiagnose: Redirecting flow to Uniswap V3.', 'info');
+        writeAgentLog('arb', `Gate 7: MarketRegimeGate.verifyRegime() -> VOLATILE`, false);
+        writeAgentLog('arb', `BLOCKED: Volatile restricts to verified protocols.`, false);
+        writeLog(`[Gate 7] MarketRegimeGate: Regime=VOLATILE. Target CertiK=0 < required 80. Tx reverted.`, 'error');
+        writeLog(`[RevertDiagnose] Actionable: Target unverified. Suggest redirect to Uniswap V3 (CertiK:96).`, 'info');
     } else {
         setAgentStatus(dotArb, 'active');
-        writeAgentLog('arb', 'Checking pool registry...');
-        writeAgentLog('arb', '✅ Arb trade executed. Profit: 0.12 PHRS');
-        writeLog('🛡️ [ExecutionEngine] Arbitrage Agent transaction executed successfully.', 'success');
+        writeAgentLog('arb', `Gate 5: SlippageGuard.verifySlippage() -> 1.2% OK`);
+        writeAgentLog('arb', `Gate 7: MarketRegimeGate.verifyRegime() -> NORMAL PASS`);
+        writeAgentLog('arb', `executeTx() -> Arb swap profit: 0.12 PHRS`);
+        writeLog(`[ExecutionEngine] Arb Agent pipeline: Registry OK -> Slippage 1.2% OK -> Regime NORMAL OK -> Executed.`, 'success');
     }
 }
 
@@ -770,7 +775,7 @@ function drawArbChart(regime) {
     ctx.stroke();
     
     // Draw CEX line
-    ctx.strokeStyle = "var(--primary-accent)";
+    ctx.strokeStyle = "#ff761c";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(pointsB[0].x, pointsB[0].y);

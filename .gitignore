@@ -5,3 +5,5 @@ cache/
 .env
 .env.local
 *.log
+broadcast/
+package-lock.json
