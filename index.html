@@ -10,13 +10,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#ff761c",
+                        "color-green": "#24a107",
+                        "color-blue": "#0ea5e9",
+                        "color-red": "#ef4444"
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=2">
+    <!-- Local styles override -->
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <!-- Ethers.js v6 CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
-    <script defer src="js/app.js?v=2"></script>
+    <!-- App JavaScript -->
+    <script defer src="js/app.js?v=3"></script>
 </head>
-<body class="font-sans antialiased">
-    <!-- Ambient glowing backgrounds inspired by Vara Network -->
+<body class="bg-[#030303] text-[#f4f4f5] font-sans antialiased min-h-screen relative overflow-x-hidden">
+    <!-- Ambient glowing backgrounds -->
     <div class="page-ambient" aria-hidden="true">
         <div class="page-ambient__glow page-ambient__glow--one"></div>
         <div class="page-ambient__glow page-ambient__glow--two"></div>
@@ -24,202 +46,193 @@
 
     <!-- Sticky Glass Header -->
     <header class="app-header">
-        <div class="container header-inner">
-            <!-- Brand logo with Zap style -->
-            <a class="group flex items-center gap-3 brand-link" href="#">
+        <div class="max-w-[1240px] mx-auto px-5 w-full flex items-center justify-between h-16">
+            <a class="flex items-center gap-3 brand-link" href="#">
                 <div class="logo-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-primary" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#ff761c]">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                     <span class="logo-glow"></span>
                 </div>
                 <div class="leading-none">
                     <div class="brand-title">
-                        <span>Pharos</span><span class="text-muted-foreground">::Sentinel</span>
+                        <span>Pharos</span><span class="text-[#a1a1aa]">::Sentinel</span>
                     </div>
                     <div class="brand-subtitle">Network</div>
                 </div>
             </a>
 
-            <!-- Centered Navigation -->
-            <nav class="header-nav">
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-1 header-nav">
                 <a class="nav-link" href="#overview">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <i class="fas fa-chart-line"></i>
                     <span>Overview</span>
                 </a>
                 <a class="nav-link" href="#regime-gate">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <i class="fas fa-shield-halved"></i>
                     <span>Regime Gate</span>
                 </a>
                 <a class="nav-link" href="#agent-arena">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M16 18a4 4 0 0 0-8 0"/><circle cx="12" cy="10" r="3"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/></svg>
+                    <i class="fas fa-robot"></i>
                     <span>Agent Arena</span>
                 </a>
                 <a class="nav-link" href="#live-logs">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <i class="fas fa-file-invoice"></i>
                     <span>Live Logs</span>
                 </a>
             </nav>
 
-            <!-- Right controls -->
-            <div class="header-controls">
-                <!-- Mock Mode Toggler -->
-                <div class="mock-mode-container">
-                    <span class="toggle-label">Mock Mode</span>
+            <!-- Header Controls -->
+            <div class="flex items-center gap-4">
+                <div class="mock-mode-container flex items-center gap-2">
+                    <span class="text-xs text-[#a1a1aa]">Mock Mode</span>
                     <label class="switch">
                         <input type="checkbox" id="mock-mode-toggle" checked>
                         <span class="slider round"></span>
                     </label>
                 </div>
 
-                <!-- Connect Wallet Trigger -->
-                <button id="btn-connect-wallet" type="button" class="btn-wallet-connect">
-                    <span id="wallet-status-dot" class="live-dot"></span>
-                    <span id="wallet-account">Mock Mode Active</span>
+                <button id="btn-connect-wallet" type="button" class="btn-wallet-connect flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-white/20 transition-colors bg-[#09090b]/80">
+                    <span id="wallet-status-dot" class="live-dot bg-[#24a107]"></span>
+                    <span id="wallet-account" class="text-xs font-mono">Mock Mode Active</span>
                 </button>
 
-                <!-- Network Status indicator badge -->
-                <div class="network-badge">
-                    <span class="live-dot"></span>PHRS ATLANTIC
+                <div class="network-badge text-xs font-semibold px-2.5 py-1 rounded bg-[#ff761c]/10 text-[#ff761c] border border-[#ff761c]/20">
+                    PHRS ATLANTIC
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Sub-header Metadata Bar -->
-    <div class="subheader-bar">
-        <div class="container subheader-inner">
-            <div class="subheader-left">
-                <span class="live-dot" id="network-pulsing-dot"></span>
-                <span class="subheader-network-title">Pharos Atlantic Testnet</span>
+    <div class="subheader-bar border-b border-white/5 bg-[#0e0e0e]/50 py-3 mt-16">
+        <div class="max-w-[1240px] mx-auto px-5 w-full flex items-center justify-between text-xs font-mono">
+            <div class="flex items-center gap-2">
+                <span class="live-dot animate-pulse bg-[#24a107]" id="network-pulsing-dot"></span>
+                <span class="text-[#a1a1aa]">Pharos Atlantic Testnet</span>
             </div>
-            <div class="subheader-right">
-                <span>Block <span class="highlight-text" id="live-block-height">#188,432</span></span>
-                <span class="bullet-separator">·</span>
-                <span>Active Regime <span class="highlight-text-primary" id="live-regime-status">NORMAL</span></span>
-                <span class="bullet-separator">·</span>
-                <span>Wallet Balance <span class="highlight-text" id="live-wallet-balance">0.00855 PHRS</span></span>
-                <span class="bullet-separator">·</span>
-                <span>Engine <span class="highlight-text-muted" id="engine-address-badge">0x8A3e...f8f4</span></span>
+            <div class="flex items-center gap-4 text-xs">
+                <span>Block <span class="text-[#f4f4f5] font-semibold" id="live-block-height">#188,432</span></span>
+                <span class="text-white/10">•</span>
+                <span>Regime <span class="text-[#24a107] font-semibold" id="live-regime-status">NORMAL</span></span>
+                <span class="text-white/10">•</span>
+                <span>Wallet Balance <span class="text-[#ff761c] font-semibold" id="live-wallet-balance">0.00855 PHRS</span></span>
+                <span class="text-white/10">•</span>
+                <span>Engine <span class="text-[#a1a1aa]" id="engine-address-badge">0x8A3e...f8f4</span></span>
             </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <main class="container main-content">
+    <main class="max-w-[1240px] mx-auto px-5 py-8 space-y-8">
         
-        <!-- SECTION 1: Metrics Insights -->
-        <section class="section" id="overview">
-            <div class="section__hdr">
-                <div>
-                    <div class="section__kicker">Insights</div>
-                    <h1 class="section__title">live security oracle metrics</h1>
-                    <p class="section__sub">Real-time parameters monitored on-chain by the Pharos Volatility Sentinel.</p>
-                </div>
+        <!-- SECTION 1: Metrics -->
+        <section id="overview" class="space-y-4">
+            <div class="mb-6">
+                <div class="text-[#ff761c] text-xs font-mono uppercase tracking-widest">Insights</div>
+                <h1 class="text-2xl font-bold uppercase tracking-tight">live security oracle metrics</h1>
+                <p class="text-sm text-[#a1a1aa]">Real-time parameters monitored on-chain by the Pharos Volatility Sentinel.</p>
             </div>
 
-            <div class="insights-metrics-grid">
-                <!-- Card 1: VIX -->
-                <article class="insights-metric-card" id="oracle-card-vix">
-                    <span class="insights-metric-card__label">Market Volatility (VIX)</span>
-                    <span class="insights-metric-value" id="oracle-vix-val">18.2</span>
-                    <div class="sparkline-container">
-                        <svg class="sparkline-svg" id="svg-vix">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Card VIX -->
+                <article class="insights-metric-card glass-panel p-5 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between h-44" id="oracle-card-vix">
+                    <span class="text-xs text-[#a1a1aa] uppercase font-semibold">Market Volatility (VIX)</span>
+                    <span class="text-3xl font-mono font-bold text-[#ff761c]" id="oracle-vix-val">18.2</span>
+                    <div class="sparkline-container h-12">
+                        <svg class="sparkline-svg w-full h-full" id="svg-vix">
                             <path d="" stroke="#ff761c" stroke-width="2.2" fill="none"></path>
                         </svg>
                     </div>
                 </article>
 
-                <!-- Card 2: Bridge Net Flow -->
-                <article class="insights-metric-card" id="oracle-card-bridge">
-                    <span class="insights-metric-card__label">Bridge Net Flow</span>
-                    <span class="insights-metric-value" id="oracle-bridge-val">1.2M <span class="unit-text">/ hr</span></span>
-                    <div class="sparkline-container">
-                        <svg class="sparkline-svg" id="svg-bridge">
+                <!-- Card Bridge -->
+                <article class="insights-metric-card glass-panel p-5 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between h-44" id="oracle-card-bridge">
+                    <span class="text-xs text-[#a1a1aa] uppercase font-semibold">Bridge Net Flow</span>
+                    <span class="text-3xl font-mono font-bold text-[#0ea5e9]" id="oracle-bridge-val">1.2M <span class="text-xs text-[#a1a1aa]">/ hr</span></span>
+                    <div class="sparkline-container h-12">
+                        <svg class="sparkline-svg w-full h-full" id="svg-bridge">
                             <path d="" stroke="#0ea5e9" stroke-width="2.2" fill="none"></path>
                         </svg>
                     </div>
                 </article>
 
-                <!-- Card 3: Oracle Divergence -->
-                <article class="insights-metric-card" id="oracle-card-div">
-                    <span class="insights-metric-card__label">Oracle Price Divergence</span>
-                    <span class="insights-metric-value" id="oracle-div-val">0.05%</span>
-                    <div class="sparkline-container">
-                        <svg class="sparkline-svg" id="svg-div">
-                            <path d="" stroke="#2bad0a" stroke-width="2.2" fill="none"></path>
+                <!-- Card Divergence -->
+                <article class="insights-metric-card glass-panel p-5 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between h-44" id="oracle-card-div">
+                    <span class="text-xs text-[#a1a1aa] uppercase font-semibold">Oracle Price Divergence</span>
+                    <span class="text-3xl font-mono font-bold text-[#24a107]" id="oracle-div-val">0.05%</span>
+                    <div class="sparkline-container h-12">
+                        <svg class="sparkline-svg w-full h-full" id="svg-div">
+                            <path d="" stroke="#24a107" stroke-width="2.2" fill="none"></path>
                         </svg>
                     </div>
                 </article>
 
-                <!-- Card 4: Auto-Keeper Controls -->
-                <article class="insights-metric-card-controls">
-                    <div class="controls-header">
-                        <span class="insights-metric-card__label">Auto-Keeper bot</span>
-                        <div class="keeper-status-badge" id="keeper-status-badge">
+                <!-- Controls Card -->
+                <article class="insights-metric-card-controls glass-panel p-5 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between h-44">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-[#a1a1aa] uppercase font-semibold">Auto-Keeper bot</span>
+                        <div class="keeper-status-badge text-[10px] uppercase font-mono px-2 py-0.5 rounded border border-white/10 text-[#a1a1aa]" id="keeper-status-badge">
                             <i class="fas fa-robot"></i> Auto-Keeper Off
                         </div>
                     </div>
                     
-                    <div class="keeper-toggle-row">
-                        <span class="toggle-label text-xs">Keeper Auto-Regime Selector</span>
+                    <div class="flex items-center justify-between text-xs text-[#a1a1aa]">
+                        <span>Auto-Regime Selector</span>
                         <label class="switch">
                             <input type="checkbox" id="keeper-toggle">
                             <span class="slider round"></span>
                         </label>
                     </div>
 
-                    <!-- Shock Injector block inside -->
-                    <div class="shock-container">
-                        <span class="shock-title">Risk Shock Injectors:</span>
-                        <div class="shock-buttons-row">
-                            <button class="btn-shock btn-shock-warning" id="btn-shock-dex">DEX Spike</button>
-                            <button class="btn-shock btn-shock-danger" id="btn-shock-bridge">Bridge Outflow</button>
-                            <button class="btn-shock btn-shock-success" id="btn-shock-stabilize">Stabilize</button>
+                    <div class="space-y-1">
+                        <span class="text-[10px] text-[#52525b] uppercase font-mono">Risk Shock Injectors:</span>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button class="btn-shock bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 text-[10px] py-1.5 font-bold uppercase rounded" id="btn-shock-dex">DEX Spike</button>
+                            <button class="btn-shock bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 text-[10px] py-1.5 font-bold uppercase rounded" id="btn-shock-bridge">Bridge Outflow</button>
+                            <button class="btn-shock bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 text-[10px] py-1.5 font-bold uppercase rounded" id="btn-shock-stabilize">Stabilize</button>
                         </div>
                     </div>
                 </article>
             </div>
         </section>
 
-        <!-- SECTION 2: Regime Shield and Simulation Arena -->
-        <section class="section grid-layout" id="regime-gate">
-            <!-- Left Side: Gate 7 Shield -->
-            <article class="dashboard-card">
-                <div class="card-header-v2">
-                    <div>
-                        <div class="section__kicker">Shield Gate</div>
-                        <h2 class="card-title">Gate 7: Market Regime Shield</h2>
-                    </div>
+        <!-- SECTION 2: Shield & Arena -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8" id="regime-gate">
+            <!-- Left Side: Shield -->
+            <article class="lg:col-span-5 glass-panel p-6 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between min-h-[440px]">
+                <div>
+                    <div class="text-[#ff761c] text-xs font-mono uppercase tracking-widest">Shield Gate</div>
+                    <h2 class="text-xl font-bold uppercase tracking-tight mb-4">Gate 7: Market Regime Shield</h2>
                 </div>
                 
-                <div class="shield-sentinel-display">
+                <div class="shield-sentinel-display flex-grow flex flex-col items-center justify-center relative my-4 border border-white/5 rounded-lg py-8 bg-black/40 overflow-hidden min-h-[200px]">
                     <div class="shield-radar-ring"></div>
-                    <div class="sentinel-shield-core" id="sentinel-shield-core">
+                    <div class="sentinel-shield-core secure-pulse text-5xl mb-4" id="sentinel-shield-core">
                         <i class="fas fa-shield-halved"></i>
                     </div>
-                    <div class="shield-status-label" id="sentinel-status-label">NORMAL MODE</div>
+                    <div class="shield-status-label text-sm font-mono tracking-wider font-bold" id="sentinel-status-label">NORMAL MODE</div>
                 </div>
 
-                <div class="regime-controls">
-                    <span class="controls-label">Manual override controls (Owner Only):</span>
-                    <div class="regime-buttons-grid">
-                        <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
-                        <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
-                        <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
+                <div class="space-y-2">
+                    <span class="text-xs text-[#a1a1aa] block">Manual override controls (Owner Only):</span>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="btn py-2 border border-white/5 hover:border-white/10 hover:bg-white/10 text-xs font-bold rounded" id="regime-btn-0">Normal</button>
+                        <button class="btn py-2 border border-white/5 hover:border-white/10 hover:bg-white/10 text-xs font-bold rounded" id="regime-btn-1">Volatile</button>
+                        <button class="btn py-2 border border-white/5 hover:border-white/10 hover:bg-white/10 text-xs font-bold rounded" id="regime-btn-2">Panic</button>
                     </div>
                 </div>
             </article>
 
-            <!-- Right Side: AI Agent Arena -->
-            <article class="dashboard-card" id="agent-arena">
-                <div class="card-header-v2">
+            <!-- Right Side: Agent Arena -->
+            <article class="lg:col-span-7 glass-panel p-6 rounded-xl border border-white/5 bg-[#09090b]/60 flex flex-col justify-between min-h-[440px]" id="agent-arena">
+                <div class="flex items-center justify-between mb-4">
                     <div>
-                        <div class="section__kicker">Simulation</div>
-                        <h2 class="card-title">AI Agent Arena</h2>
+                        <div class="text-color-blue text-xs font-mono uppercase tracking-widest">Simulation</div>
+                        <h2 class="text-xl font-bold uppercase tracking-tight">AI Agent Arena</h2>
                     </div>
-                    <div class="arena-run-control">
-                        <span class="toggle-label text-xs">Run Arena</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-[#a1a1aa]">Run Arena</span>
                         <label class="switch">
                             <input type="checkbox" id="arena-loop-toggle" checked>
                             <span class="slider round"></span>
@@ -227,86 +240,92 @@
                     </div>
                 </div>
 
-                <div class="agents-arena-grid">
-                    <!-- Agent 1: DeFi Yield -->
-                    <div class="agent-card" id="agent-yield">
-                        <div class="agent-status-indicator">
-                            <span class="agent-status-dot active"></span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+                    <!-- Agent Card: Yield -->
+                    <div class="agent-card glass-panel p-4 rounded-lg border border-white/5 bg-black/30 flex flex-col justify-between relative" id="agent-yield">
+                        <div class="agent-status-indicator absolute top-3 right-3">
+                            <span class="agent-status-dot active inline-block w-2.5 h-2.5 rounded-full bg-[#24a107]"></span>
                             <span class="agent-pulse-ring"></span>
                         </div>
-                        <div class="agent-header">
-                            <i class="fas fa-money-bill-trend-up agent-icon"></i>
-                            <h3 class="agent-title">Yield Agent</h3>
-                        </div>
-                        <div class="agent-meta">
-                            <div class="meta-row">
-                                <span class="meta-label">CertiK Score:</span>
-                                <span class="meta-val badge status-verified">94 / 100</span>
+                        <div class="space-y-3">
+                            <div class="agent-header flex items-center gap-2 border-b border-white/5 pb-2">
+                                <i class="fas fa-money-bill-trend-up text-[#ff761c]"></i>
+                                <h3 class="text-sm font-bold">Yield Agent</h3>
                             </div>
-                            <div class="meta-row">
-                                <span class="meta-label">GoPlus Check:</span>
-                                <span class="meta-val text-green"><i class="fas fa-check-circle"></i> Clean</span>
+                            <div class="agent-meta text-[10px] space-y-1 font-mono">
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">CertiK:</span>
+                                    <span class="text-[#24a107] font-semibold">Score 94 / 100</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">GoPlus:</span>
+                                    <span class="text-[#24a107] font-semibold"><i class="fas fa-check-circle"></i> Clean</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="agent-console">
-                            <div class="agent-console-title">Terminal Logs</div>
-                            <div class="agent-console-lines" id="agent-yield-logs">
+                        <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
+                            <div class="text-[#52525b] border-b border-white/5 pb-1 mb-1 font-semibold uppercase">Terminal Logs</div>
+                            <div class="agent-console-lines text-sky-400 h-16 overflow-y-auto space-y-1" id="agent-yield-logs">
                                 <div>[YieldAgent] Idle. Loop active.</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Agent 2: Arbitrage Agent -->
-                    <div class="agent-card" id="agent-arb">
-                        <div class="agent-status-indicator">
-                            <span class="agent-status-dot active"></span>
+                    <!-- Agent Card: Arb -->
+                    <div class="agent-card glass-panel p-4 rounded-lg border border-white/5 bg-black/30 flex flex-col justify-between relative" id="agent-arb">
+                        <div class="agent-status-indicator absolute top-3 right-3">
+                            <span class="agent-status-dot active inline-block w-2.5 h-2.5 rounded-full bg-[#24a107]"></span>
                             <span class="agent-pulse-ring"></span>
                         </div>
-                        <div class="agent-header">
-                            <i class="fas fa-scale-balanced agent-icon"></i>
-                            <h3 class="agent-title">Arb Agent</h3>
-                        </div>
-                        <div class="agent-meta">
-                            <div class="meta-row">
-                                <span class="meta-label">CertiK Score:</span>
-                                <span class="meta-val badge status-blacklisted">0 / 100</span>
+                        <div class="space-y-3">
+                            <div class="agent-header flex items-center gap-2 border-b border-white/5 pb-2">
+                                <i class="fas fa-scale-balanced text-[#0ea5e9]"></i>
+                                <h3 class="text-sm font-bold">Arb Agent</h3>
                             </div>
-                            <div class="meta-row">
-                                <span class="meta-label">GoPlus Check:</span>
-                                <span class="meta-val text-yellow"><i class="fas fa-triangle-exclamation"></i> Unrated</span>
+                            <div class="agent-meta text-[10px] space-y-1 font-mono">
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">CertiK:</span>
+                                    <span class="text-orange-500 font-semibold">Score 0 / 100</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">GoPlus:</span>
+                                    <span class="text-orange-500 font-semibold"><i class="fas fa-triangle-exclamation"></i> Unrated</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="agent-console">
-                            <div class="agent-console-title">Terminal Logs</div>
-                            <div class="agent-console-lines" id="agent-arb-logs">
+                        <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
+                            <div class="text-[#52525b] border-b border-white/5 pb-1 mb-1 font-semibold uppercase">Terminal Logs</div>
+                            <div class="agent-console-lines text-sky-400 h-16 overflow-y-auto space-y-1" id="agent-arb-logs">
                                 <div>[ArbAgent] Idle. Loop active.</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Agent 3: Scam Phishing Agent -->
-                    <div class="agent-card" id="agent-scam">
-                        <div class="agent-status-indicator">
-                            <span class="agent-status-dot active"></span>
+                    <!-- Agent Card: Scam -->
+                    <div class="agent-card glass-panel p-4 rounded-lg border border-white/5 bg-black/30 flex flex-col justify-between relative" id="agent-scam">
+                        <div class="agent-status-indicator absolute top-3 right-3">
+                            <span class="agent-status-dot blocked inline-block w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span>
                             <span class="agent-pulse-ring"></span>
                         </div>
-                        <div class="agent-header">
-                            <i class="fas fa-skull-crossbones agent-icon"></i>
-                            <h3 class="agent-title">Scam Agent</h3>
-                        </div>
-                        <div class="agent-meta">
-                            <div class="meta-row">
-                                <span class="meta-label">CertiK Score:</span>
-                                <span class="meta-val badge status-blacklisted">12 / 100</span>
+                        <div class="space-y-3">
+                            <div class="agent-header flex items-center gap-2 border-b border-white/5 pb-2">
+                                <i class="fas fa-skull-crossbones text-[#ef4444]"></i>
+                                <h3 class="text-sm font-bold">Scam Agent</h3>
                             </div>
-                            <div class="meta-row">
-                                <span class="meta-label">GoPlus Check:</span>
-                                <span class="meta-val text-red"><i class="fas fa-circle-xmark"></i> Blocked</span>
+                            <div class="agent-meta text-[10px] space-y-1 font-mono">
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">CertiK:</span>
+                                    <span class="text-[#ef4444] font-semibold">Score 12 / 100</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-[#a1a1aa]">GoPlus:</span>
+                                    <span class="text-[#ef4444] font-semibold"><i class="fas fa-circle-xmark"></i> Blocked</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="agent-console">
-                            <div class="agent-console-title">Terminal Logs</div>
-                            <div class="agent-console-lines" id="agent-scam-logs">
+                        <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
+                            <div class="text-[#52525b] border-b border-white/5 pb-1 mb-1 font-semibold uppercase">Terminal Logs</div>
+                            <div class="agent-console-lines text-red-500 h-16 overflow-y-auto space-y-1" id="agent-scam-logs">
                                 <div>[ScamBot] Idle. Loop active.</div>
                             </div>
                         </div>
@@ -315,34 +334,30 @@
             </article>
         </section>
 
-        <!-- SECTION 3: Live Logs styled like Live Extrinsics -->
-        <section class="section" id="live-logs">
-            <div class="insights-section-row">
+        <!-- SECTION 3: Live Logs -->
+        <section id="live-logs" class="glass-panel p-5 rounded-xl border border-white/5 bg-[#09090b]/60 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3">
                 <div>
-                    <div class="section__kicker">Event Feed</div>
-                    <h2 class="section__title">live security extrinsics</h2>
+                    <div class="text-[#ff761c] text-xs font-mono uppercase tracking-widest">Event Feed</div>
+                    <h2 class="text-xl font-bold uppercase tracking-tight">live security extrinsics</h2>
                 </div>
-                <div class="filter-row insights-filters">
-                    <button type="button" id="btn-clear-terminal" class="btn-clear">Clear Logs</button>
-                </div>
+                <button type="button" id="btn-clear-terminal" class="btn-clear text-xs px-3 py-1.5 rounded border border-white/5 hover:border-white/10 hover:bg-white/5 font-mono text-[#a1a1aa] transition-colors">Clear Logs</button>
             </div>
             
-            <div class="insights-table-card">
-                <div class="insights-event-feed" id="terminal-output">
-                    <div class="terminal-line system-msg">Pharos Execution Security Gate Console active. Ready.</div>
-                </div>
+            <div class="insights-event-feed font-mono text-xs overflow-y-auto h-40 space-y-1.5 p-3 rounded bg-black/60 border border-white/5" id="terminal-output">
+                <div class="terminal-line system-msg">[SYSTEM] Pharos Execution Security Gate Console active. Ready.</div>
             </div>
         </section>
 
     </main>
 
     <!-- Footer Component -->
-    <footer class="app-footer">
-        <div class="container footer-inner">
+    <footer class="border-t border-white/5 bg-[#09090b]/80 py-6 mt-12 text-xs text-[#a1a1aa]">
+        <div class="max-w-[1240px] mx-auto px-5 w-full flex items-center justify-between">
             <p>&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
-            <div class="footer-status">
-                <span class="live-dot"></span>
-                <span class="footer-status-label">Sentinel Active</span>
+            <div class="flex items-center gap-2 font-mono">
+                <span class="live-dot bg-[#24a107]"></span>
+                <span>Sentinel Active</span>
             </div>
         </div>
     </footer>
