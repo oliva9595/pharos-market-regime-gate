@@ -71,19 +71,19 @@ The interface is structured as a fluid, modern dashboard layout with a responsiv
     *   **Risk Shock Injectors:** Inline button row (`DEX Spike`, `Bridge Outflow`, `Stabilize`) to trigger mock conditions.
 
 ### 4. Gate 7 Market Regime Shield
-*   **Radar Display:** Stacked concentric CSS circles with a rotating radial scanner arm, creating a radar sweep effect.
-*   **Core Icon:** Shield logo at the center, changing pulse state and color dynamically:
-    *   **NORMAL:** Green core with `secure-pulse` animation, slow radar sweep.
-    *   **VOLATILE:** Orange core with `warning-pulse` animation, medium radar sweep.
-    *   **PANIC:** Red core with `danger-pulse` animation, rapid flashing sweep.
-*   **Regime Buttons:** Manual override button row (`Normal`, `Volatile`, `Panic`), styled in brand primary color for the active selection.
+*   **Radar/WebGL Display:** Replace static CSS circles with a WebGL `<canvas id="shield-3d-canvas">` running a Three.js scene.
+*   **Three.js Visual Effects:**
+    *   **Core Particle Sphere:** 1,200 particle points (`THREE.Points`) arranged in a sphere, rotating slowly. Màu hạt thay đổi tự động (lerp) theo trạng thái regime: Green (Normal), Orange (Volatile), Red (Panic).
+    *   **Hologram Scanning Rings:** Flat rotating wireframe rings surrounding the sphere, simulating active security sweeps.
+    *   **Regime-Dependent Speeds:** Rotation speed increases as regime severity intensifies (Normal = 1x, Volatile = 2.5x, Panic = 6x).
+*   **Regime Buttons:** Manual override button row (`Normal`, `Volatile`, `Panic`) styled in corresponding state colors.
 
 ### 5. AI Agent Arena
-*   Contains 3 autonomous agent cards, each displaying:
-    *   Status indicator: Pulsing green ring (active) or red dot (blocked).
-    *   Header: Agent name and icon.
-    *   Meta Row: CertiK rating score (color-coded) and GoPlus address audit status (Clean/Suspicious/Blocked).
-    *   Console Viewport: Dedicated monospace logger terminal displaying the agent's internal transaction steps.
+*   Contains 3 autonomous agent cards, each containing custom interactive graphics:
+    *   **Yield Agent Card:** Features a 2D Canvas Radar Chart showing five axes (Safety, Yield, Liquidity, Gas, Speed). The chart area breathes slowly using a Sine wave.
+    *   **Arb Agent Card:** Features a 2D Canvas Dual-Line Chart showing two overlapping curves (DEX Pool vs. Reference Price) in blue and orange. The shaded delta represents the arbitrage spread.
+    *   **Scam Agent Card:** Features a 2D Canvas Generative Dendritic Tree (Cấu trúc phân nhánh mã độc) drawn recursively in glowing neon red, simulating blockchain phishing propagation.
+    *   **Agent Terminal Logs:** Dedicated monospace console logs displaying transaction feedback.
 
 ### 6. Live Logs Console (Live Security Extrinsics)
 *   Table-styled scrolling terminal container displaying:
@@ -112,3 +112,42 @@ The dashboard logic handles both **Mock Mode** (local UI simulation loop) and **
 *   Connects to MetaMask using Ethers.js v6.
 *   Synchronizes the active regime state by reading `currentRegime()` from the deployed `MarketRegimeGate` contract (`0xECF86Cf42d27582FDcc60Eed65F0bB7567c789CF`).
 *   Broadcasts transaction `setMarketRegime(uint8 _regime)` when manually overriding the regime (verifying owner permission).
+
+---
+
+## 4. Advanced Graphics Technical Specifications
+
+### Three.js (WebGL) Shield Render Implementation
+*   **Renderer:** WebGLRenderer with `alpha: true` and `antialias: true` targeting `#shield-3d-canvas`.
+*   **Scene Components:**
+    *   `THREE.Points` with a custom shader or texture to represent a glowing particle core.
+    *   `THREE.RingGeometry` for the outer orbital rings.
+    *   `THREE.AmbientLight` and `THREE.PointLight` for local illumination, colors bound to `currentRegime`.
+*   **Animation Loop:**
+    ```javascript
+    function animate() {
+        requestAnimationFrame(animate);
+        // Rotate particle core
+        particleSphere.rotation.y += rotationSpeed;
+        particleSphere.rotation.x += rotationSpeed * 0.5;
+        // Rotate scanner ring
+        scanningRing.rotation.z += scanSpeed;
+        renderer.render(scene, camera);
+    }
+    ```
+
+### Canvas 2D Graphic Engines
+1.  **Radar Web (Yield Agent):**
+    *   Draws five outer vertices at radius $R$: $P_i = (cx + R \cos\theta_i, cy + R \sin\theta_i)$ where $\theta_i = i \times \frac{2\pi}{5}$.
+    *   Fills the inner region using a semi-transparent orange color: `rgba(255, 118, 28, 0.2)`.
+    *   Modulates $R$ slightly with a temporal factor $\sin(t)$ for breathing animation.
+2.  **Arb Dual-Line Chart:**
+    *   Plots two curves:
+        *   Curve A: $y_A(x) = cy + A \sin(\omega x + \phi_A) + \text{noise}$
+        *   Curve B: $y_B(x) = cy + B \cos(\omega x + \phi_B) + \text{noise}$
+    *   Draws fill styling between the curves when $y_B(x) > y_A(x)$ (highlighting arbitrage opportunities).
+3.  **Generative Dendritic Tree (Scam Agent):**
+    *   Recursive function `drawBranch(x, y, length, angle, depth)` using lines:
+        *   `ctx.moveTo(x, y); ctx.lineTo(x2, y2); ctx.stroke();`
+        *   Spawns two child branches at angles $\theta \pm \delta\theta$ with scaled length.
+        *   Triggered/updated at each transaction iteration, growing slowly and then restarting.
