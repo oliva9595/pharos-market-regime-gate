@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharos ExecutionEngine Shield & Regime Gate</title>
+    <title>Pharos Volatility Sentinel & Regime Gate</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,10 +15,14 @@
 <body>
     <header class="app-header">
         <div class="header-brand">
-            <img src="assets/pharos_shield_logo.png" alt="Pharos Shield Logo" width="32" height="32">
-            <span id="app-title">Pharos Execution Shield</span>
+            <img src="assets/pharos_shield_logo.png" alt="Pharos Shield Logo" width="32" height="32" onerror="this.src='https://raw.githubusercontent.com/enzo151097/pharos-skill-engine/main/assets/pharos_shield_logo.png'">
+            <span id="app-title">Pharos Volatility Sentinel</span>
         </div>
         <div class="header-controls">
+            <div class="serverless-status">
+                <span class="status-dot connected"></span>
+                <span class="status-label">Alibaba Serverless: Active</span>
+            </div>
             <div class="mock-mode-container">
                 <span class="toggle-label">Mock Mode</span>
                 <label class="switch">
@@ -27,125 +31,233 @@
                 </label>
             </div>
             <div class="wallet-status-indicator">
-                <span id="wallet-status-dot" class="status-dot disconnected"></span>
-                <span id="wallet-account" class="account-text">Disconnected</span>
+                <span id="wallet-status-dot" class="status-dot connected"></span>
+                <span id="wallet-account" class="account-text">Mock Mode Connected</span>
             </div>
             <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
         </div>
     </header>
 
-    <div class="dashboard-grid">
-        <!-- Sandbox Control Card -->
+    <div class="sentinel-grid">
+        
+        <!-- COLUMN 1: Live Security Oracle Monitor -->
         <section class="card">
             <div class="card-header">
-                <h2 class="card-title">Security Control Sandbox</h2>
-                <span class="card-subtitle">Test Execution Engine Gates against custom configurations.</span>
+                <h2 class="card-title">Live Security Oracle Monitor</h2>
+                <span class="card-subtitle">Real-time off-chain price stability and network liquidity parameters.</span>
             </div>
-            <form onsubmit="event.preventDefault();" class="sandbox-form">
-                <div class="form-group">
-                    <label>Interactive Safety Scenario Preset</label>
-                    <select id="sandbox-scenario" class="form-control">
-                        <option value="custom" selected>Manual Configuration</option>
-                        <option value="phishing">Scenario 1: Phishing Target Blacklist Block (GoPlus / Registry)</option>
-                        <option value="regime-panic">Scenario 2: Gate 7 Panic State Active Block</option>
-                        <option value="regime-volatile-bad">Scenario 3: Gate 7 Volatile State - Unverified Block (Low CertiK)</option>
-                        <option value="regime-volatile-good">Scenario 4: Gate 7 Volatile State - Verified Allow (High CertiK)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Target Contract Address</label>
-                    <input type="text" id="sandbox-target" class="form-control font-mono" placeholder="0x..." value="0x2c692A2291ad46D034bAbF4a5ACF287341B7797a" required>
-                </div>
-                <div class="form-group">
-                    <label>Calldata Hex</label>
-                    <input type="text" id="sandbox-calldata" class="form-control font-mono" value="0x" required>
-                </div>
-                <div class="form-group">
-                    <label>Value (ETH)</label>
-                    <input type="number" id="sandbox-value" class="form-control" value="0" required>
-                </div>
-                <div class="sandbox-actions">
-                    <button type="button" id="btn-verify-simulate" class="btn btn-secondary">Simulate Gates</button>
-                    <button type="button" id="btn-safe-execute" class="btn btn-primary">Execute tx</button>
-                </div>
-            </form>
             
-            <div class="scanner-container" style="margin-top: 24px;">
-                <div class="shield-display">
-                    <div class="shield-glow"></div>
-                    <div class="shield-icon" id="shield-icon"><i class="fas fa-shield-halved"></i></div>
-                    <div class="shield-status" id="shield-status">READY</div>
+            <div class="oracle-feeds-container">
+                <!-- Feed 1: VIX -->
+                <div class="oracle-feed-card" id="oracle-card-vix">
+                    <div class="oracle-header">
+                        <span class="oracle-title">Market Volatility (VIX)</span>
+                        <i class="fas fa-chart-line" style="color: var(--primary-accent);"></i>
+                    </div>
+                    <div class="oracle-value" id="oracle-vix-val">18.2</div>
+                    <div class="sparkline-container">
+                        <svg class="sparkline-svg" id="svg-vix">
+                            <path d="" stroke="#ff761c" stroke-width="2" fill="none"></path>
+                        </svg>
+                    </div>
                 </div>
-                <div class="pipeline-steps" style="display: flex; gap: 8px; flex: 1; justify-content: space-between;">
-                    <div class="step" id="step-registry"><span class="step-label">1. Registry</span></div>
-                    <div class="step" id="step-approve"><span class="step-label">2. Approve</span></div>
-                    <div class="step" id="step-preview"><span class="step-label">3. Preview</span></div>
-                    <div class="step" id="step-regime"><span class="step-label">4. Regime</span></div>
+                
+                <!-- Feed 2: Bridge Volume -->
+                <div class="oracle-feed-card" id="oracle-card-bridge">
+                    <div class="oracle-header">
+                        <span class="oracle-title">Bridge Net Flow</span>
+                        <i class="fas fa-bridge" style="color: var(--color-blue);"></i>
+                    </div>
+                    <div class="oracle-value" id="oracle-bridge-val">1.2M <span style="font-size: 10px; color: var(--text-secondary);">/ hr</span></div>
+                    <div class="sparkline-container">
+                        <svg class="sparkline-svg" id="svg-bridge">
+                            <path d="" stroke="#0ea5e9" stroke-width="2" fill="none"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Feed 3: Price Divergence -->
+                <div class="oracle-feed-card" id="oracle-card-div">
+                    <div class="oracle-header">
+                        <span class="oracle-title">Oracle Price Divergence</span>
+                        <i class="fas fa-scale-unbalanced" style="color: var(--color-green);"></i>
+                    </div>
+                    <div class="oracle-value" id="oracle-div-val">0.05%</div>
+                    <div class="sparkline-container">
+                        <svg class="sparkline-svg" id="svg-div">
+                            <path d="" stroke="#2bad0a" stroke-width="2" fill="none"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="shock-section">
+                <h3 class="section-title">Market Risk Shock Injector Controls</h3>
+                <div class="shock-controls-grid">
+                    <button class="btn-shock btn-shock-warning" id="btn-shock-dex">DEX Volatility Spike</button>
+                    <button class="btn-shock btn-shock-danger" id="btn-shock-bridge">Bridge Outflow Panic</button>
+                    <button class="btn-shock btn-shock-success" id="btn-shock-stabilize">Stabilize Feeds</button>
                 </div>
             </div>
         </section>
 
-        <!-- Market Regime Controls Card -->
+        <!-- COLUMN 2: Gate 7 On-chain Controls -->
         <section class="card">
-            <div class="card-header">
-                <h2 class="card-title">Gate 7: Market Regime Controls</h2>
-                <span class="card-subtitle">Set volatility regimes to change gate rules.</span>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="card-title">Gate 7: Market Regime Gate</h2>
+                    <span class="card-subtitle">On-chain active security enforcement shield.</span>
+                </div>
+                <div class="keeper-status-badge" id="keeper-status-badge">
+                    <i class="fas fa-robot"></i> Auto-Keeper Off
+                </div>
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                    <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
-                    <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
-                    <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
+            <div class="keeper-toggle-row">
+                <span class="toggle-label">Keeper Bot Auto-Regime Selector</span>
+                <label class="switch">
+                    <input type="checkbox" id="keeper-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            
+            <div class="shield-sentinel-display">
+                <div class="shield-radar-ring"></div>
+                <div class="sentinel-shield-core" id="sentinel-shield-core">
+                    <i class="fas fa-shield-halved"></i>
                 </div>
-                
-                <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <h3 class="section-title">Verified Protocol Registry & CertiK SkyNet ratings</h3>
-                    <div class="table-container">
-                        <table class="sample-table">
-                            <thead>
-                                <tr>
-                                    <th>Protocol Name / Address</th>
-                                    <th>Registry Status</th>
-                                    <th>CertiK Score</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div>Uniswap V2 Router</div>
-                                        <div class="sample-address font-mono">0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</div>
-                                    </td>
-                                    <td><span class="badge status-verified">Verified</span></td>
-                                    <td><span class="badge status-verified" style="font-family: var(--font-mono);"><i class="fas fa-shield-halved"></i> 94 / 100</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div>Unverified Phishing Target</div>
-                                        <div class="sample-address font-mono">0x1111111254fb6c44bac0bed2854e76f90643097d</div>
-                                    </td>
-                                    <td><span class="badge status-blacklisted">Blacklisted</span></td>
-                                    <td><span class="badge status-blacklisted" style="font-family: var(--font-mono);"><i class="fas fa-triangle-exclamation"></i> 12 / 100</span></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div>Generic Unverified Protocol</div>
-                                        <div class="sample-address font-mono">0x2222222222222222222222222222222222222222</div>
-                                    </td>
-                                    <td><span class="badge status-whitelisted">Unregistered</span></td>
-                                    <td><span class="badge status-whitelisted" style="font-family: var(--font-mono);"><i class="fas fa-circle-question"></i> Unrated</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="shield-status-label" id="sentinel-status-label">NORMAL MODE</div>
+            </div>
+            
+            <div class="regime-buttons-grid">
+                <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
+                <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
+                <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
+            </div>
+        </section>
+        
+        <!-- FULL WIDTH: AI Agent Simulation Arena -->
+        <section class="card full-width-card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="card-title">AI Agent Simulation Arena</h2>
+                    <span class="card-subtitle">Observe autonomous agents reacting dynamically to market volatility regimes.</span>
+                </div>
+                <div class="arena-controls">
+                    <span class="toggle-label" style="font-size: 12px; margin-right: 8px;">Run Loop</span>
+                    <label class="switch">
+                        <input type="checkbox" id="arena-loop-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="agents-arena-grid">
+                <!-- Agent 1: DeFi Yield Agent -->
+                <div class="agent-card" id="agent-yield">
+                    <div class="agent-status-indicator">
+                        <span class="agent-status-dot active"></span>
+                        <span class="agent-pulse-ring"></span>
+                    </div>
+                    <div class="agent-header">
+                        <i class="fas fa-money-bill-trend-up agent-icon"></i>
+                        <h3 class="agent-title">DeFi Yield Agent</h3>
+                    </div>
+                    <p class="agent-desc">Optimizes yield by staking assets in Uniswap V2 Router.</p>
+                    <div class="agent-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Target:</span>
+                            <span class="meta-val font-mono">Uniswap V2 Router</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">CertiK Rating:</span>
+                            <span class="meta-val badge status-verified">Score: 94 / 100</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">GoPlus Status:</span>
+                            <span class="meta-val text-green"><i class="fas fa-check-circle"></i> Clean</span>
+                        </div>
+                    </div>
+                    <div class="agent-console">
+                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
+                        <div class="agent-console-lines font-mono" id="agent-yield-logs">
+                            <div>[YieldAgent] Idle. Loop active.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent 2: Arbitrage Agent -->
+                <div class="agent-card" id="agent-arb">
+                    <div class="agent-status-indicator">
+                        <span class="agent-status-dot active"></span>
+                        <span class="agent-pulse-ring"></span>
+                    </div>
+                    <div class="agent-header">
+                        <i class="fas fa-scale-balanced agent-icon"></i>
+                        <h3 class="agent-title">Arbitrage Agent</h3>
+                    </div>
+                    <p class="agent-desc">Swaps between unverified decentralized pools for mispricing.</p>
+                    <div class="agent-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Target:</span>
+                            <span class="meta-val font-mono">Unrated Pool Target</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">CertiK Rating:</span>
+                            <span class="meta-val badge status-blacklisted" style="color: var(--primary-accent); border-color: rgba(255,118,28,0.3); background: rgba(255,118,28,0.1)">Score: 0 / 100</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">GoPlus Status:</span>
+                            <span class="meta-val text-yellow"><i class="fas fa-triangle-exclamation"></i> Unverified</span>
+                        </div>
+                    </div>
+                    <div class="agent-console">
+                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
+                        <div class="agent-console-lines font-mono" id="agent-arb-logs">
+                            <div>[ArbAgent] Idle. Loop active.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent 3: Malicious Phishing Agent -->
+                <div class="agent-card" id="agent-scam">
+                    <div class="agent-status-indicator">
+                        <span class="agent-status-dot active"></span>
+                        <span class="agent-pulse-ring"></span>
+                    </div>
+                    <div class="agent-header">
+                        <i class="fas fa-skull-crossbones agent-icon"></i>
+                        <h3 class="agent-title">Phishing Scam Target</h3>
+                    </div>
+                    <p class="agent-desc">Simulates interacting with a malicious drainer contract.</p>
+                    <div class="agent-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Target:</span>
+                            <span class="meta-val font-mono">Malicious Wallet Drainer</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">CertiK Rating:</span>
+                            <span class="meta-val badge status-blacklisted">Score: 12 / 100</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">GoPlus Status:</span>
+                            <span class="meta-val text-red"><i class="fas fa-circle-xmark"></i> Blacklisted</span>
+                        </div>
+                    </div>
+                    <div class="agent-console">
+                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
+                        <div class="agent-console-lines font-mono" id="agent-scam-logs">
+                            <div>[ScamBot] Idle. Loop active.</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- System Console Output Card -->
-        <section class="card card-terminal">
+        <!-- FULL WIDTH: Security Gate Logger Console -->
+        <section class="card card-terminal full-width-card">
             <div class="terminal-header">
-                <h2 class="terminal-title">SECURITY GATE LOGGER CONSOLE</h2>
+                <h2 class="terminal-title">SECURITY GATE SYSTEM MONITORING LOGS</h2>
                 <button type="button" id="btn-clear-terminal" class="btn-clear">Clear</button>
             </div>
             <div class="terminal">
@@ -154,10 +266,11 @@
                 </div>
             </div>
         </section>
+        
     </div>
 
     <footer class="app-footer">
-        <p>&copy; 2026 Pharos Network. Gate 7 Volatility Shield Middleware.</p>
+        <p>&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
     </footer>
 </body>
 </html>
