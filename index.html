@@ -34,6 +34,8 @@
     <link rel="stylesheet" href="css/style.css?v=3">
     <!-- Ethers.js v6 CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- App JavaScript -->
     <script defer src="js/app.js?v=3"></script>
 </head>
@@ -206,12 +208,9 @@
                     <h2 class="text-xl font-bold uppercase tracking-tight mb-4">Gate 7: Market Regime Shield</h2>
                 </div>
                 
-                <div class="shield-sentinel-display flex-grow flex flex-col items-center justify-center relative my-4 border border-white/5 rounded-lg py-8 bg-black/40 overflow-hidden min-h-[200px]">
-                    <div class="shield-radar-ring"></div>
-                    <div class="sentinel-shield-core secure-pulse text-5xl mb-4" id="sentinel-shield-core">
-                        <i class="fas fa-shield-halved"></i>
-                    </div>
-                    <div class="shield-status-label text-sm font-mono tracking-wider font-bold" id="sentinel-status-label">NORMAL MODE</div>
+                <div class="shield-sentinel-display flex-grow flex flex-col items-center justify-center relative my-4 border border-white/5 rounded-lg py-4 bg-black/40 overflow-hidden min-h-[220px]" id="shield-display-container">
+                    <canvas id="shield-3d-canvas" class="w-full h-full absolute inset-0"></canvas>
+                    <div class="shield-status-label text-sm font-mono tracking-wider font-bold z-10 mt-36" id="sentinel-status-label">NORMAL MODE</div>
                 </div>
 
                 <div class="space-y-2">
@@ -261,6 +260,7 @@
                                     <span class="text-[#a1a1aa]">GoPlus:</span>
                                     <span class="text-[#24a107] font-semibold"><i class="fas fa-check-circle"></i> Clean</span>
                                 </div>
+                                <canvas id="yield-radar-canvas" class="w-full h-[90px] mt-2 rounded bg-black/20 border border-white/5"></canvas>
                             </div>
                         </div>
                         <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
@@ -291,6 +291,7 @@
                                     <span class="text-[#a1a1aa]">GoPlus:</span>
                                     <span class="text-orange-500 font-semibold"><i class="fas fa-triangle-exclamation"></i> Unrated</span>
                                 </div>
+                                <canvas id="arb-chart-canvas" class="w-full h-[90px] mt-2 rounded bg-black/20 border border-white/5"></canvas>
                             </div>
                         </div>
                         <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
@@ -321,6 +322,7 @@
                                     <span class="text-[#a1a1aa]">GoPlus:</span>
                                     <span class="text-[#ef4444] font-semibold"><i class="fas fa-circle-xmark"></i> Blocked</span>
                                 </div>
+                                <canvas id="scam-dendrite-canvas" class="w-full h-[90px] mt-2 rounded bg-black/20 border border-white/5"></canvas>
                             </div>
                         </div>
                         <div class="agent-console mt-4 font-mono text-[9px] bg-black/60 p-2 rounded border border-white/5">
