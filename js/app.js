@@ -59,19 +59,41 @@ const keeperStatusBadge = document.getElementById('keeper-status-badge');
 const shieldCore = document.getElementById('sentinel-shield-core');
 const shieldStatusLabel = document.getElementById('sentinel-status-label');
 const arenaLoopToggle = document.getElementById('arena-loop-toggle');
+const liveBlockHeight = document.getElementById('live-block-height');
+const liveRegimeStatus = document.getElementById('live-regime-status');
+const liveWalletBalance = document.getElementById('live-wallet-balance');
 
 // Sparkline elements
 const svgVix = document.getElementById('svg-vix');
 const svgBridge = document.getElementById('svg-bridge');
 const svgDiv = document.getElementById('svg-div');
 
-// Logs terminal helper
+// Mock Block Number Ticker Loop (simulating active chain state)
+let mockBlockNumber = 188432;
+setInterval(() => {
+    mockBlockNumber++;
+    if (liveBlockHeight) {
+        liveBlockHeight.textContent = `#${mockBlockNumber.toLocaleString()}`;
+    }
+}, 3000);
+
+// Logs terminal helper - Styled like Live Extrinsics
 function writeLog(message, type = 'system') {
     if (!terminalOutput) return;
     const div = document.createElement('div');
     div.className = `terminal-line ${type}-msg`;
     const time = new Date().toTimeString().split(' ')[0];
-    div.innerHTML = `[${time}] ${message}`;
+    
+    let typeLabel = "SYS";
+    if (type === 'error') typeLabel = "ERR";
+    if (type === 'success') typeLabel = "OK ";
+    if (type === 'info') typeLabel = "INF";
+    
+    div.innerHTML = `
+        <span class="log-time" style="color: var(--text-muted); font-family: var(--font-mono); margin-right: 8px;">${time}</span>
+        <span class="log-type" style="color: var(--primary-accent); font-family: var(--font-mono); margin-right: 12px; font-weight: 700;">[${typeLabel}]</span>
+        <span class="log-msg">${message}</span>
+    `;
     terminalOutput.appendChild(div);
     setTimeout(() => { terminalOutput.scrollTop = terminalOutput.scrollHeight; }, 20);
 }
@@ -80,7 +102,7 @@ function writeLog(message, type = 'system') {
 function drawSparkline(svgEl, dataPoints, minVal, maxVal) {
     if (!svgEl) return;
     const width = svgEl.clientWidth || 100;
-    const height = svgEl.clientHeight || 45;
+    const height = svgEl.clientHeight || 48;
     
     const padding = 2;
     const range = maxVal - minVal || 1;
@@ -102,7 +124,7 @@ function drawSparkline(svgEl, dataPoints, minVal, maxVal) {
 function updateOracleDisplay() {
     // Set values in HTML
     document.getElementById('oracle-vix-val').textContent = metrics.vix.toFixed(1);
-    document.getElementById('oracle-bridge-val').innerHTML = `${metrics.bridge.toFixed(1)}M <span style="font-size: 10px; color: var(--text-secondary);">/ hr</span>`;
+    document.getElementById('oracle-bridge-val').innerHTML = `${metrics.bridge.toFixed(1)}M <span class="unit-text">/ hr</span>`;
     document.getElementById('oracle-div-val').textContent = `${metrics.div.toFixed(2)}%`;
     
     // Update history arrays
@@ -121,7 +143,6 @@ function updateOracleDisplay() {
 
 // Fluctuate Oracles slowly on regular loop
 setInterval(() => {
-    // Fluctuate metrics only if not recently shocked
     const isMock = mockModeToggle.checked;
     if (isMock) {
         // Add minor noise
@@ -164,17 +185,25 @@ function updateShieldState(regime) {
     // Clear classes
     shieldCore.className = 'sentinel-shield-core';
     const labels = ["NORMAL MODE", "VOLATILE MODE", "PANIC MODE"];
+    const subheaderLabels = ["NORMAL", "VOLATILE", "PANIC"];
+    
     shieldStatusLabel.textContent = labels[regime];
+    if (liveRegimeStatus) {
+        liveRegimeStatus.textContent = subheaderLabels[regime];
+    }
     
     if (regime === 0) {
         shieldCore.classList.add('secure-pulse');
         shieldStatusLabel.style.color = 'var(--color-green)';
+        if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--color-green)';
     } else if (regime === 1) {
         shieldCore.classList.add('warning-pulse');
         shieldStatusLabel.style.color = 'var(--primary-accent)';
+        if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--primary-accent)';
     } else if (regime === 2) {
         shieldCore.classList.add('danger-pulse');
         shieldStatusLabel.style.color = 'var(--color-red)';
+        if (liveRegimeStatus) liveRegimeStatus.style.color = 'var(--color-red)';
     }
     
     // Update override buttons selection state
@@ -213,9 +242,26 @@ async function changeRegime(regime) {
             await tx.wait();
             updateShieldState(regime);
             writeLog(`🎉 [Web3] Market Regime state updated successfully on-chain!`, "success");
+            
+            // Update balance after transaction
+            await queryWalletBalance();
         } catch (err) {
             writeLog(`❌ Web3 transaction failed: ${err.message}`, "error");
         }
+    }
+}
+
+// Query Wallet Balance on Pharos chain
+async function queryWalletBalance() {
+    if (!provider || !account) return;
+    try {
+        const balance = await provider.getBalance(account);
+        const formatted = parseFloat(ethers.formatEther(balance)).toFixed(5);
+        if (liveWalletBalance) {
+            liveWalletBalance.textContent = `${formatted} PHRS`;
+        }
+    } catch (e) {
+        console.error("Error querying balance:", e);
     }
 }
 
@@ -294,9 +340,9 @@ function runAgentSimulationStep() {
 
     // 1. Phishing Agent: Always gets registry blocked
     dotScam.className = 'agent-status-dot blocked';
-    writeAgentLog('scam', 'Sending 1.5 PHRS approve swap...', false);
-    writeAgentLog('scam', '❌ Registry Gate: GoPlus Phishing flag detected! Blocked.', false);
-    writeLog('🛡️ [GoPlus API] Scam Target Address (0x1111...) intercepted. Blocked transaction.', 'error');
+    writeAgentLog('scam', 'Sending swap approve payload...', false);
+    writeAgentLog('scam', '❌ Registry check: Phishing blacklisted!', false);
+    writeLog('🛡️ [GoPlus API] Scam Target Address intercepted. Blocked transaction.', 'error');
 
     // 2. DeFi Yield Agent (Uniswap, CertiK 94)
     if (currentRegime === 2) {
@@ -320,7 +366,7 @@ function runAgentSimulationStep() {
     } else if (currentRegime === 1) {
         dotArb.className = 'agent-status-dot blocked';
         writeAgentLog('arb', 'Attempting pool arbitrage swap...', false);
-        writeAgentLog('arb', '❌ Regime Gate: Volatile Regime restricts unrated targets.', false);
+        writeAgentLog('arb', '❌ Regime Gate: Volatile restricts unrated targets.', false);
         writeLog('🛡️ [Market Regime Gate] Arbitrage Agent blocked. Target CertiK rating below Volatile state limit (>80).', 'error');
         writeLog('💡 [Anvita Flow Fallback] Actionable RevertDiagnose: Redirecting flow to Uniswap V3.', 'info');
     } else {
@@ -354,6 +400,14 @@ function stopSimulationLoop() {
     writeLog("Arena Simulation loop suspended.", 'system');
 }
 
+// Clear Terminal button listener
+document.getElementById('btn-clear-terminal').addEventListener('click', () => {
+    if (terminalOutput) {
+        terminalOutput.innerHTML = '';
+        writeLog("Security Gate Console cleared.", 'system');
+    }
+});
+
 // --- Wallet & MetaMask connection logic ---
 async function connectWallet() {
     if (typeof window.ethereum === 'undefined') {
@@ -381,9 +435,11 @@ async function connectWallet() {
         const chainRegime = await regimeGateContract.currentRegime();
         updateShieldState(Number(chainRegime));
         
+        // Sync balance
+        await queryWalletBalance();
+        
         mockModeToggle.checked = false;
-        walletStatusDot.className = "status-dot connected";
-        walletStatusDot.style.backgroundColor = "";
+        walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
         walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
         
         writeLog(`🎉 Wallet connected: ${account}`, "success");
@@ -399,20 +455,27 @@ async function connectWallet() {
 
 mockModeToggle.addEventListener('change', () => {
     if (mockModeToggle.checked) {
-        walletStatusDot.className = "status-dot connected";
-        walletStatusDot.style.backgroundColor = '#eab308';
+        walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
         walletAccount.textContent = "Mock Mode Connected";
+        if (liveWalletBalance) {
+            liveWalletBalance.textContent = "0.00855 PHRS";
+        }
         writeLog("Mock mode active. Sandboxed off-chain logic enabled.", "info");
         startSimulationLoop();
         arenaLoopToggle.checked = true;
     } else {
-        walletStatusDot.style.backgroundColor = '';
         if (account) {
-            walletStatusDot.className = "status-dot connected";
+            walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
             walletAccount.textContent = `${account.slice(0, 6)}...${account.slice(-4)}`;
+            queryWalletBalance();
         } else {
-            walletStatusDot.className = "status-dot disconnected";
+            walletStatusDot.className = "live-dot h-1.5 w-1.5 rounded-full bg-primary";
+            walletStatusDot.style.backgroundColor = "var(--text-muted)";
+            walletStatusDot.style.boxShadow = "none";
             walletAccount.textContent = "Disconnected";
+            if (liveWalletBalance) {
+                liveWalletBalance.textContent = "0.00000 PHRS";
+            }
         }
         writeLog("Mock mode deactivated. Switched to Web3 context.", "info");
         stopSimulationLoop();

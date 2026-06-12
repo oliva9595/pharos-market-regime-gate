@@ -4,273 +4,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharos Volatility Sentinel & Regime Gate</title>
+    
+    <!-- Google Fonts: Geist & Geist Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
     <script defer src="js/app.js"></script>
 </head>
-<body>
-    <header class="app-header">
-        <div class="header-brand">
-            <img src="assets/pharos_shield_logo.png" alt="Pharos Shield Logo" width="32" height="32" onerror="this.src='https://raw.githubusercontent.com/enzo151097/pharos-skill-engine/main/assets/pharos_shield_logo.png'">
-            <span id="app-title">Pharos Volatility Sentinel</span>
-        </div>
-        <div class="header-controls">
-            <div class="serverless-status">
-                <span class="status-dot connected"></span>
-                <span class="status-label">Alibaba Serverless: Active</span>
+<body class="font-sans antialiased">
+    <!-- Ambient glowing backgrounds inspired by Vara Network -->
+    <div class="page-ambient" aria-hidden="true">
+        <div class="page-ambient__glow page-ambient__glow--one"></div>
+        <div class="page-ambient__glow page-ambient__glow--two"></div>
+    </div>
+
+    <!-- Sticky Glass Header -->
+    <header class="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
+        <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
+            <div class="flex h-[72px] items-center justify-between gap-6">
+                <!-- Brand logo with Zap style -->
+                <a class="group flex shrink-0 items-center gap-3" href="#">
+                    <div class="relative grid h-10 w-10 place-items-center rounded-xl border border-primary/35 bg-primary/10 text-primary transition-all group-hover:border-primary/70">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-primary" aria-hidden="true">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <span class="absolute inset-0 rounded-lg bg-primary/10 blur-md transition-all group-hover:bg-primary/20"></span>
+                    </div>
+                    <div class="leading-none">
+                        <div class="font-mono text-base font-semibold tracking-tight text-foreground">
+                            <span>Pharos</span><span class="text-muted-foreground">::Sentinel</span>
+                        </div>
+                        <div class="mt-1 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground/70">Network</div>
+                    </div>
+                </a>
+
+                <!-- Centered Navigation -->
+                <nav class="hidden items-center gap-1.5 lg:flex">
+                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#overview">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        <span>Overview</span>
+                    </a>
+                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#regime-gate">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>Regime Gate</span>
+                    </a>
+                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#agent-arena">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M16 18a4 4 0 0 0-8 0"/><circle cx="12" cy="10" r="3"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/></svg>
+                        <span>Agent Arena</span>
+                    </a>
+                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#live-logs">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>Live Logs</span>
+                    </a>
+                </nav>
+
+                <!-- Right controls -->
+                <div class="ml-auto hidden shrink-0 items-center gap-4 md:flex">
+                    <!-- Mock Mode Toggler -->
+                    <div class="mock-mode-container flex items-center gap-2">
+                        <span class="toggle-label text-xs font-mono text-muted-foreground">Mock Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="mock-mode-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <!-- Connect Wallet Trigger -->
+                    <button id="btn-connect-wallet" type="button" class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-all hover:border-primary/35 hover:bg-primary/5">
+                        <span id="wallet-status-dot" class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>
+                        <span id="wallet-account">Mock Mode Active</span>
+                    </button>
+
+                    <!-- Network Status indicator badge -->
+                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                        <span class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>PHRS ATLANTIC
+                    </div>
+                </div>
             </div>
-            <div class="mock-mode-container">
-                <span class="toggle-label">Mock Mode</span>
-                <label class="switch">
-                    <input type="checkbox" id="mock-mode-toggle" checked>
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <div class="wallet-status-indicator">
-                <span id="wallet-status-dot" class="status-dot connected"></span>
-                <span id="wallet-account" class="account-text">Mock Mode Connected</span>
-            </div>
-            <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
         </div>
     </header>
 
-    <div class="sentinel-grid">
-        
-        <!-- COLUMN 1: Live Security Oracle Monitor -->
-        <section class="card">
-            <div class="card-header">
-                <h2 class="card-title">Live Security Oracle Monitor</h2>
-                <span class="card-subtitle">Real-time off-chain price stability and network liquidity parameters.</span>
-            </div>
-            
-            <div class="oracle-feeds-container">
-                <!-- Feed 1: VIX -->
-                <div class="oracle-feed-card" id="oracle-card-vix">
-                    <div class="oracle-header">
-                        <span class="oracle-title">Market Volatility (VIX)</span>
-                        <i class="fas fa-chart-line" style="color: var(--primary-accent);"></i>
+    <!-- Sub-header Metadata Bar -->
+    <div class="pt-[72px]">
+        <div class="border-b border-border bg-card/65 shadow-[0_1px_0_oklch(1_0_0_/_0.03)] backdrop-blur">
+            <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
+                <div class="flex h-12 items-center justify-between gap-8 overflow-x-auto font-mono text-xs">
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="live-dot h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_var(--primary)]" id="network-pulsing-dot"></span>
+                        <span class="text-primary font-bold tracking-[0.02em]">Pharos Atlantic Testnet</span>
                     </div>
-                    <div class="oracle-value" id="oracle-vix-val">18.2</div>
+                    <div class="flex items-center gap-5 text-muted-foreground flex-shrink-0">
+                        <span>Block <span class="font-extrabold text-foreground" id="live-block-height">#188,432</span></span>
+                        <span class="text-border">·</span>
+                        <span>Active Regime <span class="font-extrabold text-primary" id="live-regime-status">NORMAL</span></span>
+                        <span class="text-border">·</span>
+                        <span>Wallet Balance <span class="font-extrabold text-foreground" id="live-wallet-balance">0.00855 PHRS</span></span>
+                        <span class="text-border">·</span>
+                        <span>Engine <span class="font-extrabold text-muted-foreground" id="engine-address-badge">0x8A3e...f8f4</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7 py-8">
+        
+        <!-- SECTION 1: Metrics Insights -->
+        <section class="section" id="overview">
+            <div class="section__hdr">
+                <div>
+                    <div class="section__kicker">Insights</div>
+                    <h1 class="section__title">live security oracle metrics</h1>
+                    <p class="section__sub">Real-time parameters monitored on-chain by the Pharos Volatility Sentinel.</p>
+                </div>
+            </div>
+
+            <div class="insights-metrics-grid">
+                <!-- Card 1: VIX -->
+                <article class="insights-metric-card" id="oracle-card-vix">
+                    <span class="insights-metric-card__label">Market Volatility (VIX)</span>
+                    <span class="insights-metric-value" id="oracle-vix-val">18.2</span>
                     <div class="sparkline-container">
                         <svg class="sparkline-svg" id="svg-vix">
-                            <path d="" stroke="#ff761c" stroke-width="2" fill="none"></path>
+                            <path d="" stroke="#ff761c" stroke-width="2.2" fill="none"></path>
                         </svg>
                     </div>
-                </div>
-                
-                <!-- Feed 2: Bridge Volume -->
-                <div class="oracle-feed-card" id="oracle-card-bridge">
-                    <div class="oracle-header">
-                        <span class="oracle-title">Bridge Net Flow</span>
-                        <i class="fas fa-bridge" style="color: var(--color-blue);"></i>
-                    </div>
-                    <div class="oracle-value" id="oracle-bridge-val">1.2M <span style="font-size: 10px; color: var(--text-secondary);">/ hr</span></div>
+                </article>
+
+                <!-- Card 2: Bridge Net Flow -->
+                <article class="insights-metric-card" id="oracle-card-bridge">
+                    <span class="insights-metric-card__label">Bridge Net Flow</span>
+                    <span class="insights-metric-value" id="oracle-bridge-val">1.2M <span class="unit-text">/ hr</span></span>
                     <div class="sparkline-container">
                         <svg class="sparkline-svg" id="svg-bridge">
-                            <path d="" stroke="#0ea5e9" stroke-width="2" fill="none"></path>
+                            <path d="" stroke="#0ea5e9" stroke-width="2.2" fill="none"></path>
                         </svg>
+                    </div>
+                </article>
+
+                <!-- Card 3: Oracle Divergence -->
+                <article class="insights-metric-card" id="oracle-card-div">
+                    <span class="insights-metric-card__label">Oracle Price Divergence</span>
+                    <span class="insights-metric-value" id="oracle-div-val">0.05%</span>
+                    <div class="sparkline-container">
+                        <svg class="sparkline-svg" id="svg-div">
+                            <path d="" stroke="#2bad0a" stroke-width="2.2" fill="none"></path>
+                        </svg>
+                    </div>
+                </article>
+
+                <!-- Card 4: Auto-Keeper Controls -->
+                <article class="insights-metric-card-controls">
+                    <div class="controls-header">
+                        <span class="insights-metric-card__label">Auto-Keeper bot</span>
+                        <div class="keeper-status-badge" id="keeper-status-badge">
+                            <i class="fas fa-robot"></i> Auto-Keeper Off
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center my-3">
+                        <span class="toggle-label text-xs">Keeper Auto-Regime Selector</span>
+                        <label class="switch">
+                            <input type="checkbox" id="keeper-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <!-- Shock Injector block inside -->
+                    <div class="shock-container">
+                        <span class="shock-title">Risk Shock Injectors:</span>
+                        <div class="shock-buttons-row">
+                            <button class="btn-shock btn-shock-warning" id="btn-shock-dex">DEX Spike</button>
+                            <button class="btn-shock btn-shock-danger" id="btn-shock-bridge">Bridge Outflow</button>
+                            <button class="btn-shock btn-shock-success" id="btn-shock-stabilize">Stabilize</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Regime Shield and Simulation Arena -->
+        <section class="section grid-layout" id="regime-gate">
+            <!-- Left Side: Gate 7 Shield -->
+            <article class="dashboard-card">
+                <div class="card-header-v2">
+                    <div>
+                        <div class="section__kicker">Shield Gate</div>
+                        <h2 class="card-title">Gate 7: Market Regime Shield</h2>
                     </div>
                 </div>
                 
-                <!-- Feed 3: Price Divergence -->
-                <div class="oracle-feed-card" id="oracle-card-div">
-                    <div class="oracle-header">
-                        <span class="oracle-title">Oracle Price Divergence</span>
-                        <i class="fas fa-scale-unbalanced" style="color: var(--color-green);"></i>
+                <div class="shield-sentinel-display">
+                    <div class="shield-radar-ring"></div>
+                    <div class="sentinel-shield-core" id="sentinel-shield-core">
+                        <i class="fas fa-shield-halved"></i>
                     </div>
-                    <div class="oracle-value" id="oracle-div-val">0.05%</div>
-                    <div class="sparkline-container">
-                        <svg class="sparkline-svg" id="svg-div">
-                            <path d="" stroke="#2bad0a" stroke-width="2" fill="none"></path>
-                        </svg>
+                    <div class="shield-status-label" id="sentinel-status-label">NORMAL MODE</div>
+                </div>
+
+                <div class="regime-controls">
+                    <span class="controls-label font-mono text-xs text-muted-foreground block mb-2">Manual override controls (Owner Only):</span>
+                    <div class="regime-buttons-grid">
+                        <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
+                        <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
+                        <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="shock-section">
-                <h3 class="section-title">Market Risk Shock Injector Controls</h3>
-                <div class="shock-controls-grid">
-                    <button class="btn-shock btn-shock-warning" id="btn-shock-dex">DEX Volatility Spike</button>
-                    <button class="btn-shock btn-shock-danger" id="btn-shock-bridge">Bridge Outflow Panic</button>
-                    <button class="btn-shock btn-shock-success" id="btn-shock-stabilize">Stabilize Feeds</button>
+            </article>
+
+            <!-- Right Side: AI Agent Arena -->
+            <article class="dashboard-card" id="agent-arena">
+                <div class="card-header-v2 justify-between flex items-center">
+                    <div>
+                        <div class="section__kicker">Simulation</div>
+                        <h2 class="card-title">AI Agent Arena</h2>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="toggle-label text-xs font-mono text-muted-foreground">Run Arena</span>
+                        <label class="switch">
+                            <input type="checkbox" id="arena-loop-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
-            </div>
+
+                <div class="agents-arena-grid">
+                    <!-- Agent 1: DeFi Yield -->
+                    <div class="agent-card animate-glow" id="agent-yield">
+                        <div class="agent-status-indicator">
+                            <span class="agent-status-dot active"></span>
+                            <span class="agent-pulse-ring"></span>
+                        </div>
+                        <div class="agent-header">
+                            <i class="fas fa-money-bill-trend-up agent-icon"></i>
+                            <h3 class="agent-title">Yield Agent</h3>
+                        </div>
+                        <div class="agent-meta">
+                            <div class="meta-row">
+                                <span class="meta-label">CertiK Score:</span>
+                                <span class="meta-val badge status-verified">94 / 100</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">GoPlus Check:</span>
+                                <span class="meta-val text-green"><i class="fas fa-check-circle"></i> Clean</span>
+                            </div>
+                        </div>
+                        <div class="agent-console">
+                            <div class="agent-console-title font-mono">Terminal Logs</div>
+                            <div class="agent-console-lines font-mono" id="agent-yield-logs">
+                                <div>[YieldAgent] Idle. Loop active.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent 2: Arbitrage Agent -->
+                    <div class="agent-card animate-glow" id="agent-arb">
+                        <div class="agent-status-indicator">
+                            <span class="agent-status-dot active"></span>
+                            <span class="agent-pulse-ring"></span>
+                        </div>
+                        <div class="agent-header">
+                            <i class="fas fa-scale-balanced agent-icon"></i>
+                            <h3 class="agent-title">Arb Agent</h3>
+                        </div>
+                        <div class="agent-meta">
+                            <div class="meta-row">
+                                <span class="meta-label">CertiK Score:</span>
+                                <span class="meta-val badge status-blacklisted" style="color: var(--primary-accent); border-color: rgba(255,118,28,0.3); background: rgba(255,118,28,0.1)">0 / 100</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">GoPlus Check:</span>
+                                <span class="meta-val text-yellow"><i class="fas fa-triangle-exclamation"></i> Unrated</span>
+                            </div>
+                        </div>
+                        <div class="agent-console">
+                            <div class="agent-console-title font-mono">Terminal Logs</div>
+                            <div class="agent-console-lines font-mono" id="agent-arb-logs">
+                                <div>[ArbAgent] Idle. Loop active.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent 3: Scam Phishing Agent -->
+                    <div class="agent-card animate-glow" id="agent-scam">
+                        <div class="agent-status-indicator">
+                            <span class="agent-status-dot active"></span>
+                            <span class="agent-pulse-ring"></span>
+                        </div>
+                        <div class="agent-header">
+                            <i class="fas fa-skull-crossbones agent-icon"></i>
+                            <h3 class="agent-title">Scam Agent</h3>
+                        </div>
+                        <div class="agent-meta">
+                            <div class="meta-row">
+                                <span class="meta-label">CertiK Score:</span>
+                                <span class="meta-val badge status-blacklisted">12 / 100</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-label">GoPlus Check:</span>
+                                <span class="meta-val text-red"><i class="fas fa-circle-xmark"></i> Blocked</span>
+                            </div>
+                        </div>
+                        <div class="agent-console">
+                            <div class="agent-console-title font-mono">Terminal Logs</div>
+                            <div class="agent-console-lines font-mono" id="agent-scam-logs">
+                                <div>[ScamBot] Idle. Loop active.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
         </section>
 
-        <!-- COLUMN 2: Gate 7 On-chain Controls -->
-        <section class="card">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- SECTION 3: Live Logs styled like Live Extrinsics -->
+        <section class="section" id="live-logs">
+            <div class="insights-section-row">
                 <div>
-                    <h2 class="card-title">Gate 7: Market Regime Gate</h2>
-                    <span class="card-subtitle">On-chain active security enforcement shield.</span>
+                    <div class="section__kicker">Event Feed</div>
+                    <h2 class="section__title">live security extrinsics</h2>
                 </div>
-                <div class="keeper-status-badge" id="keeper-status-badge">
-                    <i class="fas fa-robot"></i> Auto-Keeper Off
-                </div>
-            </div>
-            
-            <div class="keeper-toggle-row">
-                <span class="toggle-label">Keeper Bot Auto-Regime Selector</span>
-                <label class="switch">
-                    <input type="checkbox" id="keeper-toggle">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            
-            <div class="shield-sentinel-display">
-                <div class="shield-radar-ring"></div>
-                <div class="sentinel-shield-core" id="sentinel-shield-core">
-                    <i class="fas fa-shield-halved"></i>
-                </div>
-                <div class="shield-status-label" id="sentinel-status-label">NORMAL MODE</div>
-            </div>
-            
-            <div class="regime-buttons-grid">
-                <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
-                <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
-                <button class="btn btn-secondary" id="regime-btn-2">Panic</button>
-            </div>
-        </section>
-        
-        <!-- FULL WIDTH: AI Agent Simulation Arena -->
-        <section class="card full-width-card">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h2 class="card-title">AI Agent Simulation Arena</h2>
-                    <span class="card-subtitle">Observe autonomous agents reacting dynamically to market volatility regimes.</span>
-                </div>
-                <div class="arena-controls">
-                    <span class="toggle-label" style="font-size: 12px; margin-right: 8px;">Run Loop</span>
-                    <label class="switch">
-                        <input type="checkbox" id="arena-loop-toggle" checked>
-                        <span class="slider round"></span>
-                    </label>
+                <div class="filter-row insights-filters">
+                    <button type="button" id="btn-clear-terminal" class="btn-clear font-mono">Clear Logs</button>
                 </div>
             </div>
             
-            <div class="agents-arena-grid">
-                <!-- Agent 1: DeFi Yield Agent -->
-                <div class="agent-card" id="agent-yield">
-                    <div class="agent-status-indicator">
-                        <span class="agent-status-dot active"></span>
-                        <span class="agent-pulse-ring"></span>
-                    </div>
-                    <div class="agent-header">
-                        <i class="fas fa-money-bill-trend-up agent-icon"></i>
-                        <h3 class="agent-title">DeFi Yield Agent</h3>
-                    </div>
-                    <p class="agent-desc">Optimizes yield by staking assets in Uniswap V2 Router.</p>
-                    <div class="agent-meta">
-                        <div class="meta-row">
-                            <span class="meta-label">Target:</span>
-                            <span class="meta-val font-mono">Uniswap V2 Router</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">CertiK Rating:</span>
-                            <span class="meta-val badge status-verified">Score: 94 / 100</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">GoPlus Status:</span>
-                            <span class="meta-val text-green"><i class="fas fa-check-circle"></i> Clean</span>
-                        </div>
-                    </div>
-                    <div class="agent-console">
-                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
-                        <div class="agent-console-lines font-mono" id="agent-yield-logs">
-                            <div>[YieldAgent] Idle. Loop active.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Agent 2: Arbitrage Agent -->
-                <div class="agent-card" id="agent-arb">
-                    <div class="agent-status-indicator">
-                        <span class="agent-status-dot active"></span>
-                        <span class="agent-pulse-ring"></span>
-                    </div>
-                    <div class="agent-header">
-                        <i class="fas fa-scale-balanced agent-icon"></i>
-                        <h3 class="agent-title">Arbitrage Agent</h3>
-                    </div>
-                    <p class="agent-desc">Swaps between unverified decentralized pools for mispricing.</p>
-                    <div class="agent-meta">
-                        <div class="meta-row">
-                            <span class="meta-label">Target:</span>
-                            <span class="meta-val font-mono">Unrated Pool Target</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">CertiK Rating:</span>
-                            <span class="meta-val badge status-blacklisted" style="color: var(--primary-accent); border-color: rgba(255,118,28,0.3); background: rgba(255,118,28,0.1)">Score: 0 / 100</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">GoPlus Status:</span>
-                            <span class="meta-val text-yellow"><i class="fas fa-triangle-exclamation"></i> Unverified</span>
-                        </div>
-                    </div>
-                    <div class="agent-console">
-                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
-                        <div class="agent-console-lines font-mono" id="agent-arb-logs">
-                            <div>[ArbAgent] Idle. Loop active.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Agent 3: Malicious Phishing Agent -->
-                <div class="agent-card" id="agent-scam">
-                    <div class="agent-status-indicator">
-                        <span class="agent-status-dot active"></span>
-                        <span class="agent-pulse-ring"></span>
-                    </div>
-                    <div class="agent-header">
-                        <i class="fas fa-skull-crossbones agent-icon"></i>
-                        <h3 class="agent-title">Phishing Scam Target</h3>
-                    </div>
-                    <p class="agent-desc">Simulates interacting with a malicious drainer contract.</p>
-                    <div class="agent-meta">
-                        <div class="meta-row">
-                            <span class="meta-label">Target:</span>
-                            <span class="meta-val font-mono">Malicious Wallet Drainer</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">CertiK Rating:</span>
-                            <span class="meta-val badge status-blacklisted">Score: 12 / 100</span>
-                        </div>
-                        <div class="meta-row">
-                            <span class="meta-label">GoPlus Status:</span>
-                            <span class="meta-val text-red"><i class="fas fa-circle-xmark"></i> Blacklisted</span>
-                        </div>
-                    </div>
-                    <div class="agent-console">
-                        <div class="agent-console-title font-mono">Agent Terminal Logs</div>
-                        <div class="agent-console-lines font-mono" id="agent-scam-logs">
-                            <div>[ScamBot] Idle. Loop active.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FULL WIDTH: Security Gate Logger Console -->
-        <section class="card card-terminal full-width-card">
-            <div class="terminal-header">
-                <h2 class="terminal-title">SECURITY GATE SYSTEM MONITORING LOGS</h2>
-                <button type="button" id="btn-clear-terminal" class="btn-clear">Clear</button>
-            </div>
-            <div class="terminal">
-                <div id="terminal-output" class="terminal-output">
+            <div class="insights-table-card">
+                <div class="insights-event-feed" id="terminal-output">
                     <div class="terminal-line system-msg">Pharos Execution Security Gate Console active. Ready.</div>
                 </div>
             </div>
         </section>
-        
-    </div>
 
-    <footer class="app-footer">
-        <p>&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
+    </main>
+
+    <!-- Footer Component -->
+    <footer class="border-t border-border/40 bg-background py-8 mt-12">
+        <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-xs text-muted-foreground">&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
+                <div class="flex items-center gap-1.5">
+                    <span class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>
+                    <span class="font-mono text-xs text-primary">Sentinel Active</span>
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
