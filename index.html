@@ -23,96 +23,90 @@
     </div>
 
     <!-- Sticky Glass Header -->
-    <header class="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
-            <div class="flex h-[72px] items-center justify-between gap-6">
-                <!-- Brand logo with Zap style -->
-                <a class="group flex shrink-0 items-center gap-3" href="#">
-                    <div class="relative grid h-10 w-10 place-items-center rounded-xl border border-primary/35 bg-primary/10 text-primary transition-all group-hover:border-primary/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-primary" aria-hidden="true">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                        <span class="absolute inset-0 rounded-lg bg-primary/10 blur-md transition-all group-hover:bg-primary/20"></span>
+    <header class="app-header">
+        <div class="container header-inner">
+            <!-- Brand logo with Zap style -->
+            <a class="group flex items-center gap-3 brand-link" href="#">
+                <div class="logo-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-primary" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span class="logo-glow"></span>
+                </div>
+                <div class="leading-none">
+                    <div class="brand-title">
+                        <span>Pharos</span><span class="text-muted-foreground">::Sentinel</span>
                     </div>
-                    <div class="leading-none">
-                        <div class="font-mono text-base font-semibold tracking-tight text-foreground">
-                            <span>Pharos</span><span class="text-muted-foreground">::Sentinel</span>
-                        </div>
-                        <div class="mt-1 font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground/70">Network</div>
-                    </div>
+                    <div class="brand-subtitle">Network</div>
+                </div>
+            </a>
+
+            <!-- Centered Navigation -->
+            <nav class="header-nav">
+                <a class="nav-link" href="#overview">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>Overview</span>
                 </a>
+                <a class="nav-link" href="#regime-gate">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Regime Gate</span>
+                </a>
+                <a class="nav-link" href="#agent-arena">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M16 18a4 4 0 0 0-8 0"/><circle cx="12" cy="10" r="3"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/></svg>
+                    <span>Agent Arena</span>
+                </a>
+                <a class="nav-link" href="#live-logs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Live Logs</span>
+                </a>
+            </nav>
 
-                <!-- Centered Navigation -->
-                <nav class="hidden items-center gap-1.5 lg:flex">
-                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#overview">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                        <span>Overview</span>
-                    </a>
-                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#regime-gate">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span>Regime Gate</span>
-                    </a>
-                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#agent-arena">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M16 18a4 4 0 0 0-8 0"/><circle cx="12" cy="10" r="3"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/></svg>
-                        <span>Agent Arena</span>
-                    </a>
-                    <a class="relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all text-muted-foreground hover:bg-secondary/70 hover:text-foreground" href="#live-logs">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        <span>Live Logs</span>
-                    </a>
-                </nav>
+            <!-- Right controls -->
+            <div class="header-controls">
+                <!-- Mock Mode Toggler -->
+                <div class="mock-mode-container">
+                    <span class="toggle-label">Mock Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mock-mode-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
 
-                <!-- Right controls -->
-                <div class="ml-auto hidden shrink-0 items-center gap-4 md:flex">
-                    <!-- Mock Mode Toggler -->
-                    <div class="mock-mode-container flex items-center gap-2">
-                        <span class="toggle-label text-xs font-mono text-muted-foreground">Mock Mode</span>
-                        <label class="switch">
-                            <input type="checkbox" id="mock-mode-toggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
+                <!-- Connect Wallet Trigger -->
+                <button id="btn-connect-wallet" type="button" class="btn-wallet-connect">
+                    <span id="wallet-status-dot" class="live-dot"></span>
+                    <span id="wallet-account">Mock Mode Active</span>
+                </button>
 
-                    <!-- Connect Wallet Trigger -->
-                    <button id="btn-connect-wallet" type="button" class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 font-mono text-xs text-foreground transition-all hover:border-primary/35 hover:bg-primary/5">
-                        <span id="wallet-status-dot" class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>
-                        <span id="wallet-account">Mock Mode Active</span>
-                    </button>
-
-                    <!-- Network Status indicator badge -->
-                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                        <span class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>PHRS ATLANTIC
-                    </div>
+                <!-- Network Status indicator badge -->
+                <div class="network-badge">
+                    <span class="live-dot"></span>PHRS ATLANTIC
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Sub-header Metadata Bar -->
-    <div class="pt-[72px]">
-        <div class="border-b border-border bg-card/65 shadow-[0_1px_0_oklch(1_0_0_/_0.03)] backdrop-blur">
-            <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
-                <div class="flex h-12 items-center justify-between gap-8 overflow-x-auto font-mono text-xs">
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        <span class="live-dot h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_var(--primary)]" id="network-pulsing-dot"></span>
-                        <span class="text-primary font-bold tracking-[0.02em]">Pharos Atlantic Testnet</span>
-                    </div>
-                    <div class="flex items-center gap-5 text-muted-foreground flex-shrink-0">
-                        <span>Block <span class="font-extrabold text-foreground" id="live-block-height">#188,432</span></span>
-                        <span class="text-border">·</span>
-                        <span>Active Regime <span class="font-extrabold text-primary" id="live-regime-status">NORMAL</span></span>
-                        <span class="text-border">·</span>
-                        <span>Wallet Balance <span class="font-extrabold text-foreground" id="live-wallet-balance">0.00855 PHRS</span></span>
-                        <span class="text-border">·</span>
-                        <span>Engine <span class="font-extrabold text-muted-foreground" id="engine-address-badge">0x8A3e...f8f4</span></span>
-                    </div>
-                </div>
+    <div class="subheader-bar">
+        <div class="container subheader-inner">
+            <div class="subheader-left">
+                <span class="live-dot" id="network-pulsing-dot"></span>
+                <span class="subheader-network-title">Pharos Atlantic Testnet</span>
+            </div>
+            <div class="subheader-right">
+                <span>Block <span class="highlight-text" id="live-block-height">#188,432</span></span>
+                <span class="bullet-separator">·</span>
+                <span>Active Regime <span class="highlight-text-primary" id="live-regime-status">NORMAL</span></span>
+                <span class="bullet-separator">·</span>
+                <span>Wallet Balance <span class="highlight-text" id="live-wallet-balance">0.00855 PHRS</span></span>
+                <span class="bullet-separator">·</span>
+                <span>Engine <span class="highlight-text-muted" id="engine-address-badge">0x8A3e...f8f4</span></span>
             </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <main class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7 py-8">
+    <main class="container main-content">
         
         <!-- SECTION 1: Metrics Insights -->
         <section class="section" id="overview">
@@ -167,7 +161,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex justify-between items-center my-3">
+                    <div class="keeper-toggle-row">
                         <span class="toggle-label text-xs">Keeper Auto-Regime Selector</span>
                         <label class="switch">
                             <input type="checkbox" id="keeper-toggle">
@@ -208,7 +202,7 @@
                 </div>
 
                 <div class="regime-controls">
-                    <span class="controls-label font-mono text-xs text-muted-foreground block mb-2">Manual override controls (Owner Only):</span>
+                    <span class="controls-label">Manual override controls (Owner Only):</span>
                     <div class="regime-buttons-grid">
                         <button class="btn btn-secondary" id="regime-btn-0">Normal</button>
                         <button class="btn btn-secondary" id="regime-btn-1">Volatile</button>
@@ -219,13 +213,13 @@
 
             <!-- Right Side: AI Agent Arena -->
             <article class="dashboard-card" id="agent-arena">
-                <div class="card-header-v2 justify-between flex items-center">
+                <div class="card-header-v2">
                     <div>
                         <div class="section__kicker">Simulation</div>
                         <h2 class="card-title">AI Agent Arena</h2>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="toggle-label text-xs font-mono text-muted-foreground">Run Arena</span>
+                    <div class="arena-run-control">
+                        <span class="toggle-label text-xs">Run Arena</span>
                         <label class="switch">
                             <input type="checkbox" id="arena-loop-toggle" checked>
                             <span class="slider round"></span>
@@ -235,7 +229,7 @@
 
                 <div class="agents-arena-grid">
                     <!-- Agent 1: DeFi Yield -->
-                    <div class="agent-card animate-glow" id="agent-yield">
+                    <div class="agent-card" id="agent-yield">
                         <div class="agent-status-indicator">
                             <span class="agent-status-dot active"></span>
                             <span class="agent-pulse-ring"></span>
@@ -255,15 +249,15 @@
                             </div>
                         </div>
                         <div class="agent-console">
-                            <div class="agent-console-title font-mono">Terminal Logs</div>
-                            <div class="agent-console-lines font-mono" id="agent-yield-logs">
+                            <div class="agent-console-title">Terminal Logs</div>
+                            <div class="agent-console-lines" id="agent-yield-logs">
                                 <div>[YieldAgent] Idle. Loop active.</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Agent 2: Arbitrage Agent -->
-                    <div class="agent-card animate-glow" id="agent-arb">
+                    <div class="agent-card" id="agent-arb">
                         <div class="agent-status-indicator">
                             <span class="agent-status-dot active"></span>
                             <span class="agent-pulse-ring"></span>
@@ -275,7 +269,7 @@
                         <div class="agent-meta">
                             <div class="meta-row">
                                 <span class="meta-label">CertiK Score:</span>
-                                <span class="meta-val badge status-blacklisted" style="color: var(--primary-accent); border-color: rgba(255,118,28,0.3); background: rgba(255,118,28,0.1)">0 / 100</span>
+                                <span class="meta-val badge status-blacklisted">0 / 100</span>
                             </div>
                             <div class="meta-row">
                                 <span class="meta-label">GoPlus Check:</span>
@@ -283,15 +277,15 @@
                             </div>
                         </div>
                         <div class="agent-console">
-                            <div class="agent-console-title font-mono">Terminal Logs</div>
-                            <div class="agent-console-lines font-mono" id="agent-arb-logs">
+                            <div class="agent-console-title">Terminal Logs</div>
+                            <div class="agent-console-lines" id="agent-arb-logs">
                                 <div>[ArbAgent] Idle. Loop active.</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Agent 3: Scam Phishing Agent -->
-                    <div class="agent-card animate-glow" id="agent-scam">
+                    <div class="agent-card" id="agent-scam">
                         <div class="agent-status-indicator">
                             <span class="agent-status-dot active"></span>
                             <span class="agent-pulse-ring"></span>
@@ -311,8 +305,8 @@
                             </div>
                         </div>
                         <div class="agent-console">
-                            <div class="agent-console-title font-mono">Terminal Logs</div>
-                            <div class="agent-console-lines font-mono" id="agent-scam-logs">
+                            <div class="agent-console-title">Terminal Logs</div>
+                            <div class="agent-console-lines" id="agent-scam-logs">
                                 <div>[ScamBot] Idle. Loop active.</div>
                             </div>
                         </div>
@@ -329,7 +323,7 @@
                     <h2 class="section__title">live security extrinsics</h2>
                 </div>
                 <div class="filter-row insights-filters">
-                    <button type="button" id="btn-clear-terminal" class="btn-clear font-mono">Clear Logs</button>
+                    <button type="button" id="btn-clear-terminal" class="btn-clear">Clear Logs</button>
                 </div>
             </div>
             
@@ -343,14 +337,12 @@
     </main>
 
     <!-- Footer Component -->
-    <footer class="border-t border-border/40 bg-background py-8 mt-12">
-        <div class="mx-auto max-w-[1320px] px-5 sm:px-6 lg:px-7">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-xs text-muted-foreground">&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
-                <div class="flex items-center gap-1.5">
-                    <span class="live-dot h-1.5 w-1.5 rounded-full bg-primary"></span>
-                    <span class="font-mono text-xs text-primary">Sentinel Active</span>
-                </div>
+    <footer class="app-footer">
+        <div class="container footer-inner">
+            <p>&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
+            <div class="footer-status">
+                <span class="live-dot"></span>
+                <span class="footer-status-label">Sentinel Active</span>
             </div>
         </div>
     </footer>
