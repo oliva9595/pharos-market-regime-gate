@@ -1,28 +1,88 @@
 # Pharos Volatility Sentinel and Market Regime Gate
 
-Pharos Volatility Sentinel (formerly Pharos Execution Shield) is a transaction safety and market regime enforcement middleware designed for autonomous AI agents operating on the Pharos Network. It integrates real-time security checking, dynamic slippage control, on-chain market regime state gates, and detailed revert diagnostics to protect AI agent assets during execution.
+Pharos Volatility Sentinel is a transaction safety and market regime enforcement middleware designed for autonomous AI agents operating on the Pharos Network. It integrates real-time security checking, dynamic slippage control, on-chain market regime state gates, and detailed revert diagnostics to protect AI agent assets during execution.
 
-## System Architecture
+## The Problem
 
-The project consists of four primary layers:
+Autonomous AI agents execute complex multi-step transaction graphs without direct human intervention. This autonomy introduces three major vulnerabilities:
 
-1. **On-chain Protective Gates (Foundry Contracts)**:
-   * `ProtocolRegistry.sol`: Maintains verified and blacklisted protocol mappings on-chain.
-   * `SlippageGuard.sol`: Enforces slippage threshold rules during automated trading.
-   * `MarketRegimeGate.sol`: Holds the current market regime state (0 = NORMAL, 1 = VOLATILE, 2 = PANIC), which changes contract permissions dynamically.
-   * `ExecutionEngine.sol`: The coordinator that aggregates checks and simulates/executes agent transactions atomically.
+1. **Malicious Protocol Targeting**: Agents can be manipulated via phishing addresses, malicious contract injection, or compromised pool interactions, leading to complete wallet drains.
+2. **Execution Volatility and Liquidity Shocks**: During extreme market stress, transaction slippage can spike, leading to sandwich attacks, frontrunning, or executing trades under unfavorable pricing.
+3. **Unactionable Execution Failures**: When a smart contract transaction reverts, it returns a raw hexadecimal byte string (e.g., `0x08c379a0...`). LLM agents cannot interpret these raw byte strings, causing execution loops to stall and wasting transaction gas without resolving the root cause.
 
-2. **Off-chain SDK and CLI (Node.js)**:
-   * `ExecutionEngineSDK`: Built on Ethers.js v6 to query GoPlus APIs, manage wallet interactions, simulate transactions, and parse transaction reverts.
-   * `CLI Utility`: Commands for testing regime state, modifying parameters, and verifying security settings.
+## The Solution
 
-3. **Model Context Protocol (MCP) Server**:
-   * Exposes structured tools (`get_market_regime`, `set_market_regime`, `safe_execute`) allowing LLM agents to interact securely with Pharos smart contracts.
+Pharos Volatility Sentinel resolves these execution risks by acting as an inline security and policy interceptor (middleware):
 
-4. **Interactive Simulation Dashboard**:
-   * A premium glassmorphic interface showing the system status.
-   * **Three.js WebGL Particle System**: A 3D particle shield showing the regime status (Normal = Green, Volatile = Orange, Panic = Red) with speed-scaling rotation.
-   * **HTML5 Canvas Visualizations**: Real-time rendering of Yield Agent (breathing radar chart), Arbitrage Agent (dual-line spread chart with profit bands), and Phishing Scam Agent (generative recursive dendritic tree).
+1. **Pre-flight Security Screening**: Before broadcasting, the SDK queries threat intelligence databases (GoPlus Security API) to verify contract reputations and score security limits.
+2. **On-chain Volatility Guarding (Gate 7)**: Protects agents by locking out or restricting transaction routes when the network regime updates. Under volatile states, transactions are limited to certified protocols (CertiK score >80); under panic states, transactions are suspended.
+3. **Atomic Multicalls**: Replaces sequential, vulnerable transaction steps (Approve, Swap, Stake) with single atomic multicalls that succeed or fail as a single unit, eliminating MEV frontrunning.
+4. **Actionable Revert Diagnostics**: Intercepts reverts, decodes hexadecimal return data, and returns structured human-readable errors (e.g., "Transaction failed due to 3% slippage, suggest adjusting slippage threshold to 3.5%") allowing LLM agents to self-correct and proceed.
+
+## Architecture Diagram
+
+The diagram below outlines the components and execution boundaries between the AI Agent, off-chain security middleware, and on-chain security gates:
+
+```mermaid
+graph TD
+    subgraph Agent Loop
+        A[LLM Agent / Anvita Flow] -->|1. Request Tx| B[ExecutionEngineSDK]
+    end
+
+    subgraph Off-chain Middleware
+        B -->|2. Check Security| C[GoPlus API]
+        B -->|3. Decode Reverts| D[RevertDiagnose Module]
+    end
+
+    subgraph On-chain Gates (Pharos Atlantic Testnet)
+        B -->|4. Static simulation checkTx| E[ExecutionEngine.sol]
+        E -->|Check whitelist/blacklist| F[ProtocolRegistry.sol]
+        E -->|Check slippage limits| G[SlippageGuard.sol]
+        E -->|Query current state| H[MarketRegimeGate.sol]
+    end
+
+    E -->|5. Atomic Broadcast executeTx| E
+```
+
+## Operational Flow
+
+The following sequence diagram details the transactional flow and safety checks executed during an agent trade request:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Agent as LLM Agent (Anvita Flow)
+    participant SDK as ExecutionEngineSDK
+    participant GoPlus as GoPlus Security API
+    participant Engine as ExecutionEngine.sol
+    participant Regime as MarketRegimeGate.sol
+
+    Agent->>SDK: Request transaction execution (Target, Calldata, Value)
+    SDK->>GoPlus: Query target address reputation
+    alt Target is malicious/blacklisted
+        GoPlus-->>SDK: Flagged as Malicious
+        SDK-->>Agent: Terminate and return security error
+    else Target is clean
+        GoPlus-->>SDK: Address verified
+    end
+
+    SDK->>Engine: Run static simulation checkTx()
+    Engine->>Regime: Query current market regime
+    Regime-->>Engine: Returns regime (0=NORMAL, 1=VOLATILE, 2=PANIC)
+    
+    alt Market Regime is PANIC
+        Engine-->>SDK: Revert: Suspended in Panic state
+        SDK-->>Agent: Return "Market Suspended" diagnostic
+    else Regime is VOLATILE and Target CertiK rating < 80
+        Engine-->>SDK: Revert: Volatile restricts unrated targets
+        SDK-->>Agent: Return "CertiK Rating Below Limit" diagnostic
+    else Regime is NORMAL / VOLATILE and checks pass
+        Engine-->>SDK: Simulation succeeds
+        SDK->>Engine: Broadcast transaction executeTx()
+        Engine-->>SDK: Return execution receipt
+        SDK-->>Agent: Return success status
+    end
+```
 
 ## Partner Integrations
 
