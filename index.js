@@ -1,4 +1,4 @@
-const ExecutionEngineSDK = require("./lib/sdk");
+const ExecutionEngineSDK = require("./sdk");
 
 module.exports = {
     ExecutionEngineSDK

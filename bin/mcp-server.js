@@ -59,6 +59,30 @@ async function main() {
                         },
                         required: ["target"]
                     }
+                },
+                {
+                    name: "check_target_safety",
+                    description: "Run pre-flight security checks on a target contract address. Queries GoPlus Security API and on-chain ProtocolRegistry blacklist. Returns isContract, isBlacklisted, and goPlusFlagged booleans.",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            target: { type: "string", description: "Target contract address to check" }
+                        },
+                        required: ["target"]
+                    }
+                },
+                {
+                    name: "simulate_preview",
+                    description: "Dry-run a transaction locally without broadcasting. Uses eth_call to simulate execution and returns success or decoded revert reason.",
+                    inputSchema: {
+                        type: "object",
+                        properties: {
+                            target: { type: "string", description: "Target contract address" },
+                            data: { type: "string", default: "0x", description: "Encoded calldata" },
+                            value: { type: "string", default: "0", description: "ETH value in wei" }
+                        },
+                        required: ["target"]
+                    }
                 }
             ]
         };
@@ -93,6 +117,18 @@ async function main() {
                             })
                         }]
                     };
+                }
+                case "check_target_safety": {
+                    const result = await sdk.checkTargetSafety(args.target);
+                    return { content: [{ type: "text", text: JSON.stringify(result) }] };
+                }
+                case "simulate_preview": {
+                    try {
+                        await sdk.simulatePreview(args.target, args.data || "0x", args.value || "0");
+                        return { content: [{ type: "text", text: JSON.stringify({ success: true, message: "Simulation passed" }) }] };
+                    } catch (simErr) {
+                        return { content: [{ type: "text", text: JSON.stringify({ success: false, reason: simErr.message }) }] };
+                    }
                 }
                 default:
                     throw new Error(`Tool not found: ${name}`);
