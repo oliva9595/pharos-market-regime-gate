@@ -5,6 +5,7 @@ class AppStateStore {
     this.state = {
       mode: 'mock', // 'mock' or 'web3'
       shockScenario: 'none', // active simulation shock scenario
+      yieldScenario: 'healthy', // active yield decay simulation scenario
       marketStatus: {
         regime: 'NORMAL',
         reasons: [],

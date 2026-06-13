@@ -289,22 +289,98 @@
             </select>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+          <!-- Yield Metrics Details Grid -->
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
               <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Decay Score</span>
-              <div id="yield-decay-score" class="text-xl font-bold font-mono text-white mt-1">--</div>
+              <div id="yield-decay-score" class="text-base font-bold font-mono text-white mt-0.5">--</div>
             </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
               <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Total APY</span>
-              <div id="yield-apy" class="text-xl font-bold font-mono text-white mt-1">--</div>
+              <div id="yield-apy" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+              <span id="yield-apy-breakdown" class="text-[8px] text-white/30 font-mono block">Base: -- | Rwd: --</span>
             </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
               <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">TVL Assets</span>
-              <div id="yield-tvl" class="text-xl font-bold font-mono text-white mt-1">--</div>
+              <div id="yield-tvl" class="text-base font-bold font-mono text-white mt-0.5">--</div>
             </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
               <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">DEX Net Flow (24h)</span>
-              <div id="yield-netflow" class="text-xl font-bold font-mono text-white mt-1">--</div>
+              <div id="yield-netflow" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+            </div>
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">24h Fees</span>
+              <div id="yield-fees" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+            </div>
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Exit Slippage</span>
+              <div id="yield-slippage" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+            </div>
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Rwd Token 7d Trend</span>
+              <div id="yield-reward-trend" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+            </div>
+            <div class="bg-black/30 p-2.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Oracle Confidence</span>
+              <div id="yield-confidence" class="text-base font-bold font-mono text-white mt-0.5">--</div>
+            </div>
+          </div>
+
+          <!-- Yield Hysteresis & Cooldown State -->
+          <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 mb-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[10px] text-white/40 uppercase tracking-wider font-bold block">Yield Hysteresis Confirmation State</span>
+              <span id="yield-hysteresis-steps" class="font-mono text-[9px] font-bold text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded uppercase">IMMEDIATE</span>
+            </div>
+            <div id="yield-hysteresis-message" class="text-xs text-white/80 font-mono leading-relaxed min-h-[1.5rem] mb-3">Yield metrics stable.</div>
+            
+            <!-- Cooldown timer progress -->
+            <div id="yield-cooldown-wrapper" class="hidden space-y-1.5">
+              <div class="flex justify-between text-[8px] font-mono text-white/40 uppercase">
+                <span>Transition Cooldown Active</span>
+                <span id="yield-cooldown-timer">0s remaining</span>
+              </div>
+              <div class="cooldown-container">
+                <div id="yield-cooldown-bar" class="cooldown-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- APY History Chart -->
+          <div class="mb-4">
+            <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block mb-1.5">Historical APY Decomposition</span>
+            <div class="bg-black/50 rounded-xl border border-white/5 p-2 relative h-40">
+              <div id="yield-chart-container" class="w-full h-full"></div>
+            </div>
+          </div>
+
+          <!-- Factor Contributions Chart -->
+          <div class="mb-4">
+            <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block mb-1.5">Weighted Factor Risk Breakdown</span>
+            <div class="bg-black/50 rounded-xl border border-white/5 p-2 relative h-36">
+              <div id="yield-factors-container" class="w-full h-full"></div>
+            </div>
+          </div>
+
+          <!-- Deterministic Scenario Triggers -->
+          <div class="mb-4">
+            <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block mb-2.5">Deterministic Decay Scenarios (Simulator)</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="yield-scenario-healthy" class="btn-scenario hover-glow" title="Normal healthy yield metrics">
+                <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-500"></i>Healthy
+              </button>
+              <button id="yield-scenario-subsidy" class="btn-scenario hover-glow" title="Reward APY collapse and subsidy dependency increase">
+                <i class="fa-solid fa-chart-line-down mr-1 text-amber-500"></i>Subsidy Collapse
+              </button>
+              <button id="yield-scenario-mercenary" class="btn-scenario hover-glow" title="Large TVL outflow and negative net flow">
+                <i class="fa-solid fa-arrow-down-up-lock mr-1 text-rose-500"></i>Mercenary TVL
+              </button>
+              <button id="yield-scenario-fees" class="btn-scenario hover-glow" title="Organic protocol fee collapse">
+                <i class="fa-solid fa-file-invoice-dollar mr-1 text-rose-500"></i>Fee Collapse
+              </button>
+              <button id="yield-scenario-slippage" class="btn-scenario hover-glow col-span-2" title="Exit slippage exceeds configured max">
+                <i class="fa-solid fa-circle-exclamation mr-1 text-rose-500"></i>Exit Slippage Surge
+              </button>
             </div>
           </div>
 
@@ -316,6 +392,7 @@
           </div>
         </div>
       </section>
+
 
     </div>
 
@@ -401,8 +478,12 @@
     import { CONFIG } from './js/config.js';
     import { computeHysteresisState, generateMockReportDetails } from './js/market.js';
     import { MarketRegimeChart } from './js/charts/market.js';
+    import { computeYieldHysteresisState } from './js/yield.js';
+    import { YieldApyChart, YieldFactorsChart } from './js/charts/yield.js';
 
     let marketChart;
+    let yieldApyChart;
+    let yieldFactorsChart;
 
     // Element Cache
     const elements = {
@@ -454,8 +535,25 @@
       opportunitySelector: document.getElementById('opportunity-selector'),
       yieldDecayScore: document.getElementById('yield-decay-score'),
       yieldApy: document.getElementById('yield-apy'),
+      yieldApyBreakdown: document.getElementById('yield-apy-breakdown'),
       yieldTvl: document.getElementById('yield-tvl'),
       yieldNetflow: document.getElementById('yield-netflow'),
+      yieldFees: document.getElementById('yield-fees'),
+      yieldSlippage: document.getElementById('yield-slippage'),
+      yieldRewardTrend: document.getElementById('yield-reward-trend'),
+      yieldConfidence: document.getElementById('yield-confidence'),
+      
+      yieldHysteresisSteps: document.getElementById('yield-hysteresis-steps'),
+      yieldHysteresisMessage: document.getElementById('yield-hysteresis-message'),
+      yieldCooldownWrapper: document.getElementById('yield-cooldown-wrapper'),
+      yieldCooldownTimer: document.getElementById('yield-cooldown-timer'),
+      yieldCooldownBar: document.getElementById('yield-cooldown-bar'),
+
+      yieldScenarioHealthy: document.getElementById('yield-scenario-healthy'),
+      yieldScenarioSubsidy: document.getElementById('yield-scenario-subsidy'),
+      yieldScenarioMercenary: document.getElementById('yield-scenario-mercenary'),
+      yieldScenarioFees: document.getElementById('yield-scenario-fees'),
+      yieldScenarioSlippage: document.getElementById('yield-scenario-slippage'),
       yieldReasons: document.getElementById('yield-reasons'),
       
       logsOutput: document.getElementById('logs-output'),
@@ -799,10 +897,73 @@
 
       if (state.yieldStatus.latest) {
         elements.yieldDecayScore.textContent = `${state.yieldStatus.decayScore} / 100`;
-        elements.yieldApy.textContent = `${(state.yieldStatus.latest.apyBps / 100).toFixed(2)}%`;
-        elements.yieldTvl.textContent = `$${parseFloat(state.yieldStatus.latest.tvlUsd).toLocaleString()}`;
-        elements.yieldNetflow.textContent = `$${parseFloat(state.yieldStatus.latest.netFlowUsd24h).toLocaleString()}`;
+        elements.yieldApy.textContent = `${(state.yieldStatus.latest.totalApyBps / 100).toFixed(2)}%`;
+        elements.yieldApyBreakdown.textContent = `Base: ${(state.yieldStatus.latest.baseApyBps / 100).toFixed(2)}% | Rwd: ${(state.yieldStatus.latest.rewardApyBps / 100).toFixed(2)}%`;
+        
+        elements.yieldTvl.textContent = `$${(Number(state.yieldStatus.latest.tvlUsd) / 1e6).toFixed(2)}M`;
+        elements.yieldNetflow.textContent = `$${(Number(state.yieldStatus.latest.netFlowUsd24h) / 1e6).toFixed(2)}M`;
+        elements.yieldFees.textContent = `$${Number(state.yieldStatus.latest.feesUsd24h).toLocaleString()}`;
+        elements.yieldSlippage.textContent = `${(state.yieldStatus.latest.exitSlippageBps / 100).toFixed(2)}%`;
+        elements.yieldRewardTrend.textContent = `${(state.yieldStatus.latest.rewardTokenChangeBps7d / 100).toFixed(2)}%`;
+        elements.yieldRewardTrend.className = `text-base font-bold font-mono ${state.yieldStatus.latest.rewardTokenChangeBps7d < 0 ? 'text-rose-500' : 'text-emerald-500'}`;
+        elements.yieldConfidence.textContent = `${(state.yieldStatus.latest.confidenceBps / 100).toFixed(1)}%`;
       }
+
+      // Yield Hysteresis & Cooldown State Render
+      const yieldHyst = computeYieldHysteresisState(
+        state.yieldStatus.history,
+        state.yieldStatus.yieldState,
+        state.yieldStatus.transitionEligibleAt || 0,
+        now
+      );
+
+      elements.yieldHysteresisSteps.textContent = yieldHyst.steps || 'STABLE';
+      if (yieldHyst.steps) {
+        elements.yieldHysteresisSteps.className = `font-mono text-[9px] font-bold px-1.5 py-0.5 rounded ${
+          state.yieldStatus.yieldState === 'EXIT' ? 'text-rose-400 bg-rose-500/10' :
+          state.yieldStatus.yieldState === 'DECAYING' ? 'text-amber-400 bg-amber-500/10' :
+          'text-indigo-400 bg-indigo-500/10'
+        }`;
+      } else {
+        elements.yieldHysteresisSteps.className = 'font-mono text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded';
+      }
+
+      elements.yieldHysteresisMessage.textContent = yieldHyst.message;
+
+      if (yieldHyst.inCooldown) {
+        elements.yieldCooldownWrapper.classList.remove('hidden');
+        elements.yieldCooldownTimer.textContent = `${yieldHyst.cooldownRemaining}s remaining`;
+        elements.yieldCooldownBar.style.width = `${yieldHyst.cooldownProgress}%`;
+      } else {
+        elements.yieldCooldownWrapper.classList.add('hidden');
+        elements.yieldCooldownBar.style.width = '0%';
+      }
+
+      // Yield Charts Render
+      if (yieldApyChart) {
+        yieldApyChart.render(state.yieldStatus.history);
+      }
+      if (yieldFactorsChart) {
+        yieldFactorsChart.render(state.yieldStatus.factors || {});
+      }
+
+      // Simulation Scenario Active States
+      const yieldScenarios = [
+        { el: elements.yieldScenarioHealthy, name: 'healthy', type: 'healthy' },
+        { el: elements.yieldScenarioSubsidy, name: 'subsidy_collapse', type: 'subsidy' },
+        { el: elements.yieldScenarioMercenary, name: 'mercenary_tvl', type: 'mercenary' },
+        { el: elements.yieldScenarioFees, name: 'fee_collapse', type: 'fees' },
+        { el: elements.yieldScenarioSlippage, name: 'slippage_surge', type: 'slippage' }
+      ];
+
+      yieldScenarios.forEach(item => {
+        if (item.el) {
+          item.el.classList.remove('active-healthy', 'active-subsidy', 'active-mercenary', 'active-fees', 'active-slippage');
+          if (state.yieldScenario === item.name) {
+            item.el.classList.add(`active-${item.type}`);
+          }
+        }
+      });
 
       elements.yieldReasons.textContent = '';
       if (state.yieldStatus.reasons.length === 0) {
@@ -915,6 +1076,8 @@
     // App Initialization
     function init() {
       marketChart = new MarketRegimeChart('market-chart-container');
+      yieldApyChart = new YieldApyChart('yield-chart-container');
+      yieldFactorsChart = new YieldFactorsChart('yield-factors-container');
 
       stateStore.subscribe(render);
       setupCopyAddressListeners();
@@ -975,6 +1138,25 @@
       bindShock(elements.shockDepeg, 'depeg', 'Stablecoin Depeg Panic');
       bindShock(elements.shockStale, 'stale', 'Stale Oracle / Confidence Loss');
       bindShock(elements.shockRecovery, 'recovery', 'Market Recovery Trigger');
+
+      // Simulation Yield Scenario Listeners
+      const bindYieldScenario = (el, scenarioName, label) => {
+        if (el) {
+          el.addEventListener('click', () => {
+            const currentScenario = stateStore.getState().yieldScenario;
+            const nextScenario = currentScenario === scenarioName ? 'healthy' : scenarioName;
+            stateStore.updateState({ yieldScenario: nextScenario });
+            logMessage(`Simulation override: ${nextScenario === 'healthy' ? 'Reset to Healthy yield' : label + ' activated'}`, 'warning');
+            pollData();
+          });
+        }
+      };
+
+      bindYieldScenario(elements.yieldScenarioHealthy, 'healthy', 'Healthy Yield');
+      bindYieldScenario(elements.yieldScenarioSubsidy, 'subsidy_collapse', 'Subsidy Collapse');
+      bindYieldScenario(elements.yieldScenarioMercenary, 'mercenary_tvl', 'Mercenary TVL Outflow');
+      bindYieldScenario(elements.yieldScenarioFees, 'fee_collapse', 'Fee Collapse');
+      bindYieldScenario(elements.yieldScenarioSlippage, 'slippage_surge', 'Exit Slippage Surge');
 
       // Wallet Init
       walletHandler.checkConnection();

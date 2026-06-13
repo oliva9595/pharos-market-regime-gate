@@ -244,3 +244,66 @@ select {
   box-shadow: 0 0 8px rgba(244, 63, 94, 0.08);
 }
 
+/* Yield Decay Scenario Button Styles */
+.btn-scenario {
+  background: rgba(9, 9, 12, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: rgba(244, 244, 245, 0.6);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.btn-scenario:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-scenario.active-healthy {
+  border-color: var(--brand-emerald);
+  color: var(--brand-emerald);
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.btn-scenario.active-subsidy {
+  border-color: var(--brand-purple);
+  color: var(--brand-purple);
+  background: rgba(139, 92, 246, 0.08);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+  text-shadow: 0 0 4px rgba(139, 92, 246, 0.4);
+}
+
+.btn-scenario.active-mercenary {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
+}
+
+.btn-scenario.active-fees {
+  border-color: var(--brand-orange);
+  color: var(--brand-orange);
+  background: rgba(255, 118, 28, 0.08);
+  box-shadow: 0 0 12px rgba(255, 118, 28, 0.25);
+  text-shadow: 0 0 4px rgba(255, 118, 28, 0.4);
+}
+
+.btn-scenario.active-slippage {
+  border-color: var(--brand-rose);
+  color: var(--brand-rose);
+  background: rgba(244, 63, 94, 0.08);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+  text-shadow: 0 0 4px rgba(244, 63, 94, 0.4);
+}
+
+
