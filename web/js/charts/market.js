@@ -29,8 +29,8 @@ export class MarketRegimeChart {
 
     const width = this.container.clientWidth || 500;
     const height = this.container.clientHeight || 160;
-    const leftPad = 25;
-    const rightPad = 135; // Extra padding for threshold labels with larger text
+    const leftPad = 40;
+    const rightPad = 150; // Extra padding for threshold labels with larger text
     const topPad = 15;
     const bottomPad = 25;
     const effWidth = width - leftPad - rightPad;
@@ -135,7 +135,7 @@ export class MarketRegimeChart {
         x: leftPad + effWidth + 6,
         y: y + 3,
         fill: t.color,
-        'font-size': '10px',
+        'font-size': '12px',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': 'semibold',
         opacity: '0.85'
@@ -224,7 +224,7 @@ export class MarketRegimeChart {
       x: leftPad + effWidth / 2,
       y: height - 5,
       fill: colors.textMuted,
-      'font-size': '9px',
+      'font-size': '12px',
       'text-anchor': 'middle',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
@@ -236,7 +236,7 @@ export class MarketRegimeChart {
       x: leftPad,
       y: topPad - 5,
       fill: colors.textMuted,
-      'font-size': '9px',
+      'font-size': '12px',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
     yLabel.textContent = 'VIX INDEX (BPS)';

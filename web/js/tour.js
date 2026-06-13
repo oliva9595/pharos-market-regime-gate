@@ -2,38 +2,38 @@
 
 const tourSteps = [
   {
-    title: "Chào mừng đến với Pharos Volatility Sentinel!",
-    text: "Hệ thống bảo mật tự động giám sát rủi ro thị trường và bảo vệ các giao dịch DeFi của bạn trên chuỗi khối Vara. Hãy cùng dạo quanh 1 vòng để hiểu cách vận hành.",
+    title: "Welcome to Pharos Volatility Sentinel!",
+    text: "An automated security system monitoring market risks and protecting your DeFi transactions on the Vara Network. Let's take a quick tour to see how it works.",
     targetId: null
   },
   {
-    title: "1. Trạng thái Quyết định Hệ thống",
-    text: "Bảng này hiển thị chính sách thực thi hiện tại của Sentinel: ALLOW (Cho phép), RESTRICT (Hạn chế), BLOCK (Chặn giao dịch), hoặc UNWIND (Rút tài sản). Đây là kết quả đánh giá rủi ro tổng hợp.",
+    title: "1. System Decision Banner",
+    text: "This banner displays the current Sentinel execution policy: ALLOW, RESTRICT, BLOCK, or UNWIND. This represents the consolidated real-time risk assessment.",
     targetId: "global-readiness-banner"
   },
   {
-    title: "2. Giám sát Chỉ số Thị trường (Market Regime)",
-    text: "Theo dõi 6 tín hiệu bảo mật từ Oracle (Biến động VIX, Giá lệch Divergence, Rút vốn Cầu nối Outflow, Stablecoin Depeg...) và vẽ biểu đồ biến động lịch sử đối chiếu với các ngưỡng cảnh báo.",
+    title: "2. Market Regime Monitor",
+    text: "Monitors 6 core security oracle signals (VIX Volatility, Price Divergence, Bridge Outflow, Stablecoin Depeg, etc.) and visualizes historical volatility against alert thresholds.",
     targetId: "market-regime-panel"
   },
   {
-    title: "3. Bộ mô phỏng Cú sốc Thị trường (Shock Simulator)",
-    text: "Sử dụng các nút mô phỏng này để bơm cú sốc VIX >30%, dòng rút cầu nối đột biến, hoặc dữ liệu Oracle hết hạn... để chứng kiến hệ thống lập tức chuyển sang trạng thái chặn BLOCK.",
+    title: "3. Deterministic Shock Simulator",
+    text: "Use these simulation injectors to trigger a VIX shock (>30%), bridge panic outflow, or stale oracle data, and witness the system instantly transition to BLOCK/RESTRICT.",
     targetId: "market-shocks-container"
   },
   {
-    title: "4. Giám sát Suy giảm Lợi nhuận (Yield Decay)",
-    text: "Đánh giá mức độ an toàn của lợi nhuận dựa trên TVL, biến động dòng vốn ròng 24h, phí sinh ra, và độ trượt giá đầu ra để cảnh báo rủi ro sụt giảm APY.",
+    title: "4. Yield Decay Monitor",
+    text: "Evaluates vault yield safety based on TVL, 24h net flow, fees, and slippage to detect and alert on APY decay and mercenary capital flight.",
     targetId: "yield-decay-panel"
   },
   {
-    title: "5. Giả lập kịch bản Lợi nhuận (Yield Simulator)",
-    text: "Giả lập các kịch bản APY suy giảm do hết quỹ thưởng (Subsidy Collapse) hoặc cá mập rút vốn tháo chạy (Mercenary TVL) để thử nghiệm kích hoạt trạng thái giám sát rủi ro WATCH hoặc DECAYING.",
+    title: "5. Yield Decay Simulator",
+    text: "Simulate decay scenarios like reward depletion (Subsidy Collapse) or rapid capital exit (Mercenary TVL) to test WATCH and DECAYING state transitions.",
     targetId: "yield-scenarios-container"
   },
   {
-    title: "6. Đấu trường Thực thi (Execution Proof)",
-    text: "Thử nghiệm gửi các giao dịch nạp/rút tiền. Hệ thống sẽ kiểm tra xem chính sách hiện tại có cho phép không (Check Action), hoặc ký và thực thi giao dịch trực tiếp trên chuỗi khối Vara (Execute Action).",
+    title: "6. Execution Proof Arena",
+    text: "Simulate or execute Web3 transactions on Vara. Check Action queries the policy, while Execute Action signs and dispatches transactions directly on-chain.",
     targetId: "execution-proof-panel"
   }
 ];
@@ -61,13 +61,13 @@ export function initTour() {
     const step = tourSteps[index];
 
     // Update popup texts
-    document.getElementById('tour-step-indicator').textContent = `Bước ${index + 1}/${tourSteps.length}`;
+    document.getElementById('tour-step-indicator').textContent = `Step ${index + 1}/${tourSteps.length}`;
     document.getElementById('tour-title').textContent = step.title;
     document.getElementById('tour-text').textContent = step.text;
 
     // Update navigation buttons state
     btnBack.disabled = index === 0;
-    btnNext.textContent = index === tourSteps.length - 1 ? "Hoàn thành" : "Tiếp tục";
+    btnNext.textContent = index === tourSteps.length - 1 ? "Finish" : "Next";
 
     // Highlight target
     let targetEl = null;

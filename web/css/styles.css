@@ -47,9 +47,9 @@
 
   /* Typography scale — explicit, consistent */
   --text-label: 12px;   /* card field labels, section subheadings */
-  --text-body: 14px;    /* general body, descriptions */
-  --text-value: 24px;   /* metric values */
-  --text-title: 20px;   /* panel headings */
+  --text-body: 12px;    /* general body, descriptions */
+  --text-value: 16px;   /* metric values */
+  --text-title: 16px;   /* panel headings */
 }
 
 /* ── Reset ─────────────────────────────── */
@@ -60,7 +60,7 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   font-family: 'Geist', system-ui, sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -81,103 +81,84 @@ body {
 h1, h2, h3, h4 { margin: 0; color: var(--text-primary); }
 
 /* ── Global typography normalization ────────────────
-   Enforce readable minimum sizes regardless of Tailwind.
-   This prevents text-xs + uppercase from looking microscopic.
+   Enforce exactly two font sizes regardless of Tailwind:
+   - Small: 12px (descriptions, labels, metadata, ticks, tables, select elements)
+   - Medium: 16px (titles, metrics, badges, headers, buttons)
    ────────────────────────────────────────────────── */
 
-.text-xs {
-  font-size: 12px !important;
-}
-.text-sm {
-  font-size: 14px !important;
-  line-height: 1.4 !important;
-}
-.text-base {
-  font-size: 16px !important;
-}
-.text-lg {
-  font-size: 18px !important;
-}
-.text-xl {
-  font-size: 22px !important;
-}
-.text-2xl {
-  font-size: 28px !important;
-}
-.text-3xl {
-  font-size: 34px !important;
-}
-
-/* All label-style spans with uppercase get minimum 12px */
+/* 1. Small size overrides */
+.text-xs,
+.text-sm,
+body,
+dd,
+dt,
+select,
+input,
+li,
+span,
+p,
+#stale-warning-banner,
+#logs-output,
+#logs-output div,
+#market-reasons li,
+#yield-reasons li,
+#hysteresis-message,
+#yield-hysteresis-message,
+#yield-apy-breakdown,
+[id^="trend-"],
+#report-seq,
+#report-reporter,
+#report-sig,
+#report-gate-state,
+#report-val-hash,
+.border-t.border-neutral-200.text-xs,
+.execution-proof-list dt,
+.execution-proof-list dd,
+#execution-description,
+#execution-result,
 span.text-xs.uppercase,
 span.text-xs.font-mono,
-label.text-xs {
+label.text-xs,
+.execution-proof-label {
   font-size: 12px !important;
-  letter-spacing: 0.05em;
+  line-height: 1.5 !important;
 }
 
-/* Section-level subheadings (Live Security Oracle Signals, etc.) */
-span.text-xs.uppercase.tracking-wider,
-span.text-xs.uppercase.tracking-wide {
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  color: var(--text-secondary) !important;
+/* Default color for small text to secondary unless specialized */
+p, span, li, dt, dd {
+  color: var(--text-secondary);
 }
 
-/* Metric card mini-labels — the key fix for "VIX VOLATILITY" etc. */
-.glass-panel span.text-xs.uppercase,
-.glass-panel span.text-xs.font-mono.uppercase,
-section span.text-xs.uppercase {
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.05em !important;
-  color: var(--text-secondary) !important;
+/* Ensure selected highlights keep primary colors */
+.font-bold, .font-mono, .text-white, .text-zinc-200, .text-zinc-300, #report-seq, #report-sig, #report-gate-state {
+  color: inherit;
 }
 
-/* Metric values — always large and prominent */
-.text-xl.font-mono, .text-xl.font-bold {
-  font-size: 24px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  line-height: 1.2 !important;
+/* 2. Medium size overrides */
+.text-base,
+.text-lg,
+.text-xl,
+.text-2xl,
+.text-3xl,
+h1,
+h2,
+h3,
+h4,
+.serif-title,
+.text-xl.font-mono,
+.text-xl.font-bold,
+#banner-decision-text,
+#market-regime-badge,
+#yield-decay-badge,
+.badge,
+.execution-decision-badge,
+button,
+.btn-shock,
+.btn-scenario,
+.execution-action-button {
+  font-size: 16px !important;
+  line-height: 1.35 !important;
 }
-/* Default to primary color unless a semantic color is explicitly set */
-.text-xl.font-mono:not(.text-rose-600):not(.text-emerald-700):not(.text-amber-600):not(.text-emerald-500):not(.text-rose-500):not(.text-amber-500),
-.text-xl.font-bold:not(.text-rose-600):not(.text-emerald-700):not(.text-amber-600):not(.text-emerald-500):not(.text-rose-500):not(.text-amber-500) {
-  color: var(--text-primary) !important;
-}
-
-/* Body / description text at readable base */
-.text-sm.font-mono,
-.text-sm.text-neutral-700,
-.text-sm.text-neutral-500 {
-  font-size: 14px !important;
-}
-
-/* Diagnostic list items (Regime Diagnostics, Decay Diagnostics) */
-#market-reasons li,
-#yield-reasons li {
-  font-size: 14px !important;
-  color: var(--text-secondary) !important;
-  line-height: 1.6;
-}
-
-/* Hysteresis / cooldown message text */
-#hysteresis-message,
-#yield-hysteresis-message {
-  font-size: 14px !important;
-  color: var(--text-secondary) !important;
-}
-
-/* Log output */
-#logs-output {
-  font-size: 13px !important;
-}
-#logs-output div {
-  font-size: 13px !important;
-  line-height: 1.6;
 }
 
 /* Trend indicators (UP/DN/STABLE) next to metric values */
@@ -200,22 +181,22 @@ section span.text-xs.uppercase {
 
 /* On-chain report table text */
 #report-seq, #report-reporter, #report-sig, #report-gate-state, #report-val-hash {
-  font-size: 13px !important;
+  font-size: 12px !important;
 }
 
 /* Meta footer (Chain ID, Block, RPC) */
 .border-t.border-neutral-200.text-xs {
-  font-size: 13px !important;
+  font-size: 12px !important;
 }
 
 /* h2 panel titles */
 h2.serif-title {
-  font-size: 20px !important;
+  font-size: 16px !important;
 }
 
 /* Execution proof labels */
 .execution-proof-label {
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
   color: var(--text-tertiary) !important;
@@ -235,7 +216,7 @@ h2.serif-title {
 /* Execution proof labels */
 .execution-proof-label {
   display: block;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
@@ -245,20 +226,20 @@ h2.serif-title {
 
 .execution-proof-list dd { font-size: 12px !important; font-weight: 600; color: var(--text-primary) !important; }
 .execution-proof-list dt { font-size: 12px !important; color: var(--text-secondary) !important; }
-#execution-description { font-size: 13px !important; color: var(--text-secondary) !important; line-height: 1.5; }
+#execution-description { font-size: 12px !important; color: var(--text-secondary) !important; line-height: 1.5; }
 #execution-result { font-size: 12px !important; }
 
 /* ── text-sm normalization ───────────────
-   Ensure all .text-sm elements render at proper 14px.
+   Ensure all .text-sm elements render at proper 12px.
    This is the primary fix for card labels that were
    previously using text-xs (12px) in uppercase.  */
 .text-sm {
-  font-size: 14px !important;
+  font-size: 12px !important;
   line-height: 1.4 !important;
 }
 /* But font-mono text-sm should be slightly smaller to not compete with values */
 .text-sm.font-mono:not(.font-bold) {
-  font-size: 13px !important;
+  font-size: 12px !important;
 }
 
 /* ── Tailwind color class resets for dark theme ─── */
@@ -302,7 +283,7 @@ main { color: var(--text-primary) !important; }
 /* ── Banner Decision Badge ─────────────── */
 #banner-decision-text {
   font-family: 'Geist Mono', monospace !important;
-  font-size: 18px !important;
+  font-size: 16px !important;
   font-weight: 800 !important;
   letter-spacing: 0.08em !important;
   padding: 6px 16px !important;
@@ -344,7 +325,7 @@ main { color: var(--text-primary) !important; }
 
 /* ── Section Headings inside panels ───── */
 .panel-heading-label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -358,7 +339,7 @@ main { color: var(--text-primary) !important; }
   padding: 2px 8px;
   border-radius: var(--r-pill);
   font-family: 'Geist Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   border: 1px solid transparent;
@@ -368,7 +349,7 @@ main { color: var(--text-primary) !important; }
 #market-regime-badge,
 #yield-decay-badge {
   font-family: 'Geist Mono', monospace !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.04em !important;
   padding: 2px 8px !important;
@@ -415,7 +396,7 @@ main { color: var(--text-primary) !important; }
   border-radius: var(--r-sm) !important;
   color: var(--text-primary) !important;
   font-family: 'Geist Mono', monospace !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.03em !important;
   padding: 6px 10px !important;
@@ -463,7 +444,7 @@ main { color: var(--text-primary) !important; }
   padding: 6px 14px !important;
   border-radius: var(--r-sm) !important;
   font-family: 'Geist Mono', monospace !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.12s var(--ease) !important;
@@ -499,14 +480,14 @@ main { color: var(--text-primary) !important; }
   padding: 14px !important;
 }
 .execution-proof-label {
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
   color: var(--text-tertiary) !important;
 }
 .execution-proof-list { display: grid; gap: 6px; margin-top: 10px; }
-.execution-proof-list > div { display: flex; justify-content: space-between; align-items: baseline; font-family: 'Geist Mono', monospace; font-size: 11px; }
+.execution-proof-list > div { display: flex; justify-content: space-between; align-items: baseline; font-family: 'Geist Mono', monospace; font-size: 12px; }
 .execution-proof-list dt { color: var(--text-secondary) !important; }
 .execution-proof-list dd { color: var(--text-primary) !important; font-weight: 600; }
 
@@ -517,7 +498,7 @@ main { color: var(--text-primary) !important; }
   padding: 3px 10px;
   border-radius: var(--r-pill);
   font-family: 'Geist Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
   border: 1px solid transparent;
@@ -625,7 +606,7 @@ button:focus-visible, select:focus-visible, a:focus-visible {
 #logs-output {
   background: var(--surface-2) !important;
   border-color: var(--border) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
 }
 
 /* ── Ambient glow ─────────────────────── */
@@ -652,7 +633,7 @@ button:focus-visible, select:focus-visible, a:focus-visible {
   border: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
   border-radius: var(--r-pill) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
 }
 #connect-wallet:hover {
   background: var(--surface-2) !important;
@@ -660,7 +641,7 @@ button:focus-visible, select:focus-visible, a:focus-visible {
 }
 #toggle-mode {
   font-family: 'Geist Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-secondary) !important;
 }
@@ -673,7 +654,7 @@ button:focus-visible, select:focus-visible, a:focus-visible {
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   font-family: 'Geist Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 

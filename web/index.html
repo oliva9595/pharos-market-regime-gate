@@ -58,7 +58,7 @@
           <span id="toggle-mode" class="font-bold text-amber-500 uppercase">Mock Mode</span>
         </div>
         <button id="restart-tour" class="px-3 py-1.5 rounded-full border border-zinc-700 transition-all font-mono text-xs flex items-center gap-1.5 bg-zinc-900 text-zinc-100">
-          <i class="fa-solid fa-circle-question text-zinc-400"></i>Hướng dẫn
+          <i class="fa-solid fa-circle-question text-zinc-400"></i>Guide
         </button>
         <button id="connect-wallet" class="px-4 py-1.5 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-600 transition-all font-mono text-xs flex items-center gap-2 bg-zinc-900 text-zinc-100">
           <span class="w-2 h-2 rounded-full bg-rose-500" id="wallet-dot" aria-hidden="true"></span>
@@ -70,7 +70,7 @@
 
   <!-- Stale Data Warning -->
   <div id="stale-warning-banner" class="hidden w-full py-2 px-6 text-center text-sm font-mono font-semibold" role="alert">
-    <i class="fa-solid fa-triangle-exclamation mr-2"></i>Dữ liệu đang cũ — API không phản hồi trong 30 giây qua.
+    <i class="fa-solid fa-triangle-exclamation mr-2"></i>Stale Data — API not responding in the last 30 seconds.
   </div>
 
   <!-- ── Main Content ───────────────────────────────────────── -->
@@ -79,8 +79,8 @@
 
 
     <!-- ════════════════════════════════════════════════════
-         ① SYSTEM DECISION — Đây là trạng thái hiện tại
-         Hệ thống đang cho phép hay chặn giao dịch?
+         ① SYSTEM DECISION — Current system status
+         Is transaction allowed or blocked by the system?
          ════════════════════════════════════════════════════ -->
     <section id="global-readiness-banner" class="glass-panel rounded-2xl overflow-hidden" role="status" aria-label="System Decision">
       <!-- Step label -->
@@ -90,7 +90,7 @@
             <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 text-zinc-950 text-xs font-bold shrink-0">1</span>
             <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-400">System Decision</span>
           </div>
-          <p class="text-xs text-zinc-500">Trạng thái chính sách thực thi hiện tại — hệ thống có cho phép giao dịch không?</p>
+          <p class="text-xs text-zinc-500">Current execution policy status — is transaction allowed by the system?</p>
         </div>
       </div>
       <!-- Decision content -->
@@ -113,7 +113,7 @@
         <!-- Recommendation + Consequence -->
         <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1">
-            <div class="text-xs font-mono text-zinc-500 uppercase tracking-wider">Khuyến nghị</div>
+            <div class="text-xs font-mono text-zinc-500 uppercase tracking-wider">Recommendation</div>
             <div id="banner-recommendation" class="text-sm font-semibold text-zinc-200">--</div>
           </div>
           <div class="space-y-1">
@@ -135,7 +135,7 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         ② & ③ WHY — Tại sao hệ thống đưa ra quyết định này?
+         ② & ③ WHY — Why did the system make this decision?
          ════════════════════════════════════════════════════ -->
     <div>
       <div class="flex items-center gap-2 mb-4">
@@ -260,11 +260,11 @@
               <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
                 <span class="text-sm text-zinc-400 font-bold block mb-3">On-Chain Report</span>
                 <div class="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs font-mono">
-                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Seq #</span> <span id="report-seq" class="font-bold text-sky-400">#--</span></div>
-                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Reporter</span> <span id="report-reporter" class="font-bold truncate max-w-[80px] text-zinc-300">0x...</span></div>
-                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Signature</span> <span id="report-sig" class="font-bold text-emerald-400">--</span></div>
-                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Gate State</span> <span id="report-gate-state" class="font-bold text-indigo-400">--</span></div>
-                  <div class="col-span-2 flex justify-between pt-1"><span class="text-zinc-500">Val. Hash</span> <span id="report-val-hash" class="font-bold truncate max-w-[200px] text-zinc-300">0x...</span></div>
+                  <div class="flex flex-col border-b border-zinc-850 pb-1.5"><span class="text-zinc-500 uppercase">Seq #</span><span id="report-seq" class="font-bold text-sky-400 mt-0.5">#--</span></div>
+                  <div class="flex flex-col border-b border-zinc-850 pb-1.5"><span class="text-zinc-500 uppercase">Reporter</span><span id="report-reporter" class="font-bold text-zinc-300 mt-0.5 truncate max-w-full">0x...</span></div>
+                  <div class="flex flex-col border-b border-zinc-850 pb-1.5"><span class="text-zinc-500 uppercase">Signature</span><span id="report-sig" class="font-bold text-emerald-400 mt-0.5">--</span></div>
+                  <div class="flex flex-col border-b border-zinc-850 pb-1.5"><span class="text-zinc-500 uppercase">Gate State</span><span id="report-gate-state" class="font-bold text-indigo-400 mt-0.5">--</span></div>
+                  <div class="col-span-2 flex flex-col pt-1.5"><span class="text-zinc-500 uppercase">Val. Hash</span><span id="report-val-hash" class="font-bold text-zinc-300 mt-0.5 truncate max-w-full">0x...</span></div>
                 </div>
               </div>
             </div>
@@ -459,15 +459,15 @@
     <!-- / Signal Monitors wrapper -->
 
     <!-- ════════════════════════════════════════════════════
-         ③ WHAT TO DO — Mô phỏng hoặc thực thi on-chain
-         Kiểm tra chính sách và thực hiện giao dịch
+         ③ WHAT TO DO — On-chain simulation or execution
+         Verify policy compliance and submit transactions
          ════════════════════════════════════════════════════ -->
     <div>
       <div class="flex items-center gap-2 mb-4">
         <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 text-zinc-950 text-xs font-bold shrink-0">3</span>
         <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-400">Execution Proof Arena</span>
         <div class="flex-grow h-px bg-zinc-800"></div>
-        <span class="text-sm text-zinc-500">Mô phỏng chính sách hoặc thực thi trực tiếp trên blockchain</span>
+        <span class="text-sm text-zinc-500">Simulate execution policy checks or execute Web3 transactions directly on-chain</span>
       </div>
 
     <!-- Execution Proof Arena -->
@@ -1470,17 +1470,17 @@
   <div id="tour-popup" class="hidden flex-col justify-between">
     <div class="space-y-3">
       <div class="flex justify-between items-center">
-        <span id="tour-step-indicator" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">Bước 1/7</span>
-        <button id="tour-close" class="text-zinc-500 hover:text-white transition-colors p-1" title="Đóng hướng dẫn"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <span id="tour-step-indicator" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">Step 1/7</span>
+        <button id="tour-close" class="text-zinc-500 hover:text-white transition-colors p-1" title="Close Guide"><i class="fa-solid fa-xmark text-sm"></i></button>
       </div>
-      <h4 id="tour-title" class="text-sm font-bold tracking-tight text-white font-sans">Tiêu đề bước</h4>
-      <p id="tour-text" class="text-xs text-zinc-400 leading-relaxed font-sans">Nội dung hướng dẫn chi tiết từng phần hiển thị ở đây.</p>
+      <h4 id="tour-title" class="text-sm font-bold tracking-tight text-white font-sans">Step Title</h4>
+      <p id="tour-text" class="text-xs text-zinc-400 leading-relaxed font-sans">Step description details.</p>
     </div>
     <div class="flex items-center justify-between pt-4 border-t border-zinc-850 mt-4">
-      <button id="tour-skip" class="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors">Bỏ qua</button>
+      <button id="tour-skip" class="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors">Skip</button>
       <div class="flex items-center gap-2">
-        <button id="tour-back" class="px-2.5 py-1 rounded text-xs font-mono bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Quay lại</button>
-        <button id="tour-next" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded text-xs font-mono transition-colors">Tiếp tục</button>
+        <button id="tour-back" class="px-2.5 py-1 rounded text-xs font-mono bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Back</button>
+        <button id="tour-next" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded text-xs font-mono transition-colors">Next</button>
       </div>
     </div>
   </div>

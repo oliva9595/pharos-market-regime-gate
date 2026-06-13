@@ -33,7 +33,7 @@ export class YieldApyChart {
 
     const width = this.container.clientWidth || 500;
     const height = this.container.clientHeight || 160;
-    const leftPad = 40;
+    const leftPad = 50;
     const rightPad = 15;
     const topPad = 15;
     const bottomPad = 25;
@@ -220,7 +220,7 @@ export class YieldApyChart {
         x: leftPad - 5,
         y: y + 3,
         fill: colors.textMuted,
-        'font-size': '10px',
+        'font-size': '12px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)'
       });
@@ -233,7 +233,7 @@ export class YieldApyChart {
       x: leftPad,
       y: topPad - 5,
       fill: colors.textMuted,
-      'font-size': '9px',
+      'font-size': '12px',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
     yLabel.textContent = 'APY (%)';
@@ -244,7 +244,7 @@ export class YieldApyChart {
       x: leftPad + effWidth / 2,
       y: height - 5,
       fill: colors.textMuted,
-      'font-size': '9px',
+      'font-size': '12px',
       'text-anchor': 'middle',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
@@ -277,8 +277,8 @@ export class YieldFactorsChart {
 
     const width = this.container.clientWidth || 500;
     const height = this.container.clientHeight || 140;
-    const leftPad = 130; // Increased padding to prevent label truncation
-    const rightPad = 45;  // Increased padding for value labels
+    const leftPad = 150; // Increased padding to prevent label truncation
+    const rightPad = 55;  // Increased padding for value labels
     const topPad = 10;
     const bottomPad = 10;
     const effWidth = width - leftPad - rightPad;
@@ -310,7 +310,7 @@ export class YieldFactorsChart {
         x: leftPad - 10,
         y: y + 8,
         fill: '#a3a3a3',
-        'font-size': '10px',
+        'font-size': '12px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': 'semibold'
@@ -355,7 +355,7 @@ export class YieldFactorsChart {
         x: leftPad + effWidth + 6,
         y: y + 8,
         fill: f.score >= 50 ? '#ff3366' : '#ffffff',
-        'font-size': '10px',
+        'font-size': '12px',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': f.score >= 50 ? 'bold' : 'normal'
       });
