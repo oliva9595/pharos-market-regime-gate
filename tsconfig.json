@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/risk-core" },
     { "path": "packages/data-adapters" },
-    { "path": "services/keeper" }
+    { "path": "services/keeper" },
+    { "path": "services/api" }
   ]
 }
