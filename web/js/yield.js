@@ -94,7 +94,6 @@ export function calculateYieldFactorScores(snap, apySlope) {
   // 4. Fee Sustainability Risk (15%)
   let feeSustainability = 100;
   const feesN = parseBigInt(snap.feesUsd24h);
-  const tvlN = parseBigInt(snap.tvlUsd);
   if (tvlN > 0n) {
     const annualizedFees = feesN * 365n;
     const feesRatio = Number(annualizedFees) / Number(tvlN);

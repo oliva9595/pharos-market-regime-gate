@@ -48,6 +48,16 @@
         <span id="banner-confidence"><i class="fa-solid fa-gauge mr-1"></i> Confidence: --</span>
       </div>
     </div>
+    <div class="max-w-7xl mx-auto mt-3 pt-3 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-xs font-mono gap-3 text-white/80">
+      <div class="flex items-center gap-2">
+        <span class="text-white/40 uppercase font-semibold">Recommendation:</span>
+        <span id="banner-recommendation">LOADING...</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-white/40 uppercase font-semibold">On-Chain Consequence:</span>
+        <span id="banner-consequence">LOADING...</span>
+      </div>
+    </div>
   </div>
 
   <!-- Sticky Header -->
@@ -284,8 +294,8 @@
           <div class="mb-4">
             <label for="opportunity-selector" class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block mb-1">Target Vault Opportunity</label>
             <select id="opportunity-selector" class="w-full bg-[#09090c] border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-white/80 focus:border-brand focus-visible:outline-none focus:ring-1 focus:ring-brand">
-              <option value="0xbe713906E4D5ac544C069Cd16B2233C979b8AB5a">ProtocolRegistry Vault (0xbe71...AB5a)</option>
-              <option value="0xdeB9B625e70E38cdb0dEe5DEAACa25A5095D512E">SlippageGuard Vault (0xdeB9...512E)</option>
+              <option value="0x809d550fca64d94Bd9F66E60752A544199cfAC3D">ProtocolRegistry Vault (0x809d...AC3D)</option>
+              <option value="0x4c5859f0F772848b2D91F1D83E2Fe57935348029">SlippageGuard Vault (0x4c58...8029)</option>
             </select>
           </div>
 
@@ -396,7 +406,64 @@
 
     </div>
 
-    <!-- SECTION 2: Safety Gate Contracts & Log Window -->
+    <!-- SECTION 2: Real Execution Proof Arena -->
+    <section class="glass-panel p-6 rounded-2xl execution-proof-panel" aria-labelledby="execution-proof-title">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/5 pb-4 mb-5">
+        <div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-brand" aria-hidden="true"></i>
+            <h2 id="execution-proof-title" class="text-base font-bold uppercase tracking-wider">Execution Proof Arena</h2>
+          </div>
+          <p class="text-xs text-white/40 mt-1">Simulate policy checks in mock mode or call ExecutionEngineV2 in Web3 mode.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="execution-scenario" class="bg-[#09090c] border border-white/10 rounded-lg px-3 py-2 text-xs font-mono" aria-label="Select execution proof scenario"></select>
+          <button id="execution-check" class="execution-action-button execution-action-button--check">
+            <i class="fa-solid fa-shield mr-1"></i>Check Action
+          </button>
+          <button id="execution-execute" class="execution-action-button execution-action-button--execute" disabled>
+            <i class="fa-solid fa-wallet mr-1"></i>Execute Action
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <article class="execution-proof-card">
+          <span class="execution-proof-label">Action Context</span>
+          <dl class="execution-proof-list">
+            <div><dt>Action</dt><dd id="execution-action-type">--</dd></div>
+            <div><dt>Target</dt><dd id="execution-target">--</dd></div>
+            <div><dt>Opportunity</dt><dd id="execution-opportunity">--</dd></div>
+            <div><dt>Position / Slippage</dt><dd id="execution-limits-requested">--</dd></div>
+          </dl>
+        </article>
+
+        <article class="execution-proof-card">
+          <span class="execution-proof-label">Combined Policy</span>
+          <div class="flex items-center gap-2 mt-3">
+            <span id="execution-decision" class="execution-decision-badge">NOT CHECKED</span>
+            <span id="execution-result" class="text-xs font-mono text-white/40">Awaiting simulation</span>
+          </div>
+          <p id="execution-description" class="text-xs text-white/50 mt-3"></p>
+          <div class="mt-3">
+            <span class="execution-proof-label">Reason Codes</span>
+            <div id="execution-reasons" class="flex flex-wrap gap-1.5 mt-2"></div>
+          </div>
+        </article>
+
+        <article class="execution-proof-card">
+          <span class="execution-proof-label">Proof & Provenance</span>
+          <dl class="execution-proof-list">
+            <div><dt>Report ID</dt><dd id="execution-report-id">--</dd></div>
+            <div><dt>Policy Limits</dt><dd id="execution-policy-limits">--</dd></div>
+            <div><dt>Simulation</dt><dd id="execution-simulation">Not run</dd></div>
+            <div><dt>Transaction</dt><dd><a id="execution-tx-link" class="text-brand hover:text-white" target="_blank" rel="noopener noreferrer">--</a></dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Safety Gate Contracts & Log Window -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       <!-- Contract Safety Panel -->
@@ -480,6 +547,8 @@
     import { MarketRegimeChart } from './js/charts/market.js';
     import { computeYieldHysteresisState } from './js/yield.js';
     import { YieldApyChart, YieldFactorsChart } from './js/charts/yield.js';
+    import { EXECUTION_SCENARIOS, getExecutionScenario } from './js/scenarios.js';
+    import { createEngineClient, evaluateMockExecution } from './js/execution.js';
 
     let marketChart;
     let yieldApyChart;
@@ -493,6 +562,8 @@
       bannerReportId: document.getElementById('banner-report-id'),
       bannerFreshness: document.getElementById('banner-freshness'),
       bannerConfidence: document.getElementById('banner-confidence'),
+      bannerRecommendation: document.getElementById('banner-recommendation'),
+      bannerConsequence: document.getElementById('banner-consequence'),
       
       toggleMode: document.getElementById('toggle-mode'),
       connectWallet: document.getElementById('connect-wallet'),
@@ -555,6 +626,22 @@
       yieldScenarioFees: document.getElementById('yield-scenario-fees'),
       yieldScenarioSlippage: document.getElementById('yield-scenario-slippage'),
       yieldReasons: document.getElementById('yield-reasons'),
+
+      executionScenario: document.getElementById('execution-scenario'),
+      executionCheck: document.getElementById('execution-check'),
+      executionExecute: document.getElementById('execution-execute'),
+      executionActionType: document.getElementById('execution-action-type'),
+      executionTarget: document.getElementById('execution-target'),
+      executionOpportunity: document.getElementById('execution-opportunity'),
+      executionLimitsRequested: document.getElementById('execution-limits-requested'),
+      executionDecision: document.getElementById('execution-decision'),
+      executionResult: document.getElementById('execution-result'),
+      executionDescription: document.getElementById('execution-description'),
+      executionReasons: document.getElementById('execution-reasons'),
+      executionReportId: document.getElementById('execution-report-id'),
+      executionPolicyLimits: document.getElementById('execution-policy-limits'),
+      executionSimulation: document.getElementById('execution-simulation'),
+      executionTxLink: document.getElementById('execution-tx-link'),
       
       logsOutput: document.getElementById('logs-output'),
       clearLogs: document.getElementById('clear-logs'),
@@ -633,6 +720,111 @@
           });
         }
       });
+    }
+
+    function shortHex(value) {
+      return `${value.slice(0, 8)}...${value.slice(-6)}`;
+    }
+
+    function renderExecutionScenario(scenario) {
+      elements.executionActionType.textContent = scenario.actionType;
+      elements.executionTarget.textContent = shortHex(scenario.target);
+      elements.executionTarget.title = scenario.target;
+      elements.executionOpportunity.textContent = shortHex(scenario.opportunityId);
+      elements.executionOpportunity.title = scenario.opportunityId;
+      elements.executionLimitsRequested.textContent = `$${scenario.positionUsd.toLocaleString()} / ${scenario.requestedSlippageBps} bps`;
+      elements.executionDescription.textContent = scenario.description;
+      elements.executionDecision.textContent = scenario.decision;
+      elements.executionDecision.className = `execution-decision-badge execution-decision-badge--${scenario.decision.toLowerCase()}`;
+      elements.executionResult.textContent = 'Awaiting simulation';
+      elements.executionReasons.textContent = '';
+      scenario.reasonCodes.forEach(code => {
+        const badge = document.createElement('span');
+        badge.className = 'execution-reason-code';
+        badge.textContent = code;
+        elements.executionReasons.appendChild(badge);
+      });
+      elements.executionReportId.textContent = '--';
+      elements.executionPolicyLimits.textContent = '--';
+      elements.executionSimulation.textContent = 'Not run';
+      elements.executionTxLink.textContent = '--';
+      elements.executionTxLink.removeAttribute('href');
+    }
+
+    function renderExecutionProof(proof, mode) {
+      const decision = proof.decision || (proof.allowed ? 'ALLOW' : 'BLOCK');
+      elements.executionDecision.textContent = decision;
+      elements.executionDecision.className = `execution-decision-badge execution-decision-badge--${decision.toLowerCase()}`;
+      elements.executionResult.textContent = proof.allowed ? 'ALLOWED' : 'REJECTED';
+      elements.executionResult.className = `text-xs font-mono font-bold ${proof.allowed ? 'text-emerald-400' : 'text-rose-400'}`;
+      elements.executionSimulation.textContent = `${mode.toUpperCase()}: ${proof.reason || (proof.allowed ? 'Policy passed' : 'Policy rejected')}`;
+      elements.executionReportId.textContent = proof.reportId || 'On-chain latest report';
+      if (proof.maxPositionUsd !== undefined) {
+        elements.executionPolicyLimits.textContent = `$${Number(proof.maxPositionUsd).toLocaleString()} / ${Number(proof.maxSlippageBps)} bps`;
+      } else {
+        elements.executionPolicyLimits.textContent = 'Enforced on-chain';
+      }
+    }
+
+    async function checkSelectedExecution() {
+      const scenario = getExecutionScenario(elements.executionScenario.value);
+      const state = stateStore.getState();
+      elements.executionCheck.disabled = true;
+      elements.executionSimulation.textContent = 'Checking policy...';
+
+      try {
+        if (state.mode === 'mock') {
+          const proof = evaluateMockExecution(scenario);
+          renderExecutionProof(proof, 'mock');
+          elements.executionExecute.disabled = true;
+          logMessage(`Mock checkAction ${scenario.label}: ${proof.decision}`, proof.allowed ? 'info' : 'warning');
+          return;
+        }
+
+        if (!state.wallet.connected || !walletHandler.provider) {
+          throw new Error('Connect a wallet on Pharos Atlantic before checking Web3 policy.');
+        }
+        const client = createEngineClient({
+          ethersApi: ethers,
+          engineAddress: CONFIG.CONTRACTS.ExecutionEngine,
+          provider: walletHandler.provider,
+          signer: walletHandler.signer
+        });
+        const proof = await client.check(scenario);
+        renderExecutionProof({ ...proof, decision: proof.allowed ? scenario.decision : 'BLOCK' }, 'web3');
+        elements.executionExecute.disabled = !proof.allowed;
+        logMessage(`On-chain checkAction ${scenario.label}: ${proof.allowed ? 'ALLOWED' : 'REJECTED'}`, proof.allowed ? 'info' : 'warning');
+      } catch (err) {
+        renderExecutionProof({ allowed: false, decision: 'BLOCK', reason: err.message }, state.mode);
+        elements.executionExecute.disabled = true;
+        logMessage(`Execution check failed: ${err.message}`, 'error');
+      } finally {
+        elements.executionCheck.disabled = false;
+      }
+    }
+
+    async function executeSelectedAction() {
+      const state = stateStore.getState();
+      if (state.mode !== 'web3') return;
+      const scenario = getExecutionScenario(elements.executionScenario.value);
+      elements.executionExecute.disabled = true;
+      elements.executionSimulation.textContent = 'Waiting for wallet confirmation...';
+      try {
+        const client = createEngineClient({
+          ethersApi: ethers,
+          engineAddress: CONFIG.CONTRACTS.ExecutionEngine,
+          provider: walletHandler.provider,
+          signer: walletHandler.signer
+        });
+        const receipt = await client.execute(scenario);
+        elements.executionSimulation.textContent = `Confirmed in block #${receipt.blockNumber}`;
+        elements.executionTxLink.textContent = shortHex(receipt.hash);
+        elements.executionTxLink.href = `${CONFIG.EXPLORER_URL}/tx/${receipt.hash}`;
+        logMessage(`executeAction confirmed: ${receipt.hash}`, 'info');
+      } catch (err) {
+        elements.executionSimulation.textContent = `Execution reverted or rejected: ${err.message}`;
+        logMessage(`executeAction failed: ${err.message}`, 'error');
+      }
     }
 
     // Render trend indicator symbols and colors
@@ -735,28 +927,48 @@
       let bannerDotColor = 'bg-brand';
       let bannerBorderColor = 'border-brand/30';
       let bannerBgColor = 'bg-brand/10 text-brand';
+      let recommendation = "";
+      let consequence = "";
+      let textClass = "";
 
       if (combinedDecision === 'ALLOW') {
         bannerDotColor = 'bg-emerald-500';
         bannerBorderColor = 'border-emerald-500/30';
         bannerBgColor = 'bg-emerald-500/10 text-emerald-400';
+        recommendation = "Safe to allocate capital. Monitoring health.";
+        consequence = "Execution engine allows all actions.";
+        textClass = "text-emerald-400";
       } else if (combinedDecision === 'RESTRICT') {
         bannerDotColor = 'bg-amber-500';
         bannerBorderColor = 'border-amber-500/30';
         bannerBgColor = 'bg-amber-500/10 text-amber-400';
+        recommendation = "Reduce position size and tighten slippage limits.";
+        consequence = "Slippage limits enforced; position size limits active.";
+        textClass = "text-amber-400";
       } else if (combinedDecision === 'BLOCK') {
         bannerDotColor = 'bg-rose-500';
         bannerBorderColor = 'border-rose-500/30';
         bannerBgColor = 'bg-rose-500/10 text-rose-400';
+        recommendation = "Halt new deposits. Watch and evaluate current positions.";
+        consequence = "Deposits to target opportunity blocked.";
+        textClass = "text-rose-400";
       } else if (combinedDecision === 'UNWIND') {
         bannerDotColor = 'bg-violet-500';
         bannerBorderColor = 'border-violet-500/30';
         bannerBgColor = 'bg-violet-500/10 text-violet-400';
+        recommendation = "Initiate emergency withdrawal or safe unwind immediately.";
+        consequence = "All deposits and swaps blocked except unwind/repay.";
+        textClass = "text-violet-400";
       }
 
       elements.bannerDot.className = `relative inline-flex rounded-full h-3 w-3 ${bannerDotColor}`;
       elements.bannerPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${bannerDotColor}`;
       elements.bannerDecisionText.className = `text-lg font-bold font-mono tracking-widest px-4 py-1 rounded border ${bannerBorderColor} ${bannerBgColor}`;
+
+      elements.bannerRecommendation.textContent = recommendation;
+      elements.bannerConsequence.textContent = consequence;
+      elements.bannerRecommendation.className = textClass;
+      elements.bannerConsequence.className = textClass;
 
       // Freshness and report ID
       const latestReportId = state.marketStatus.reasonsHash || '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -1082,6 +1294,14 @@
       stateStore.subscribe(render);
       setupCopyAddressListeners();
 
+      Object.values(EXECUTION_SCENARIOS).forEach(scenario => {
+        const option = document.createElement('option');
+        option.value = scenario.id;
+        option.textContent = scenario.label;
+        elements.executionScenario.appendChild(option);
+      });
+      renderExecutionScenario(getExecutionScenario(elements.executionScenario.value));
+
       // Dynamically bind contract addresses from CONFIG
       document.getElementById('addr-registry').textContent = `${CONFIG.CONTRACTS.ProtocolRegistry.slice(0, 6)}...${CONFIG.CONTRACTS.ProtocolRegistry.slice(-4)}`;
       document.getElementById('addr-slippage').textContent = `${CONFIG.CONTRACTS.SlippageGuard.slice(0, 6)}...${CONFIG.CONTRACTS.SlippageGuard.slice(-4)}`;
@@ -1117,6 +1337,12 @@
 
       elements.marketRetry.addEventListener('click', pollData);
       elements.yieldRetry.addEventListener('click', pollData);
+      elements.executionScenario.addEventListener('change', () => {
+        renderExecutionScenario(getExecutionScenario(elements.executionScenario.value));
+        elements.executionExecute.disabled = true;
+      });
+      elements.executionCheck.addEventListener('click', checkSelectedExecution);
+      elements.executionExecute.addEventListener('click', executeSelectedAction);
 
       // Simulation Shock Scenario Listeners
       const bindShock = (el, scenarioName, label) => {

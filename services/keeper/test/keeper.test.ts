@@ -44,4 +44,8 @@ describe('SentinelKeeper components', () => {
     
     logSpy.mockRestore();
   });
+
+  it('refuses live mode without explicit keeper credentials', () => {
+    expect(() => new SentinelKeeper(false, [])).toThrow('Live keeper requires');
+  });
 });

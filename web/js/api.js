@@ -269,7 +269,7 @@ export const apiClient = {
     let history = [...(state.yieldStatus.history || [])];
     if (history.length === 0) {
       for (let i = 25; i > 0; i--) {
-        const hTime = now - i * 3;
+        const hTime = now - i * 3600;
         const hTotalApy = Math.max(500, jitter(1200, 80));
         const hBaseApy = Math.max(300, jitter(1000, 60));
         history.push({

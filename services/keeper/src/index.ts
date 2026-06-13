@@ -17,6 +17,9 @@ export class SentinelKeeper {
     private opportunityIds: string[] = []
   ) {
     if (!this.dryRun) {
+      if (!config.keeperPrivateKey || config.registryAddress === ethers.ZeroAddress) {
+        throw new Error('Live keeper requires PHAROS_KEEPER_PRIVATE_KEY and a non-zero REGISTRY_ADDRESS');
+      }
       const provider = new ethers.JsonRpcProvider(config.rpcUrl);
       this.reporter = new SignedReporter(config.keeperPrivateKey, config.registryAddress, provider);
       this.queue = new TransactionQueue(async (task) => {

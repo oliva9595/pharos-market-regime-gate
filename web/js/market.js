@@ -368,7 +368,7 @@ export function computeHysteresisState(history, currentRegime, transitionEligibl
 
 export function generateMockReportDetails(regime, sequenceNumber) {
   // Deterministic values based on sequence number
-  const reporterAddress = "0xbe713906E4D5ac544C069Cd16B2233C979b8AB5a";
+  const reporterAddress = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
   const validationHash = hashReasons([regime, String(sequenceNumber), "validation"]);
   
   return {

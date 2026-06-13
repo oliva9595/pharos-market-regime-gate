@@ -306,4 +306,101 @@ select {
   text-shadow: 0 0 4px rgba(244, 63, 94, 0.4);
 }
 
+.execution-proof-panel {
+  border-color: rgba(255, 118, 28, 0.18);
+}
+
+.execution-proof-card {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.execution-proof-label {
+  color: rgba(244, 244, 245, 0.38);
+  display: block;
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.execution-proof-list {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.execution-proof-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+}
+
+.execution-proof-list dt {
+  color: rgba(244, 244, 245, 0.35);
+}
+
+.execution-proof-list dd {
+  color: rgba(244, 244, 245, 0.85);
+  margin: 0;
+  max-width: 65%;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.execution-action-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 9px 12px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.execution-action-button--check {
+  background: rgba(255, 118, 28, 0.1);
+  border-color: rgba(255, 118, 28, 0.3);
+  color: var(--brand-orange);
+}
+
+.execution-action-button--execute {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--brand-emerald);
+}
+
+.execution-action-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+
+.execution-decision-badge,
+.execution-reason-code {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.execution-decision-badge--allow { color: var(--brand-emerald); border-color: rgba(16, 185, 129, 0.3); }
+.execution-decision-badge--restrict { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+.execution-decision-badge--block { color: var(--brand-rose); border-color: rgba(244, 63, 94, 0.3); }
+.execution-decision-badge--unwind { color: var(--brand-purple); border-color: rgba(139, 92, 246, 0.3); }
+
+.execution-reason-code {
+  color: rgba(244, 244, 245, 0.55);
+  font-size: 8px;
+  padding: 3px 6px;
+}
 

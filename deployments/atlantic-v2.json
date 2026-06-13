@@ -1,0 +1,11 @@
+{
+  "status": "deployed",
+  "chainId": 688689,
+  "network": "Pharos Atlantic",
+  "riskReportRegistry": "0x9d4454B023096f34B160D6B654540c56A1F81688",
+  "marketRegimeGateV2": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
+  "yieldDecayGate": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+  "protocolRegistryV2": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+  "slippageGuardV2": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
+  "executionEngineV2": "0x1291Be112d480055DaFd8a610b7d1e203891C274"
+}

@@ -16,9 +16,9 @@
     "build": "tsc -b tsconfig.json",
     "test": "vitest run",
     "test:contracts": "C:\\Users\\XuanCanh\\.foundry\\bin\\forge.exe test",
-    "typecheck": "tsc --noEmit -b tsconfig.json",
-    "check:secrets": "node -e \"if(process.env.PHAROS_DEPLOYER_PRIVATE_KEY && process.env.PHAROS_DEPLOYER_PRIVATE_KEY.length !== 66) throw new Error('Invalid key length')\"",
-    "check:atlantic": "node -e \"console.log('Pharos Atlantic Check OK')\""
+    "typecheck": "tsc -b tsconfig.json",
+    "check:secrets": "node scripts/check-secrets.cjs",
+    "check:atlantic": "node scripts/check-atlantic.cjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.6.0",

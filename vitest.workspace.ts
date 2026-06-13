@@ -5,7 +5,8 @@ export default defineWorkspace([
     test: {
       include: [
         'packages/*/test/**/*.test.ts',
-        'services/*/test/**/*.test.ts'
+        'services/*/test/**/*.test.ts',
+        'web/test/**/*.test.js'
       ],
       exclude: [
         '**/node_modules/**',

@@ -11,3 +11,6 @@ package-lock.json
 *.db
 dist/
 tsconfig.tsbuildinfo
+deployments/*-private.json
+deployments/*-receipts.json
+keeper-state/

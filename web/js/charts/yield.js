@@ -115,7 +115,6 @@ export class YieldApyChart {
 
     // 3. Draw stacked areas
     let baseAreaD = '';
-    let rewardAreaD = '';
     let totalLineD = '';
 
     history.forEach((snap, idx) => {
@@ -125,11 +124,9 @@ export class YieldApyChart {
 
       if (idx === 0) {
         baseAreaD += `M ${x} ${height - bottomPad} L ${x} ${yBase}`;
-        rewardAreaD += `M ${x} ${yBase} L ${x} ${yTotal}`;
         totalLineD += `M ${x} ${yTotal}`;
       } else {
         baseAreaD += ` L ${x} ${yBase}`;
-        rewardAreaD += ` L ${x} ${yTotal}`;
         totalLineD += ` L ${x} ${yTotal}`;
       }
 
