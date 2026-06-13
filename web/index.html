@@ -221,25 +221,26 @@
           <div class="space-y-3 text-xs font-mono">
             <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
               <span class="text-white/40">ProtocolRegistry</span>
-              <span id="addr-registry" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xbe71...AB5a</span>
+              <span id="addr-registry" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
             <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
               <span class="text-white/40">SlippageGuard</span>
-              <span id="addr-slippage" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xdeB9...512E</span>
+              <span id="addr-slippage" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
             <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
               <span class="text-white/40">MarketRegimeGate</span>
-              <span id="addr-regime" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xECF8...89CF</span>
+              <span id="addr-regime" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
             <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
               <span class="text-white/40">ExecutionEngine</span>
-              <span id="addr-engine" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x8A3e...f8f4</span>
+              <span id="addr-engine" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
           </div>
         </div>
         
-        <div class="mt-5 pt-4 border-t border-white/5 text-[10px] text-white/40 font-mono flex items-center justify-between">
+        <div class="mt-5 pt-4 border-t border-white/5 text-[10px] text-white/40 font-mono flex flex-wrap items-center justify-between gap-2">
           <span>Chain ID: <span id="meta-chain-id" class="text-white/80 font-bold">688689</span></span>
+          <span>Block: <span id="meta-block-height" class="text-white/80 font-bold">#--</span></span>
           <span class="flex items-center gap-1">RPC: <span id="meta-rpc" class="text-emerald-400 font-bold">ONLINE</span></span>
         </div>
       </section>
@@ -321,6 +322,7 @@
       logsOutput: document.getElementById('logs-output'),
       clearLogs: document.getElementById('clear-logs'),
       metaChainId: document.getElementById('meta-chain-id'),
+      metaBlockHeight: document.getElementById('meta-block-height'),
       metaRpc: document.getElementById('meta-rpc'),
       
       marketLoading: document.getElementById('market-loading-overlay'),
@@ -392,11 +394,23 @@
     function render(state) {
       // 1. Wallet state
       if (state.wallet.connected) {
-        elements.walletText.textContent = `${state.wallet.address.slice(0, 6)}...${state.wallet.address.slice(-4)}`;
-        elements.walletDot.className = 'w-2 h-2 rounded-full bg-emerald-500 pulsing-dot';
+        if (state.wallet.chainId !== CONFIG.CHAIN_ID) {
+          elements.walletText.textContent = 'WRONG NETWORK';
+          elements.walletDot.className = 'w-2 h-2 rounded-full bg-amber-500 pulsing-dot';
+          
+          if (!elements.walletText.getAttribute('data-notified-wrong-network')) {
+            logMessage(`Warning: Connected to Chain ID ${state.wallet.chainId}. Please switch to ${CONFIG.CHAIN_NAME} (Chain ID ${CONFIG.CHAIN_ID}).`, 'warning');
+            elements.walletText.setAttribute('data-notified-wrong-network', 'true');
+          }
+        } else {
+          elements.walletText.textContent = `${state.wallet.address.slice(0, 6)}...${state.wallet.address.slice(-4)}`;
+          elements.walletDot.className = 'w-2 h-2 rounded-full bg-emerald-500 pulsing-dot';
+          elements.walletText.removeAttribute('data-notified-wrong-network');
+        }
       } else {
         elements.walletText.textContent = 'Connect Wallet';
         elements.walletDot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        elements.walletText.removeAttribute('data-notified-wrong-network');
       }
 
       // 2. Gateway/Mode state
@@ -528,6 +542,12 @@
 
       // Meta attributes
       elements.metaChainId.textContent = state.wallet.chainId || CONFIG.CHAIN_ID;
+      if (state.wallet.connected && state.wallet.chainId !== CONFIG.CHAIN_ID) {
+        elements.metaChainId.className = 'text-rose-500 font-bold';
+      } else {
+        elements.metaChainId.className = 'text-white/80 font-bold';
+      }
+      elements.metaBlockHeight.textContent = `#${state.blockHeight.toLocaleString()}`;
       elements.metaRpc.textContent = state.wallet.connected ? 'CONNECTED' : 'ONLINE';
     }
 
@@ -546,12 +566,23 @@
         
         // If web3 mode is enabled and wallet is connected, try to query regime on-chain directly
         let onChainRegime = marketStatus.regime;
+        let onChainBlock = state.blockHeight;
         if (state.mode === 'web3' && state.wallet.connected) {
           const contractRegime = await walletHandler.queryOnChainRegime();
           if (contractRegime) {
             onChainRegime = contractRegime;
             logMessage(`On-Chain regime verified: ${contractRegime}`, 'info');
           }
+          if (walletHandler.provider) {
+            try {
+              const currentBlock = await walletHandler.provider.getBlockNumber();
+              onChainBlock = Number(currentBlock);
+            } catch (blockErr) {
+              console.error('Failed to get block number:', blockErr);
+            }
+          }
+        } else {
+          onChainBlock = state.blockHeight + 1;
         }
 
         stateStore.updateState({
@@ -561,6 +592,7 @@
           },
           yieldStatus,
           decisionsHistory: decisionsHistory.history,
+          blockHeight: onChainBlock,
           apiState: {
             loading: false,
             error: null,
@@ -600,6 +632,12 @@
     function init() {
       stateStore.subscribe(render);
       setupCopyAddressListeners();
+
+      // Dynamically bind contract addresses from CONFIG
+      document.getElementById('addr-registry').textContent = `${CONFIG.CONTRACTS.ProtocolRegistry.slice(0, 6)}...${CONFIG.CONTRACTS.ProtocolRegistry.slice(-4)}`;
+      document.getElementById('addr-slippage').textContent = `${CONFIG.CONTRACTS.SlippageGuard.slice(0, 6)}...${CONFIG.CONTRACTS.SlippageGuard.slice(-4)}`;
+      document.getElementById('addr-regime').textContent = `${CONFIG.CONTRACTS.MarketRegimeGate.slice(0, 6)}...${CONFIG.CONTRACTS.MarketRegimeGate.slice(-4)}`;
+      document.getElementById('addr-engine').textContent = `${CONFIG.CONTRACTS.ExecutionEngine.slice(0, 6)}...${CONFIG.CONTRACTS.ExecutionEngine.slice(-4)}`;
       
       // Event Listeners
       elements.toggleMode.addEventListener('click', () => {

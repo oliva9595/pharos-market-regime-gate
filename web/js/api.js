@@ -7,14 +7,9 @@ export const apiClient = {
     if (currentState.mode === 'mock') {
       return this.getMockMarketStatus();
     }
-    try {
-      const res = await fetch(`${CONFIG.API_BASE_URL}/api/market/status`);
-      if (!res.ok) throw new Error(`API returned status ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      console.warn('Fastify API connection failed. Falling back to mock market data.', err);
-      return this.getMockMarketStatus();
-    }
+    const res = await fetch(`${CONFIG.API_BASE_URL}/api/market/status`);
+    if (!res.ok) throw new Error(`API returned status ${res.status}`);
+    return await res.json();
   },
 
   async fetchYieldStatus(opportunityId) {
@@ -22,14 +17,9 @@ export const apiClient = {
     if (currentState.mode === 'mock') {
       return this.getMockYieldStatus(opportunityId);
     }
-    try {
-      const res = await fetch(`${CONFIG.API_BASE_URL}/api/yield/status?opportunityId=${opportunityId}`);
-      if (!res.ok) throw new Error(`API returned status ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      console.warn('Fastify API connection failed. Falling back to mock yield data.', err);
-      return this.getMockYieldStatus(opportunityId);
-    }
+    const res = await fetch(`${CONFIG.API_BASE_URL}/api/yield/status?opportunityId=${opportunityId}`);
+    if (!res.ok) throw new Error(`API returned status ${res.status}`);
+    return await res.json();
   },
 
   async fetchDecisionsHistory() {
@@ -37,14 +27,9 @@ export const apiClient = {
     if (currentState.mode === 'mock') {
       return this.getMockDecisionsHistory();
     }
-    try {
-      const res = await fetch(`${CONFIG.API_BASE_URL}/api/decisions/history`);
-      if (!res.ok) throw new Error(`API returned status ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      console.warn('Fastify API connection failed. Falling back to mock decisions data.', err);
-      return this.getMockDecisionsHistory();
-    }
+    const res = await fetch(`${CONFIG.API_BASE_URL}/api/decisions/history`);
+    if (!res.ok) throw new Error(`API returned status ${res.status}`);
+    return await res.json();
   },
 
   async submitDecisionReceipt(receipt) {
