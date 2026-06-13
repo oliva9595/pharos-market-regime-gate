@@ -1,0 +1,7 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/risk-core" },
+    { "path": "packages/data-adapters" }
+  ]
+}

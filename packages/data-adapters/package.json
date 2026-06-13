@@ -1,0 +1,17 @@
+{
+  "name": "@pharos/data-adapters",
+  "version": "1.0.0",
+  "description": "Market and yield data adapters and normalizers",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@pharos/risk-core": "*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
