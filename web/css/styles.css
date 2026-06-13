@@ -1,406 +1,338 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-dark: #020204;
-  --bg-card: rgba(10, 10, 16, 0.65);
-  --border-color: rgba(255, 255, 255, 0.05);
-  --border-focus: #ff761c;
+  /* Vara A2A Network — Agents Arena Design System Tokens */
+  --bg-page: #fafafa;
+  --bg-card: #ffffff;
+  --color-1: #000000;
+  --color-text-muted: #555555;
+  --color-text-metadata: #777777;
   
-  --brand-orange: #ff761c;
-  --brand-purple: #8b5cf6;
-  --brand-cyan: #06b6d4;
-  --brand-emerald: #10b981;
-  --brand-rose: #f43f5e;
+  /* Borders */
+  --border-color: #000000;
+  --border-muted: rgba(0, 0, 0, 0.08);
+  
+  /* Semantic Colors */
+  --accent-green: oklch(0.82 0.21 145);
+  --warning-amber: #e47a11;
+  --warning-red: #d92d20; /* reserve red for errors/warnings */
+  
+  /* Radii */
+  --radius-sm: 3px 3px 1px 1px;
+  --radius-md: 33554400px;
+  --radius-lg: 5px;
+  --radius-xl: 11.25px;
+  --radius-full: 15.25px;
+  --radius-6: 999px;
+  
+  /* Shadows using accent-green oklch(0.82 0.21 145) */
+  --shadow-sm: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.82 0.21 145 / 0.4) 0px 0px 10px 0px;
+  --shadow-md: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.82 0.21 145 / 0.5) 0px 0px 12px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(1 0 0 / 0.03) 0px 1px 0px 0px;
+  --shadow-xl: oklch(0.82 0.21 145 / 0.16) 0px 0px 14px 0px;
+  --shadow-5: oklch(0.82 0.21 145 / 0.35) 0px 0px 20px 0px, oklch(0.82 0.21 145 / 0.18) 0px 0px 60px 0px;
+  
+  /* Motion */
+  --duration-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-base: 0.2s;
+  --duration-slow: 0.38s cubic-bezier(0.21, 0.78, 0.32, 1);
 }
 
+/* Base Body Styles */
 body {
-  background-color: var(--bg-dark);
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #f4f4f5;
+  background-color: var(--bg-page) !important;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  color: var(--color-1) !important;
 }
 
 .mono {
-  font-family: 'Geist Mono', monospace;
+  font-family: 'Geist Mono', monospace !important;
 }
 
-/* Glassmorphism Styles */
+/* Layout overrides to make it white-minimal grid */
 .glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.9);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-lg) !important;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.15s !important;
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 118, 28, 0.3);
-  box-shadow: 0 15px 45px -10px rgba(255, 118, 28, 0.08);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* Focus States for Accessibility */
+/* Accessibility Focus States */
 a:focus-visible,
 button:focus-visible,
 select:focus-visible,
 input:focus-visible {
-  outline: 2px solid var(--border-focus);
-  outline-offset: 4px;
+  outline: 2px solid var(--color-1) !important;
+  outline-offset: 4px !important;
 }
 
-/* Background Ambient Glows */
-@keyframes ambient-pulse {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scale(1) translate(0, 0);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.15) translate(3%, 5%);
-  }
+/* Force light text overrides on Tailwind color classes */
+.text-white,
+.text-gray-100,
+.text-gray-200,
+.text-gray-300,
+.text-zinc-100,
+.text-zinc-200,
+.text-zinc-300 {
+  color: var(--color-1) !important;
 }
 
+.text-white\/60,
+.text-white\/40,
+.text-gray-400,
+.text-zinc-400,
+.text-white\/50 {
+  color: var(--color-text-muted) !important;
+}
+
+.text-white\/80,
+.text-gray-300,
+.text-zinc-300 {
+  color: #222222 !important;
+}
+
+/* Border overrides */
+.border-white\/10,
+.border-white\/5,
+.border-zinc-800,
+.border-gray-800,
+.border-white\/20 {
+  border-color: var(--border-muted) !important;
+}
+
+/* Background overrides */
+.bg-white\/5,
+.bg-zinc-900,
+.bg-[#0d0d12],
+.bg-white\/10,
+.bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+.bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Heading Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-1) !important;
+  font-weight: 700 !important;
+}
+
+/* Header & Banner Styles */
+#global-readiness-banner {
+  background-color: var(--bg-card) !important;
+  border-bottom: 2px solid var(--border-color) !important;
+  color: var(--color-1) !important;
+}
+
+header {
+  background-color: var(--bg-card) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Buttons (btn-shock, btn-scenario, execution-action-button) */
+.btn-shock, .btn-scenario {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  font-family: 'Geist Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  padding: 8px 12px !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--color-1) !important;
+  cursor: pointer !important;
+  transition: all var(--duration-fast) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.btn-shock:hover, .btn-scenario:hover {
+  background: #f0f0f0 !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-shock:disabled, .btn-scenario:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Active states using exact design system mappings */
+.btn-shock.active-normal,
+.btn-scenario.active-healthy {
+  border-color: var(--accent-green) !important;
+  background: var(--bg-card) !important;
+  color: var(--color-1) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.btn-shock.active-volatile,
+.btn-scenario.active-fees,
+.btn-scenario.active-subsidy {
+  border-color: var(--warning-amber) !important;
+  background: var(--bg-card) !important;
+  color: var(--color-1) !important;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, var(--warning-amber) 0px 0px 10px 0px !important;
+}
+
+.btn-shock.active-panic,
+.btn-scenario.active-mercenary,
+.btn-scenario.active-slippage {
+  border-color: var(--warning-red) !important;
+  background: var(--bg-card) !important;
+  color: var(--color-1) !important;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, var(--warning-red) 0px 0px 10px 0px !important;
+}
+
+/* Ambient glow overrides (to make them very soft white/green light reflections) */
 .ambient-glow {
-  filter: blur(120px);
-  animation: ambient-pulse 10s infinite ease-in-out;
-  pointer-events: none;
+  background-color: var(--accent-green) !important;
+  opacity: 0.05 !important;
+  mix-blend-mode: multiply !important;
 }
 
 /* Loading Spinners & Overlays */
-.overlay-container {
-  position: relative;
-}
-
 .state-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(2, 2, 4, 0.88);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 40;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.state-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
 }
 
 .spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(255, 118, 28, 0.15);
-  border-top-color: var(--brand-orange);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Status dots and glow rings */
-.status-glow-ring {
-  box-shadow: 0 0 12px currentColor;
+  border: 3px solid rgba(0, 0, 0, 0.05) !important;
+  border-top-color: var(--color-1) !important;
 }
 
 /* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
 ::-webkit-scrollbar-track {
-  background: rgba(2, 2, 4, 0.3);
+  background: #f0f0f0 !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 118, 28, 0.25);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-radius: var(--radius-lg) !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 118, 28, 0.5);
+  background: rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Custom dropdown resets for dark mode aesthetics */
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 14px;
-  padding-right: 36px;
-}
-
-/* Custom micro-animations */
-.hover-glow:hover {
-  filter: drop-shadow(0 0 8px var(--brand-orange));
-}
-
-.pulsing-dot {
-  animation: pulse-dot-anim 2s infinite;
-}
-
-@keyframes pulse-dot-anim {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
-}
-
-/* Premium Shock Scenario Button Styles */
-.btn-shock {
-  background: rgba(9, 9, 12, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: rgba(244, 244, 245, 0.6);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-}
-
-.btn-shock:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-/* Active Glow States */
-.btn-shock.active-normal {
-  border-color: var(--brand-emerald);
-  color: var(--brand-emerald);
-  background: rgba(16, 185, 129, 0.08);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
-  text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
-}
-
-.btn-shock.active-volatile {
-  border-color: var(--brand-orange);
-  color: var(--brand-orange);
-  background: rgba(255, 118, 28, 0.08);
-  box-shadow: 0 0 12px rgba(255, 118, 28, 0.25);
-  text-shadow: 0 0 4px rgba(255, 118, 28, 0.4);
-}
-
-.btn-shock.active-panic {
-  border-color: var(--brand-rose);
-  color: var(--brand-rose);
-  background: rgba(244, 63, 94, 0.08);
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
-  text-shadow: 0 0 4px rgba(244, 63, 94, 0.4);
-}
-
-/* Cooldown Progress Bar */
-.cooldown-container {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  overflow: hidden;
-  height: 6px;
-  position: relative;
-  width: 100%;
-}
-
-.cooldown-bar {
-  background: linear-gradient(90deg, var(--brand-purple), var(--brand-orange));
-  height: 100%;
-  width: 0%;
-  transition: width 0.3s ease;
-  box-shadow: 0 0 8px var(--brand-purple);
-}
-
-/* Neon utilities */
-.neon-border-emerald {
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.08);
-}
-.neon-border-amber {
-  border-color: rgba(245, 158, 11, 0.3);
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.08);
-}
-.neon-border-rose {
-  border-color: rgba(244, 63, 94, 0.3);
-  box-shadow: 0 0 8px rgba(244, 63, 94, 0.08);
-}
-
-/* Yield Decay Scenario Button Styles */
-.btn-scenario {
-  background: rgba(9, 9, 12, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: rgba(244, 244, 245, 0.6);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-}
-
-.btn-scenario:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.btn-scenario.active-healthy {
-  border-color: var(--brand-emerald);
-  color: var(--brand-emerald);
-  background: rgba(16, 185, 129, 0.08);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
-  text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
-}
-
-.btn-scenario.active-subsidy {
-  border-color: var(--brand-purple);
-  color: var(--brand-purple);
-  background: rgba(139, 92, 246, 0.08);
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
-  text-shadow: 0 0 4px rgba(139, 92, 246, 0.4);
-}
-
-.btn-scenario.active-mercenary {
-  border-color: #ef4444;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
-  text-shadow: 0 0 4px rgba(239, 68, 68, 0.4);
-}
-
-.btn-scenario.active-fees {
-  border-color: var(--brand-orange);
-  color: var(--brand-orange);
-  background: rgba(255, 118, 28, 0.08);
-  box-shadow: 0 0 12px rgba(255, 118, 28, 0.25);
-  text-shadow: 0 0 4px rgba(255, 118, 28, 0.4);
-}
-
-.btn-scenario.active-slippage {
-  border-color: var(--brand-rose);
-  color: var(--brand-rose);
-  background: rgba(244, 63, 94, 0.08);
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
-  text-shadow: 0 0 4px rgba(244, 63, 94, 0.4);
-}
-
+/* Execution Arena styles */
 .execution-proof-panel {
-  border-color: rgba(255, 118, 28, 0.18);
+  border: 2px solid var(--border-color) !important;
 }
 
 .execution-proof-card {
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 16px;
-  min-width: 0;
+  background: #ffffff !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-xl) !important;
 }
 
 .execution-proof-label {
-  color: rgba(244, 244, 245, 0.38);
-  display: block;
-  font-family: 'Geist Mono', monospace;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.execution-proof-list {
-  display: grid;
-  gap: 9px;
-  margin-top: 12px;
-}
-
-.execution-proof-list div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-}
-
-.execution-proof-list dt {
-  color: rgba(244, 244, 245, 0.35);
+  color: var(--color-text-muted) !important;
 }
 
 .execution-proof-list dd {
-  color: rgba(244, 244, 245, 0.85);
-  margin: 0;
-  max-width: 65%;
-  overflow-wrap: anywhere;
-  text-align: right;
+  color: var(--color-1) !important;
+}
+
+.execution-proof-list dt {
+  color: var(--color-text-muted) !important;
 }
 
 .execution-action-button {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  font-family: 'Geist Mono', monospace;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 9px 12px;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
+  border: 1px solid var(--border-color) !important;
+  background: var(--bg-card) !important;
+  color: var(--color-1) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+.execution-action-button:hover:not(:disabled) {
+  background: #f5f5f5 !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .execution-action-button--check {
-  background: rgba(255, 118, 28, 0.1);
-  border-color: rgba(255, 118, 28, 0.3);
-  color: var(--brand-orange);
+  border-color: var(--accent-green) !important;
 }
 
 .execution-action-button--execute {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: var(--brand-emerald);
+  border-color: var(--warning-amber) !important;
 }
 
-.execution-action-button:disabled {
-  cursor: not-allowed;
-  filter: grayscale(1);
-  opacity: 0.35;
+/* Decision Badges */
+.execution-decision-badge {
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-full) !important;
 }
 
-.execution-decision-badge,
-.execution-reason-code {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  font-family: 'Geist Mono', monospace;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 4px 8px;
+.execution-decision-badge--allow {
+  background-color: var(--accent-green) !important;
+  color: #000000 !important;
 }
 
-.execution-decision-badge--allow { color: var(--brand-emerald); border-color: rgba(16, 185, 129, 0.3); }
-.execution-decision-badge--restrict { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
-.execution-decision-badge--block { color: var(--brand-rose); border-color: rgba(244, 63, 94, 0.3); }
-.execution-decision-badge--unwind { color: var(--brand-purple); border-color: rgba(139, 92, 246, 0.3); }
-
-.execution-reason-code {
-  color: rgba(244, 244, 245, 0.55);
-  font-size: 8px;
-  padding: 3px 6px;
+.execution-decision-badge--restrict {
+  background-color: var(--warning-amber) !important;
+  color: #ffffff !important;
 }
 
+.execution-decision-badge--block {
+  background-color: var(--warning-red) !important;
+  color: #ffffff !important;
+}
+
+.execution-decision-badge--unwind {
+  background-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+/* Cooldown Bar */
+.cooldown-container {
+  border: 1px solid var(--border-color) !important;
+  background: #f0f0f0 !important;
+}
+
+.cooldown-bar {
+  background: var(--accent-green) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Hysteresis lists and text */
+#market-hysteresis,
+#yield-hysteresis {
+  font-family: 'Geist Mono', monospace !important;
+}
+
+/* Custom dropdown resets */
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-color: #ffffff !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+}
+
+/* Stale Banner */
+#stale-warning-banner {
+  background-color: rgba(228, 122, 17, 0.1) !important;
+  border-bottom: 2px solid var(--warning-amber) !important;
+  color: var(--warning-amber) !important;
+}
+
+/* Neon Borders for UI States */
+.neon-border-emerald {
+  border: 2px solid var(--accent-green) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.neon-border-amber {
+  border: 2px solid var(--warning-amber) !important;
+}
+.neon-border-rose {
+  border: 2px solid var(--warning-red) !important;
+}

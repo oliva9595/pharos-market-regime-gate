@@ -46,11 +46,11 @@ export class MarketRegimeChart {
 
     // Color definitions
     const colors = {
-      normal: '#10b981',   // emerald green
-      volatile: '#ff761c', // brand orange
-      panic: '#f43f5e',    // rose red
-      textMuted: 'rgba(244, 244, 245, 0.4)',
-      gridLine: 'rgba(255, 255, 255, 0.05)'
+      normal: 'oklch(0.82 0.21 145)',   // Vara signature green
+      volatile: '#e47a11', // warning amber
+      panic: '#d92d20',    // warning red
+      textMuted: '#666666',
+      gridLine: 'rgba(0, 0, 0, 0.08)'
     };
 
     // Determine current regime color
@@ -205,7 +205,7 @@ export class MarketRegimeChart {
           cy: y,
           r: '3.5',
           fill: ptColor,
-          stroke: '#020204',
+          stroke: '#ffffff',
           'stroke-width': '1.5'
         });
         

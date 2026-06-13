@@ -12,8 +12,30 @@
       theme: {
         extend: {
           colors: {
-            brand: '#ff761c',
-            darkest: '#020204'
+            brand: 'oklch(0.82 0.21 145)', // Vara signature green
+            darkest: '#fafafa', // Light theme background
+            'color-1': '#000000'
+          },
+          fontFamily: {
+            sans: ['Geist', 'sans-serif'],
+            mono: ['Geist Mono', 'monospace'],
+          },
+          fontSize: {
+            'xs': '9px',
+            'sm': '10px',
+            'base': '11px',
+            'lg': '13px',
+            'xl': '15px',
+            '2xl': '38px',
+            '3xl': '42px',
+          },
+          borderRadius: {
+            'sm': '3px 3px 1px 1px',
+            'md': '33554400px',
+            'lg': '5px',
+            'xl': '11.25px',
+            'full': '15.25px',
+            '6': '999px',
           }
         }
       }
@@ -26,7 +48,7 @@
   <!-- Ethers.js v6 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
 </head>
-<body class="bg-[#020204] text-[#f4f4f5] min-h-screen relative overflow-x-hidden flex flex-col">
+<body class="bg-darkest text-color-1 min-h-screen relative overflow-x-hidden flex flex-col font-sans">
   <!-- Background Ambient Glows -->
   <div class="fixed w-[500px] h-[500px] rounded-full bg-brand/5 top-[-250px] left-[-200px] ambient-glow" aria-hidden="true"></div>
   <div class="fixed w-[600px] h-[600px] rounded-full bg-indigo-500/5 bottom-[-300px] right-[-200px] ambient-glow" aria-hidden="true"></div>

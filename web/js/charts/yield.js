@@ -49,11 +49,11 @@ export class YieldApyChart {
 
     // Color definitions
     const colors = {
-      baseApy: '#10b981',       // emerald green
-      rewardApy: '#8b5cf6',     // violet
-      totalLine: '#3b82f6',     // blue
-      textMuted: 'rgba(244, 244, 245, 0.4)',
-      gridLine: 'rgba(255, 255, 255, 0.05)'
+      baseApy: 'oklch(0.82 0.21 145)',   // Vara signature green
+      rewardApy: '#888888',     // neutral gray
+      totalLine: '#000000',     // high-contrast black
+      textMuted: '#666666',
+      gridLine: 'rgba(0, 0, 0, 0.08)'
     };
 
     // 1. Create Defs for gradients & filters
@@ -203,7 +203,7 @@ export class YieldApyChart {
         cy: y,
         r: '3',
         fill: colors.totalLine,
-        stroke: '#020204',
+        stroke: '#ffffff',
         'stroke-width': '1'
       });
 
@@ -294,12 +294,12 @@ export class YieldFactorsChart {
     });
 
     const factorList = [
-      { key: 'apySlopeRisk', label: 'APY Slope (25%)', score: factors.apySlopeRisk ?? 0, color: '#ff761c' },
-      { key: 'subsidyDependency', label: 'Subsidy Dep (20%)', score: factors.subsidyDependency ?? 0, color: '#8b5cf6' },
-      { key: 'tvlNetFlow', label: 'TVL Net Flow (20%)', score: factors.tvlNetFlow ?? 0, color: '#ef4444' },
-      { key: 'feeSustainability', label: 'Fee Sustain (15%)', score: factors.feeSustainability ?? 0, color: '#3b82f6' },
-      { key: 'exitLiquidity', label: 'Exit Slippage (10%)', score: factors.exitLiquidity ?? 0, color: '#eab308' },
-      { key: 'rewardToken', label: 'Reward Token (10%)', score: factors.rewardToken ?? 0, color: '#ec4899' }
+      { key: 'apySlopeRisk', label: 'APY Slope (25%)', score: factors.apySlopeRisk ?? 0 },
+      { key: 'subsidyDependency', label: 'Subsidy Dep (20%)', score: factors.subsidyDependency ?? 0 },
+      { key: 'tvlNetFlow', label: 'TVL Net Flow (20%)', score: factors.tvlNetFlow ?? 0 },
+      { key: 'feeSustainability', label: 'Fee Sustain (15%)', score: factors.feeSustainability ?? 0 },
+      { key: 'exitLiquidity', label: 'Exit Slippage (10%)', score: factors.exitLiquidity ?? 0 },
+      { key: 'rewardToken', label: 'Reward Token (10%)', score: factors.rewardToken ?? 0 }
     ];
 
     const rowHeight = effHeight / factorList.length;
@@ -311,7 +311,7 @@ export class YieldFactorsChart {
       const text = this.createEl('text', {
         x: leftPad - 10,
         y: y + 8,
-        fill: 'rgba(244, 244, 245, 0.6)',
+        fill: '#555555',
         'font-size': '8px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
@@ -327,8 +327,8 @@ export class YieldFactorsChart {
         width: effWidth,
         height: '8',
         rx: '4',
-        fill: 'rgba(255, 255, 255, 0.04)',
-        stroke: 'rgba(255, 255, 255, 0.02)',
+        fill: 'rgba(0, 0, 0, 0.05)',
+        stroke: 'rgba(0, 0, 0, 0.02)',
         'stroke-width': '1'
       });
       svg.appendChild(bgBar);
@@ -336,14 +336,19 @@ export class YieldFactorsChart {
       // Draw Fill bar
       const fillWidth = (f.score / 100) * effWidth;
       if (fillWidth > 0) {
+        // Map color semantically: green for low, amber for moderate, red for high
+        const barColor = f.score >= 50 
+          ? '#d92d20' 
+          : (f.score >= 30 ? '#e47a11' : 'oklch(0.82 0.21 145)');
+
         const fillBar = this.createEl('rect', {
           x: leftPad,
           y: y,
           width: fillWidth,
           height: '8',
           rx: '4',
-          fill: f.color,
-          opacity: f.score >= 50 ? '0.95' : '0.6'
+          fill: barColor,
+          opacity: f.score >= 50 ? '0.95' : '0.7'
         });
         svg.appendChild(fillBar);
       }
@@ -352,7 +357,7 @@ export class YieldFactorsChart {
       const valText = this.createEl('text', {
         x: leftPad + effWidth + 6,
         y: y + 8,
-        fill: f.score >= 50 ? '#ef4444' : 'rgba(244, 244, 245, 0.8)',
+        fill: f.score >= 50 ? '#d92d20' : '#000000',
         'font-size': '8px',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': f.score >= 50 ? 'bold' : 'normal'
