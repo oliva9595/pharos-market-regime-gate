@@ -1,0 +1,20 @@
+{
+  "name": "@pharos/keeper",
+  "version": "1.0.0",
+  "description": "Risk evaluator and signed report publisher keeper service",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "start": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@pharos/risk-core": "*",
+    "@pharos/data-adapters": "*",
+    "ethers": "^6.13.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
