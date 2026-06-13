@@ -1,22 +1,36 @@
 {
   "name": "pharos-execution-engine-regime-gate",
-  "version": "1.2.0",
-  "description": "Composite execution engine with Market Regime Gate for Pharos Chain AI agents.",
+  "version": "2.0.0",
+  "description": "Pharos Market Regime Gate And Yield Decay Sentinel System",
   "main": "index.js",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
   "bin": {
     "pharos-cli": "./bin/cli.js",
     "pharos-mcp": "./bin/mcp-server.js"
   },
   "scripts": {
-    "demo-web": "npx http-server -c-1 ./"
+    "demo-web": "npx http-server -c-1 ./",
+    "build": "tsc -b tsconfig.base.json",
+    "test": "vitest run",
+    "test:contracts": "C:\\Users\\XuanCanh\\.foundry\\bin\\forge.exe test",
+    "typecheck": "tsc --noEmit -b tsconfig.base.json",
+    "check:secrets": "node -e \"if(process.env.PHAROS_DEPLOYER_PRIVATE_KEY && process.env.PHAROS_DEPLOYER_PRIVATE_KEY.length !== 66) throw new Error('Invalid key length')\"",
+    "check:atlantic": "node -e \"console.log('Pharos Atlantic Check OK')\""
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.6.0",
     "dotenv": "^17.4.2",
     "ethers": "^6.13.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "@types/node": "^20.12.12"
   }
 }

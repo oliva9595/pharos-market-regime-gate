@@ -7,3 +7,7 @@ cache/
 *.log
 broadcast/
 package-lock.json
+*.sqlite
+*.db
+dist/
+tsconfig.tsbuildinfo
