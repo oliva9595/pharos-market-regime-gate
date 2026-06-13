@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharos Volatility Sentinel Command Center</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#ff761c',
+            darkest: '#020204'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- FontAwesome & Custom Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#020204] text-[#f4f4f5] min-h-screen relative overflow-x-hidden flex flex-col">
+  <!-- Background Ambient Glows -->
+  <div class="fixed w-[500px] h-[500px] rounded-full bg-brand/5 top-[-250px] left-[-200px] ambient-glow" aria-hidden="true"></div>
+  <div class="fixed w-[600px] h-[600px] rounded-full bg-indigo-500/5 bottom-[-300px] right-[-200px] ambient-glow" aria-hidden="true"></div>
+
+  <!-- Global Readiness Banner -->
+  <div id="global-readiness-banner" class="w-full py-4 px-6 border-b border-white/10 text-center transition-colors duration-300 z-50 sticky top-0 bg-[#020204]/90 backdrop-blur-md" role="status">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="flex h-3 w-3 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-brand" id="banner-ping"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-brand" id="banner-dot"></span>
+        </span>
+        <span class="text-xs font-semibold uppercase tracking-wider text-white/60">Execution Policy:</span>
+        <span id="banner-decision-text" class="text-lg font-bold font-mono tracking-widest px-4 py-1 rounded border border-brand/30 bg-brand/10 text-brand">LOADING</span>
+      </div>
+      <div class="flex items-center gap-6 text-xs text-white/60 font-mono">
+        <span id="banner-report-id" class="bg-white/5 px-2.5 py-1 rounded max-w-[240px] truncate">Report: 0x...</span>
+        <span id="banner-freshness"><i class="fa-regular fa-clock mr-1"></i> Freshness: --</span>
+        <span id="banner-confidence"><i class="fa-solid fa-gauge mr-1"></i> Confidence: --</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Header -->
+  <header class="w-full border-b border-white/5 bg-[#020204]/60 py-4 px-6 z-40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="relative w-8 h-8 flex items-center justify-center rounded border border-brand bg-brand/10" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved text-brand text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold uppercase tracking-wider flex items-center gap-2">
+            <span>Pharos Sentinel</span>
+            <span class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">ATLANTIC</span>
+          </h1>
+          <p class="text-[9px] text-white/40 uppercase tracking-widest font-mono">Security Command Center</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <!-- Execution Mode Controller -->
+        <div class="flex items-center gap-2 bg-white/5 rounded-full px-3.5 py-1 border border-white/10">
+          <span class="text-[10px] text-white/50 uppercase font-mono">Gateway:</span>
+          <button id="toggle-mode" class="text-[10px] font-bold font-mono text-brand hover:text-white transition-colors uppercase" aria-label="Toggle simulator execution gateway mode">MOCK MODE</button>
+        </div>
+        
+        <!-- Wallet Connection -->
+        <button id="connect-wallet" class="px-4 py-1.5 rounded-full border border-white/10 hover:border-white/20 transition-all font-mono text-xs flex items-center gap-2 bg-[#09090c]" aria-label="Connect Web3 wallet">
+          <span class="w-2 h-2 rounded-full bg-rose-500" id="wallet-dot" aria-hidden="true"></span>
+          <span id="wallet-text">Connect Wallet</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stale Data Warning Banner -->
+  <div id="stale-warning-banner" class="hidden w-full bg-amber-500/10 border-b border-amber-500/20 py-2 px-6 text-center text-xs text-amber-400 font-mono" role="alert">
+    <i class="fa-solid fa-triangle-exclamation mr-2"></i> WARNING: API data is currently stale. Last successful poll was over 30s ago.
+  </div>
+
+  <!-- Main Grid Layout -->
+  <main class="flex-grow max-w-7xl mx-auto w-full p-6 space-y-6">
+    
+    <!-- SECTION 1: Monitor Panels -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Market Regime Monitor Section -->
+      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between" id="market-regime-panel" aria-labelledby="market-title">
+        <!-- Loading overlay -->
+        <div class="state-overlay" id="market-loading-overlay" aria-hidden="true">
+          <div class="spinner mb-2"></div>
+          <span class="text-xs text-white/60 font-mono">Refreshing Market Metrics...</span>
+        </div>
+        
+        <!-- Error overlay -->
+        <div class="state-overlay" id="market-error-overlay" aria-hidden="true">
+          <i class="fa-solid fa-circle-exclamation text-rose-500 text-3xl mb-2"></i>
+          <span class="text-xs text-rose-400 font-mono mb-4" id="market-error-msg">Connection Error</span>
+          <button class="px-4 py-1.5 border border-white/10 rounded text-xs font-mono bg-[#09090c] hover:bg-white/5" id="market-retry-btn">Retry Connection</button>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-5">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-chart-line text-brand text-lg" aria-hidden="true"></i>
+              <h2 id="market-title" class="text-base font-bold uppercase tracking-wider">Market Regime Monitor</h2>
+            </div>
+            <span id="market-regime-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LOADING</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Volatility Index (VIX)</span>
+              <div id="market-volatility" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Price Divergence</span>
+              <div id="market-divergence" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Bridge Net Outflow</span>
+              <div id="market-bridge" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Liquidity Depth</span>
+              <div id="market-liquidity" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block">Regime Diagnostics:</span>
+            <ul id="market-reasons" class="space-y-2 text-xs font-mono text-white/80 max-h-24 overflow-y-auto bg-black/40 p-4 rounded-xl border border-white/5">
+              <li class="text-white/40">No diagnostics available.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Yield Decay Monitor Section -->
+      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between" id="yield-decay-panel" aria-labelledby="yield-title">
+        <!-- Loading overlay -->
+        <div class="state-overlay" id="yield-loading-overlay" aria-hidden="true">
+          <div class="spinner mb-2"></div>
+          <span class="text-xs text-white/60 font-mono">Refreshing Yield Metrics...</span>
+        </div>
+        
+        <!-- Error overlay -->
+        <div class="state-overlay" id="yield-error-overlay" aria-hidden="true">
+          <i class="fa-solid fa-circle-exclamation text-rose-500 text-3xl mb-2"></i>
+          <span class="text-xs text-rose-400 font-mono mb-4" id="yield-error-msg">Connection Error</span>
+          <button class="px-4 py-1.5 border border-white/10 rounded text-xs font-mono bg-[#09090c] hover:bg-white/5" id="yield-retry-btn">Retry Connection</button>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-seedling text-indigo-400 text-lg" aria-hidden="true"></i>
+              <h2 id="yield-title" class="text-base font-bold uppercase tracking-wider">Yield Decay Monitor</h2>
+            </div>
+            <span id="yield-decay-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LOADING</span>
+          </div>
+
+          <!-- Opportunity ID Selector -->
+          <div class="mb-4">
+            <label for="opportunity-selector" class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block mb-1">Target Vault Opportunity</label>
+            <select id="opportunity-selector" class="w-full bg-[#09090c] border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-white/80 focus:border-brand focus-visible:outline-none focus:ring-1 focus:ring-brand">
+              <option value="0xbe713906E4D5ac544C069Cd16B2233C979b8AB5a">ProtocolRegistry Vault (0xbe71...AB5a)</option>
+              <option value="0xdeB9B625e70E38cdb0dEe5DEAACa25A5095D512E">SlippageGuard Vault (0xdeB9...512E)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Decay Score</span>
+              <div id="yield-decay-score" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Total APY</span>
+              <div id="yield-apy" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">TVL Assets</span>
+              <div id="yield-tvl" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">DEX Net Flow (24h)</span>
+              <div id="yield-netflow" class="text-xl font-bold font-mono text-white mt-1">--</div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block">Decay Diagnostics:</span>
+            <ul id="yield-reasons" class="space-y-2 text-xs font-mono text-white/80 max-h-24 overflow-y-auto bg-black/40 p-4 rounded-xl border border-white/5">
+              <li class="text-white/40">No diagnostics available.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- SECTION 2: Safety Gate Contracts & Log Window -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Contract Safety Panel -->
+      <section class="glass-panel p-6 rounded-2xl flex flex-col justify-between" aria-labelledby="status-title">
+        <div>
+          <div class="flex items-center gap-2 border-b border-white/5 pb-3.5 mb-4">
+            <i class="fa-solid fa-file-contract text-emerald-400 text-base" aria-hidden="true"></i>
+            <h2 id="status-title" class="text-sm font-bold uppercase tracking-wider">Gate Safety Deployment</h2>
+          </div>
+          <div class="space-y-3 text-xs font-mono">
+            <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
+              <span class="text-white/40">ProtocolRegistry</span>
+              <span id="addr-registry" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xbe71...AB5a</span>
+            </div>
+            <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
+              <span class="text-white/40">SlippageGuard</span>
+              <span id="addr-slippage" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xdeB9...512E</span>
+            </div>
+            <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
+              <span class="text-white/40">MarketRegimeGate</span>
+              <span id="addr-regime" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0xECF8...89CF</span>
+            </div>
+            <div class="flex justify-between items-center bg-black/20 p-2.5 rounded-lg border border-white/5">
+              <span class="text-white/40">ExecutionEngine</span>
+              <span id="addr-engine" class="text-white/80 font-bold truncate ml-2 max-w-[140px] hover:text-brand transition-colors cursor-pointer" title="Copy Address">0x8A3e...f8f4</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-5 pt-4 border-t border-white/5 text-[10px] text-white/40 font-mono flex items-center justify-between">
+          <span>Chain ID: <span id="meta-chain-id" class="text-white/80 font-bold">688689</span></span>
+          <span class="flex items-center gap-1">RPC: <span id="meta-rpc" class="text-emerald-400 font-bold">ONLINE</span></span>
+        </div>
+      </section>
+
+      <!-- Live Execution Console -->
+      <section class="glass-panel p-6 rounded-2xl lg:col-span-2 flex flex-col justify-between" id="logs-panel" aria-labelledby="logs-title">
+        <!-- Empty state placeholder -->
+        <div class="state-overlay" id="logs-empty-overlay" aria-hidden="true">
+          <i class="fa-solid fa-list text-white/10 text-3xl mb-2"></i>
+          <span class="text-xs text-white/30 font-mono">No security logs recorded.</span>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between border-b border-white/5 pb-3.5 mb-4">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand text-base" aria-hidden="true"></i>
+              <h2 id="logs-title" class="text-sm font-bold uppercase tracking-wider">Live Security Logs</h2>
+            </div>
+            <button id="clear-logs" class="text-[10px] text-white/40 hover:text-white/85 uppercase font-mono px-3 py-1 border border-white/15 rounded-lg hover:bg-white/5 transition-all">Clear Logs</button>
+          </div>
+          
+          <div id="logs-output" class="h-36 overflow-y-auto font-mono text-xs space-y-2 p-4 rounded-xl bg-black/50 border border-white/5">
+            <div class="text-brand/80">[SYSTEM] Pharos Volatility Sentinel dashboard ready.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer Component -->
+  <footer class="w-full border-t border-white/5 bg-black/40 py-4 px-6 text-center text-xs text-white/40 mt-auto z-40">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 font-mono">
+      <p>&copy; 2026 Pharos Network. Volatility Shield Sentinel Middleware.</p>
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 pulsing-dot"></span>
+        <span>Sentinel Command Center Active</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Coordination Logic -->
+  <script type="module">
+    import { stateStore } from './js/state.js';
+    import { apiClient } from './js/api.js';
+    import { walletHandler } from './js/wallet.js';
+    import { CONFIG } from './js/config.js';
+
+    // Element Cache
+    const elements = {
+      bannerDecisionText: document.getElementById('banner-decision-text'),
+      bannerPing: document.getElementById('banner-ping'),
+      bannerDot: document.getElementById('banner-dot'),
+      bannerReportId: document.getElementById('banner-report-id'),
+      bannerFreshness: document.getElementById('banner-freshness'),
+      bannerConfidence: document.getElementById('banner-confidence'),
+      
+      toggleMode: document.getElementById('toggle-mode'),
+      connectWallet: document.getElementById('connect-wallet'),
+      walletDot: document.getElementById('wallet-dot'),
+      walletText: document.getElementById('wallet-text'),
+      staleWarningBanner: document.getElementById('stale-warning-banner'),
+      
+      marketRegimeBadge: document.getElementById('market-regime-badge'),
+      marketVolatility: document.getElementById('market-volatility'),
+      marketDivergence: document.getElementById('market-divergence'),
+      marketBridge: document.getElementById('market-bridge'),
+      marketLiquidity: document.getElementById('market-liquidity'),
+      marketReasons: document.getElementById('market-reasons'),
+      
+      yieldDecayBadge: document.getElementById('yield-decay-badge'),
+      opportunitySelector: document.getElementById('opportunity-selector'),
+      yieldDecayScore: document.getElementById('yield-decay-score'),
+      yieldApy: document.getElementById('yield-apy'),
+      yieldTvl: document.getElementById('yield-tvl'),
+      yieldNetflow: document.getElementById('yield-netflow'),
+      yieldReasons: document.getElementById('yield-reasons'),
+      
+      logsOutput: document.getElementById('logs-output'),
+      clearLogs: document.getElementById('clear-logs'),
+      metaChainId: document.getElementById('meta-chain-id'),
+      metaRpc: document.getElementById('meta-rpc'),
+      
+      marketLoading: document.getElementById('market-loading-overlay'),
+      marketError: document.getElementById('market-error-overlay'),
+      marketRetry: document.getElementById('market-retry-btn'),
+      yieldLoading: document.getElementById('yield-loading-overlay'),
+      yieldError: document.getElementById('yield-error-overlay'),
+      yieldRetry: document.getElementById('yield-retry-btn'),
+      logsEmpty: document.getElementById('logs-empty-overlay')
+    };
+
+    // Safe logger utility to prevent XSS injection
+    function logMessage(text, type = 'info') {
+      const line = document.createElement('div');
+      line.className = `text-xs font-mono ${type === 'error' ? 'text-red-500' : type === 'warning' ? 'text-amber-500' : 'text-sky-400'}`;
+      
+      const timestamp = document.createElement('span');
+      timestamp.className = 'text-white/30 mr-2';
+      timestamp.textContent = `[${new Date().toLocaleTimeString()}]`;
+      
+      const content = document.createElement('span');
+      content.textContent = text;
+      
+      line.appendChild(timestamp);
+      line.appendChild(content);
+      elements.logsOutput.appendChild(line);
+      elements.logsOutput.scrollTop = elements.logsOutput.scrollHeight;
+      
+      // Update logs empty state overlay
+      elements.logsEmpty.classList.remove('active');
+    }
+
+    // Compute combined decision (ALLOW / RESTRICT / BLOCK / UNWIND)
+    function getCombinedDecision(marketRegime, yieldState) {
+      if (marketRegime === 'PANIC') return 'UNWIND';
+      if (marketRegime === 'VOLATILE') {
+        if (yieldState === 'DECAYING' || yieldState === 'EXIT') return 'UNWIND';
+        return 'RESTRICT';
+      }
+      if (yieldState === 'EXIT') return 'UNWIND';
+      if (yieldState === 'DECAYING') return 'BLOCK';
+      if (yieldState === 'WATCH') return 'RESTRICT';
+      return 'ALLOW';
+    }
+
+    // Copy to clipboard helper
+    function setupCopyAddressListeners() {
+      ['addr-registry', 'addr-slippage', 'addr-regime', 'addr-engine'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('click', async () => {
+            const address = el.textContent.includes('...') ? 
+              (id === 'addr-registry' ? CONFIG.CONTRACTS.ProtocolRegistry :
+               id === 'addr-slippage' ? CONFIG.CONTRACTS.SlippageGuard :
+               id === 'addr-regime' ? CONFIG.CONTRACTS.MarketRegimeGate :
+               CONFIG.CONTRACTS.ExecutionEngine) : el.textContent;
+            try {
+              await navigator.clipboard.writeText(address);
+              logMessage(`Copied address to clipboard: ${address}`, 'info');
+            } catch (err) {
+              console.error('Failed to copy text: ', err);
+            }
+          });
+        }
+      });
+    }
+
+    // Main render bindings
+    function render(state) {
+      // 1. Wallet state
+      if (state.wallet.connected) {
+        elements.walletText.textContent = `${state.wallet.address.slice(0, 6)}...${state.wallet.address.slice(-4)}`;
+        elements.walletDot.className = 'w-2 h-2 rounded-full bg-emerald-500 pulsing-dot';
+      } else {
+        elements.walletText.textContent = 'Connect Wallet';
+        elements.walletDot.className = 'w-2 h-2 rounded-full bg-rose-500';
+      }
+
+      // 2. Gateway/Mode state
+      elements.toggleMode.textContent = `${state.mode.toUpperCase()} MODE`;
+
+      // 3. Stale indicator
+      if (state.apiState.stale) {
+        elements.staleWarningBanner.classList.remove('hidden');
+      } else {
+        elements.staleWarningBanner.classList.add('hidden');
+      }
+
+      // 4. Combined readiness banner calculations
+      const combinedDecision = getCombinedDecision(state.marketStatus.regime, state.yieldStatus.yieldState);
+      elements.bannerDecisionText.textContent = combinedDecision;
+      
+      let bannerDotColor = 'bg-brand';
+      let bannerBorderColor = 'border-brand/30';
+      let bannerBgColor = 'bg-brand/10 text-brand';
+
+      if (combinedDecision === 'ALLOW') {
+        bannerDotColor = 'bg-emerald-500';
+        bannerBorderColor = 'border-emerald-500/30';
+        bannerBgColor = 'bg-emerald-500/10 text-emerald-400';
+      } else if (combinedDecision === 'RESTRICT') {
+        bannerDotColor = 'bg-amber-500';
+        bannerBorderColor = 'border-amber-500/30';
+        bannerBgColor = 'bg-amber-500/10 text-amber-400';
+      } else if (combinedDecision === 'BLOCK') {
+        bannerDotColor = 'bg-rose-500';
+        bannerBorderColor = 'border-rose-500/30';
+        bannerBgColor = 'bg-rose-500/10 text-rose-400';
+      } else if (combinedDecision === 'UNWIND') {
+        bannerDotColor = 'bg-violet-500';
+        bannerBorderColor = 'border-violet-500/30';
+        bannerBgColor = 'bg-violet-500/10 text-violet-400';
+      }
+
+      elements.bannerDot.className = `relative inline-flex rounded-full h-3 w-3 ${bannerDotColor}`;
+      elements.bannerPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${bannerDotColor}`;
+      elements.bannerDecisionText.className = `text-lg font-bold font-mono tracking-widest px-4 py-1 rounded border ${bannerBorderColor} ${bannerBgColor}`;
+
+      // Freshness and report ID
+      const latestReportId = state.marketStatus.reasonsHash || '0x0000000000000000000000000000000000000000000000000000000000000000';
+      elements.bannerReportId.textContent = `Report: ${latestReportId.slice(0, 10)}...`;
+
+      if (state.marketStatus.latest) {
+        const elapsed = Math.max(0, Math.floor(Date.now() / 1000) - state.marketStatus.latest.observedAt);
+        elements.bannerFreshness.innerHTML = `<i class="fa-regular fa-clock mr-1"></i> Freshness: ${elapsed}s ago`;
+        elements.bannerConfidence.innerHTML = `<i class="fa-solid fa-gauge mr-1"></i> Confidence: ${(state.marketStatus.latest.confidenceBps / 100).toFixed(1)}%`;
+      }
+
+      // 5. Market regime details
+      elements.marketRegimeBadge.textContent = state.marketStatus.regime;
+      if (state.marketStatus.regime === 'NORMAL') {
+        elements.marketRegimeBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      } else if (state.marketStatus.regime === 'VOLATILE') {
+        elements.marketRegimeBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-amber-500/10 text-amber-400 border-amber-500/20';
+      } else if (state.marketStatus.regime === 'PANIC') {
+        elements.marketRegimeBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-rose-500/10 text-rose-400 border-rose-500/20';
+      }
+
+      if (state.marketStatus.latest) {
+        elements.marketVolatility.textContent = `${(state.marketStatus.latest.volatilityBps / 100).toFixed(2)}%`;
+        elements.marketDivergence.textContent = `${(state.marketStatus.latest.priceDivergenceBps / 100).toFixed(2)}%`;
+        elements.marketBridge.textContent = `$${parseFloat(state.marketStatus.latest.bridgeNetOutflowUsd).toLocaleString()}`;
+        elements.marketLiquidity.textContent = `$${parseFloat(state.marketStatus.latest.liquidityDepthUsd).toLocaleString()}`;
+      }
+
+      // Safe render reasons to avoid innerHTML XSS injection
+      elements.marketReasons.textContent = '';
+      if (state.marketStatus.reasons.length === 0) {
+        const li = document.createElement('li');
+        li.className = 'text-white/40';
+        li.textContent = 'All systemic safety indicators normal.';
+        elements.marketReasons.appendChild(li);
+      } else {
+        state.marketStatus.reasons.forEach(reason => {
+          const li = document.createElement('li');
+          li.className = 'flex items-center gap-2 text-white/80';
+          const icon = document.createElement('i');
+          icon.className = 'fa-solid fa-circle-info text-brand';
+          li.appendChild(icon);
+          const span = document.createElement('span');
+          span.textContent = reason;
+          li.appendChild(span);
+          elements.marketReasons.appendChild(li);
+        });
+      }
+
+      // 6. Yield decay details
+      elements.yieldDecayBadge.textContent = state.yieldStatus.yieldState;
+      if (state.yieldStatus.yieldState === 'HEALTHY') {
+        elements.yieldDecayBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      } else if (state.yieldStatus.yieldState === 'WATCH') {
+        elements.yieldDecayBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      } else if (state.yieldStatus.yieldState === 'DECAYING') {
+        elements.yieldDecayBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-amber-500/10 text-amber-400 border-amber-500/20';
+      } else if (state.yieldStatus.yieldState === 'EXIT') {
+        elements.yieldDecayBadge.className = 'font-mono text-xs font-bold px-3 py-1 rounded border bg-rose-500/10 text-rose-400 border-rose-500/20';
+      }
+
+      if (state.yieldStatus.latest) {
+        elements.yieldDecayScore.textContent = `${state.yieldStatus.decayScore} / 100`;
+        elements.yieldApy.textContent = `${(state.yieldStatus.latest.apyBps / 100).toFixed(2)}%`;
+        elements.yieldTvl.textContent = `$${parseFloat(state.yieldStatus.latest.tvlUsd).toLocaleString()}`;
+        elements.yieldNetflow.textContent = `$${parseFloat(state.yieldStatus.latest.netFlowUsd24h).toLocaleString()}`;
+      }
+
+      elements.yieldReasons.textContent = '';
+      if (state.yieldStatus.reasons.length === 0) {
+        const li = document.createElement('li');
+        li.className = 'text-white/40';
+        li.textContent = 'Yield signals behaving inside design limits.';
+        elements.yieldReasons.appendChild(li);
+      } else {
+        state.yieldStatus.reasons.forEach(reason => {
+          const li = document.createElement('li');
+          li.className = 'flex items-center gap-2 text-white/80';
+          const icon = document.createElement('i');
+          icon.className = 'fa-solid fa-circle-exclamation text-indigo-400';
+          li.appendChild(icon);
+          const span = document.createElement('span');
+          span.textContent = reason;
+          li.appendChild(span);
+          elements.yieldReasons.appendChild(li);
+        });
+      }
+
+      // Meta attributes
+      elements.metaChainId.textContent = state.wallet.chainId || CONFIG.CHAIN_ID;
+      elements.metaRpc.textContent = state.wallet.connected ? 'CONNECTED' : 'ONLINE';
+    }
+
+    // Main fetch polling
+    async function pollData() {
+      const state = stateStore.getState();
+      
+      // Update loading status
+      elements.marketLoading.classList.add('active');
+      elements.yieldLoading.classList.add('active');
+      
+      try {
+        const marketStatus = await apiClient.fetchMarketStatus();
+        const yieldStatus = await apiClient.fetchYieldStatus(state.yieldStatus.opportunityId);
+        const decisionsHistory = await apiClient.fetchDecisionsHistory();
+        
+        // If web3 mode is enabled and wallet is connected, try to query regime on-chain directly
+        let onChainRegime = marketStatus.regime;
+        if (state.mode === 'web3' && state.wallet.connected) {
+          const contractRegime = await walletHandler.queryOnChainRegime();
+          if (contractRegime) {
+            onChainRegime = contractRegime;
+            logMessage(`On-Chain regime verified: ${contractRegime}`, 'info');
+          }
+        }
+
+        stateStore.updateState({
+          marketStatus: {
+            ...marketStatus,
+            regime: onChainRegime
+          },
+          yieldStatus,
+          decisionsHistory: decisionsHistory.history,
+          apiState: {
+            loading: false,
+            error: null,
+            stale: false,
+            lastUpdated: Math.floor(Date.now() / 1000)
+          }
+        });
+        
+        elements.marketError.classList.remove('active');
+        elements.yieldError.classList.remove('active');
+      } catch (err) {
+        console.error('Data polling error:', err);
+        
+        // Flag stale state if previous data existed
+        const updatedApiState = {
+          loading: false,
+          error: err.message,
+          stale: true,
+          lastUpdated: state.apiState.lastUpdated
+        };
+        stateStore.updateState({ apiState: updatedApiState });
+        
+        logMessage(`Data poll failed: ${err.message}`, 'error');
+        
+        // Show error overlay
+        document.getElementById('market-error-msg').textContent = err.message;
+        document.getElementById('yield-error-msg').textContent = err.message;
+        elements.marketError.classList.add('active');
+        elements.yieldError.classList.add('active');
+      } finally {
+        elements.marketLoading.classList.remove('active');
+        elements.yieldLoading.classList.remove('active');
+      }
+    }
+
+    // App Initialization
+    function init() {
+      stateStore.subscribe(render);
+      setupCopyAddressListeners();
+      
+      // Event Listeners
+      elements.toggleMode.addEventListener('click', () => {
+        const currentMode = stateStore.getState().mode;
+        const newMode = currentMode === 'mock' ? 'web3' : 'mock';
+        stateStore.updateState({ mode: newMode });
+        logMessage(`Gateway execution mode switched to: ${newMode.toUpperCase()}`, 'warning');
+        pollData();
+      });
+
+      elements.connectWallet.addEventListener('click', () => {
+        walletHandler.connectWallet();
+      });
+
+      elements.opportunitySelector.addEventListener('change', (e) => {
+        const oppId = e.target.value;
+        stateStore.updateState(prev => ({
+          yieldStatus: { ...prev.yieldStatus, opportunityId: oppId }
+        }));
+        logMessage(`Active tracking target updated to: ${oppId}`, 'info');
+        pollData();
+      });
+
+      elements.clearLogs.addEventListener('click', () => {
+        elements.logsOutput.textContent = '';
+        elements.logsEmpty.classList.add('active');
+      });
+
+      elements.marketRetry.addEventListener('click', pollData);
+      elements.yieldRetry.addEventListener('click', pollData);
+
+      // Wallet Init
+      walletHandler.checkConnection();
+      walletHandler.setupListeners();
+
+      // Poll Loop
+      pollData();
+      setInterval(pollData, 10000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

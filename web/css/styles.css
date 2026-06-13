@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #020204;
+  --bg-card: rgba(10, 10, 16, 0.65);
+  --border-color: rgba(255, 255, 255, 0.05);
+  --border-focus: #ff761c;
+  
+  --brand-orange: #ff761c;
+  --brand-purple: #8b5cf6;
+  --brand-cyan: #06b6d4;
+  --brand-emerald: #10b981;
+  --brand-rose: #f43f5e;
+}
+
+body {
+  background-color: var(--bg-dark);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #f4f4f5;
+}
+
+.mono {
+  font-family: 'Geist Mono', monospace;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 118, 28, 0.3);
+  box-shadow: 0 15px 45px -10px rgba(255, 118, 28, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Focus States for Accessibility */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 4px;
+}
+
+/* Background Ambient Glows */
+@keyframes ambient-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15) translate(3%, 5%);
+  }
+}
+
+.ambient-glow {
+  filter: blur(120px);
+  animation: ambient-pulse 10s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Loading Spinners & Overlays */
+.overlay-container {
+  position: relative;
+}
+
+.state-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 2, 4, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.state-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 118, 28, 0.15);
+  border-top-color: var(--brand-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status dots and glow rings */
+.status-glow-ring {
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(2, 2, 4, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 118, 28, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 118, 28, 0.5);
+}
+
+/* Custom dropdown resets for dark mode aesthetics */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 36px;
+}
+
+/* Custom micro-animations */
+.hover-glow:hover {
+  filter: drop-shadow(0 0 8px var(--brand-orange));
+}
+
+.pulsing-dot {
+  animation: pulse-dot-anim 2s infinite;
+}
+
+@keyframes pulse-dot-anim {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
