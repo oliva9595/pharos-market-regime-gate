@@ -9,3 +9,5 @@ remappings = [
 ]
 optimizer = true
 optimizer_runs = 200
+via_ir = true
+
