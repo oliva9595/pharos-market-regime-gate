@@ -1,0 +1,17 @@
+{
+  "name": "@pharos/sdk",
+  "version": "1.0.0",
+  "description": "Agent execution readiness check, diagnostics and Web3 transaction wrapping SDK",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@pharos/risk-core": "*",
+    "ethers": "^6.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

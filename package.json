@@ -13,10 +13,10 @@
   },
   "scripts": {
     "demo-web": "npx http-server -c-1 ./",
-    "build": "tsc -b tsconfig.base.json",
+    "build": "tsc -b tsconfig.json",
     "test": "vitest run",
     "test:contracts": "C:\\Users\\XuanCanh\\.foundry\\bin\\forge.exe test",
-    "typecheck": "tsc --noEmit -b tsconfig.base.json",
+    "typecheck": "tsc --noEmit -b tsconfig.json",
     "check:secrets": "node -e \"if(process.env.PHAROS_DEPLOYER_PRIVATE_KEY && process.env.PHAROS_DEPLOYER_PRIVATE_KEY.length !== 66) throw new Error('Invalid key length')\"",
     "check:atlantic": "node -e \"console.log('Pharos Atlantic Check OK')\""
   },

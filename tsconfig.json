@@ -4,6 +4,7 @@
     { "path": "packages/risk-core" },
     { "path": "packages/data-adapters" },
     { "path": "services/keeper" },
-    { "path": "services/api" }
+    { "path": "services/api" },
+    { "path": "packages/sdk" }
   ]
 }
