@@ -58,4 +58,28 @@ contract SlippageGuardTest is Test {
         vm.expectRevert("SlippageGuard: slippage too high");
         guard.verifySlippage(address(router), txData, 500);
     }
+
+    function testMalformedCalldataReverts() public {
+        bytes memory badData = hex"38ed173900000000"; // only 8 bytes, selector + 4 bytes
+        vm.expectRevert("SlippageGuard: malformed swap calldata");
+        guard.verifySlippage(address(router), badData, 500);
+    }
+
+    function testZeroAmountOutMinReverts() public {
+        address[] memory path = new address[](2);
+        path[0] = tokenIn;
+        path[1] = tokenOut;
+
+        bytes memory txData = abi.encodeWithSignature(
+            "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)",
+            100,
+            0, // zero minimum amount
+            path,
+            address(this),
+            block.timestamp + 60
+        );
+
+        vm.expectRevert("SlippageGuard: amountOutMin is zero");
+        guard.verifySlippage(address(router), txData, 500);
+    }
 }

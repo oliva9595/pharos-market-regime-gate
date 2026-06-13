@@ -24,4 +24,18 @@ contract ProtocolRegistryTest is Test {
         vm.expectRevert("Registry: Target address is blacklisted");
         registry.checkAddress(bob);
     }
+
+    function testZeroAddressReverts() public {
+        vm.expectRevert("Registry: target is zero address");
+        registry.setVerified(address(0), true);
+
+        vm.expectRevert("Registry: target is zero address");
+        registry.setBlacklisted(address(0), true);
+    }
+
+    function testCannotVerifyBlacklisted() public {
+        registry.setBlacklisted(bob, true);
+        vm.expectRevert("Registry: target is blacklisted");
+        registry.setVerified(bob, true);
+    }
 }
