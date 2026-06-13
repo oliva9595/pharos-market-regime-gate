@@ -163,3 +163,84 @@ select {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
+
+/* Premium Shock Scenario Button Styles */
+.btn-shock {
+  background: rgba(9, 9, 12, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: rgba(244, 244, 245, 0.6);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.btn-shock:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Active Glow States */
+.btn-shock.active-normal {
+  border-color: var(--brand-emerald);
+  color: var(--brand-emerald);
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.btn-shock.active-volatile {
+  border-color: var(--brand-orange);
+  color: var(--brand-orange);
+  background: rgba(255, 118, 28, 0.08);
+  box-shadow: 0 0 12px rgba(255, 118, 28, 0.25);
+  text-shadow: 0 0 4px rgba(255, 118, 28, 0.4);
+}
+
+.btn-shock.active-panic {
+  border-color: var(--brand-rose);
+  color: var(--brand-rose);
+  background: rgba(244, 63, 94, 0.08);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+  text-shadow: 0 0 4px rgba(244, 63, 94, 0.4);
+}
+
+/* Cooldown Progress Bar */
+.cooldown-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  overflow: hidden;
+  height: 6px;
+  position: relative;
+  width: 100%;
+}
+
+.cooldown-bar {
+  background: linear-gradient(90deg, var(--brand-purple), var(--brand-orange));
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--brand-purple);
+}
+
+/* Neon utilities */
+.neon-border-emerald {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.08);
+}
+.neon-border-amber {
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.08);
+}
+.neon-border-rose {
+  border-color: rgba(244, 63, 94, 0.3);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.08);
+}
+

@@ -4,6 +4,7 @@ class AppStateStore {
   constructor() {
     this.state = {
       mode: 'mock', // 'mock' or 'web3'
+      shockScenario: 'none', // active simulation shock scenario
       marketStatus: {
         regime: 'NORMAL',
         reasons: [],

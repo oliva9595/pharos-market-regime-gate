@@ -91,10 +91,10 @@
   <main class="flex-grow max-w-7xl mx-auto w-full p-6 space-y-6">
     
     <!-- SECTION 1: Monitor Panels -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
       
       <!-- Market Regime Monitor Section -->
-      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between" id="market-regime-panel" aria-labelledby="market-title">
+      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col xl:col-span-2" id="market-regime-panel" aria-labelledby="market-title">
         <!-- Loading overlay -->
         <div class="state-overlay" id="market-loading-overlay" aria-hidden="true">
           <div class="spinner mb-2"></div>
@@ -109,7 +109,7 @@
         </div>
 
         <div>
-          <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-5">
+          <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
             <div class="flex items-center gap-2.5">
               <i class="fa-solid fa-chart-line text-brand text-lg" aria-hidden="true"></i>
               <h2 id="market-title" class="text-base font-bold uppercase tracking-wider">Market Regime Monitor</h2>
@@ -117,28 +117,139 @@
             <span id="market-regime-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LOADING</span>
           </div>
           
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Volatility Index (VIX)</span>
-              <div id="market-volatility" class="text-xl font-bold font-mono text-white mt-1">--</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column: Metrics & On-Chain Status -->
+            <div class="space-y-5">
+              <div>
+                <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block mb-3">Live Security Oracle Signals</span>
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Volatility Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Volatility Index (VIX)</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-volatility" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-volatility" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Entry: Volatile >=30% | Panic >=45%</span>
+                  </div>
+                  <!-- Divergence Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Price Divergence</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-divergence" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-divergence" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Entry: Volatile >=1.0% | Panic >=3.0%</span>
+                  </div>
+                  <!-- Outflow Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Bridge Net Outflow</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-bridge" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-bridge" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Entry: Volatile >=$5M | Panic >=$10M</span>
+                  </div>
+                  <!-- Stablecoin Depeg Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Stablecoin Depeg</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-depeg" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-depeg" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Entry: Volatile >=0.5% | Panic >=2.0%</span>
+                  </div>
+                  <!-- Confidence Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Oracle Confidence</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-confidence" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-confidence" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Entry: Volatile <80% | Panic <60%</span>
+                  </div>
+                  <!-- Liquidity Depth Card -->
+                  <div class="bg-black/30 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-colors relative">
+                    <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Liquidity Depth</span>
+                    <div class="flex items-baseline justify-between mt-1">
+                      <div id="market-liquidity" class="text-lg font-bold font-mono text-white">--</div>
+                      <span id="trend-liquidity" class="text-[10px] font-mono font-bold text-white/30"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                    </div>
+                    <span class="text-[8px] text-white/25 font-mono block mt-1">Normal Range: >$20.0M depth</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active On-Chain Report Details -->
+              <div class="bg-black/40 p-4 rounded-xl border border-white/5">
+                <span class="text-[10px] text-white/40 uppercase tracking-wider font-bold block mb-2">Active On-Chain Report Details</span>
+                <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] font-mono text-white/80">
+                  <div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-white/40">Sequence Number:</span> <span id="report-seq" class="font-bold text-sky-400">#--</span></div>
+                  <div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-white/40">Reporter:</span> <span id="report-reporter" class="font-bold truncate max-w-[80px]">0x...</span></div>
+                  <div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-white/40">Signature status:</span> <span id="report-sig" class="font-bold text-emerald-400">--</span></div>
+                  <div class="flex justify-between border-b border-white/5 pb-1.5"><span class="text-white/40">Gate State:</span> <span id="report-gate-state" class="font-bold text-brand">--</span></div>
+                  <div class="col-span-2 flex justify-between pt-1"><span class="text-white/40">Validation Hash:</span> <span id="report-val-hash" class="font-bold truncate max-w-[200px]">0x...</span></div>
+                </div>
+              </div>
             </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Price Divergence</span>
-              <div id="market-divergence" class="text-xl font-bold font-mono text-white mt-1">--</div>
-            </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Bridge Net Outflow</span>
-              <div id="market-bridge" class="text-xl font-bold font-mono text-white mt-1">--</div>
-            </div>
-            <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-              <span class="text-[9px] text-white/40 uppercase tracking-wider font-semibold block">Liquidity Depth</span>
-              <div id="market-liquidity" class="text-xl font-bold font-mono text-white mt-1">--</div>
+
+            <!-- Right Column: Visualization, Hysteresis & Shocks -->
+            <div class="space-y-5">
+              <!-- Hysteresis State / Cooldown Info -->
+              <div class="bg-black/30 p-3.5 rounded-xl border border-white/5">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-[10px] text-white/40 uppercase tracking-wider font-bold block">Hysteresis Confirmation State</span>
+                  <span id="hysteresis-steps" class="font-mono text-[9px] font-bold text-brand uppercase">STABLE</span>
+                </div>
+                <div id="hysteresis-message" class="text-xs text-white/80 font-mono leading-relaxed min-h-[1.5rem] mb-3">System status stable.</div>
+                
+                <!-- Cooldown timer progress -->
+                <div id="cooldown-wrapper" class="hidden space-y-1.5">
+                  <div class="flex justify-between text-[8px] font-mono text-white/40 uppercase">
+                    <span>Transition Cooldown Active</span>
+                    <span id="cooldown-timer">0s remaining</span>
+                  </div>
+                  <div class="cooldown-container">
+                    <div id="cooldown-bar" class="cooldown-bar"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Horizon Threshold Chart -->
+              <div class="bg-black/50 rounded-xl border border-white/5 p-2 relative h-40">
+                <div id="market-chart-container" class="w-full h-full"></div>
+              </div>
+
+              <!-- Deterministic Shock Scenario Injectors -->
+              <div>
+                <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block mb-2.5">Deterministic Shock Injectors (Simulator)</span>
+                <div class="grid grid-cols-3 gap-2">
+                  <button id="shock-vix" class="btn-shock hover-glow" title="VIX volatility crosses 30% Volatile entry threshold">
+                    <i class="fa-solid fa-wind mr-1 text-amber-500"></i>VIX Shock
+                  </button>
+                  <button id="shock-div" class="btn-shock hover-glow" title="DEX price divergence crosses 1.0% Volatile entry threshold">
+                    <i class="fa-solid fa-code-fork mr-1 text-amber-500"></i>Divergence
+                  </button>
+                  <button id="shock-outflow" class="btn-shock hover-glow" title="Bridge Net Outflow crosses $10.0M Panic entry threshold">
+                    <i class="fa-solid fa-right-from-bracket mr-1 text-rose-500"></i>Outflow
+                  </button>
+                  <button id="shock-depeg" class="btn-shock hover-glow" title="Stablecoin depeg crosses 2.0% Panic entry threshold">
+                    <i class="fa-solid fa-anchor-circle-xmark mr-1 text-rose-500"></i>Depeg
+                  </button>
+                  <button id="shock-stale" class="btn-shock hover-glow" title="Oracle confidence drops and timestamp goes stale forcing PANIC">
+                    <i class="fa-solid fa-hourglass-end mr-1 text-rose-500"></i>Stale Oracle
+                  </button>
+                  <button id="shock-recovery" class="btn-shock hover-glow" title="Returns all metrics to stable normal values">
+                    <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-500"></i>Recover
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-2 mt-4 pt-4 border-t border-white/5">
             <span class="text-xs text-white/40 uppercase tracking-wider font-semibold block">Regime Diagnostics:</span>
-            <ul id="market-reasons" class="space-y-2 text-xs font-mono text-white/80 max-h-24 overflow-y-auto bg-black/40 p-4 rounded-xl border border-white/5">
+            <ul id="market-reasons" class="space-y-1.5 text-xs font-mono text-white/80 max-h-24 overflow-y-auto bg-black/40 p-3.5 rounded-xl border border-white/5">
               <li class="text-white/40">No diagnostics available.</li>
             </ul>
           </div>
@@ -146,7 +257,7 @@
       </section>
 
       <!-- Yield Decay Monitor Section -->
-      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between" id="yield-decay-panel" aria-labelledby="yield-title">
+      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between xl:col-span-1" id="yield-decay-panel" aria-labelledby="yield-title">
         <!-- Loading overlay -->
         <div class="state-overlay" id="yield-loading-overlay" aria-hidden="true">
           <div class="spinner mb-2"></div>
@@ -288,6 +399,10 @@
     import { apiClient } from './js/api.js';
     import { walletHandler } from './js/wallet.js';
     import { CONFIG } from './js/config.js';
+    import { computeHysteresisState, generateMockReportDetails } from './js/market.js';
+    import { MarketRegimeChart } from './js/charts/market.js';
+
+    let marketChart;
 
     // Element Cache
     const elements = {
@@ -308,8 +423,32 @@
       marketVolatility: document.getElementById('market-volatility'),
       marketDivergence: document.getElementById('market-divergence'),
       marketBridge: document.getElementById('market-bridge'),
+      marketDepeg: document.getElementById('market-depeg'),
+      marketConfidence: document.getElementById('market-confidence'),
       marketLiquidity: document.getElementById('market-liquidity'),
       marketReasons: document.getElementById('market-reasons'),
+
+      // Trend elements
+      trendVolatility: document.getElementById('trend-volatility'),
+      trendDivergence: document.getElementById('trend-divergence'),
+      trendBridge: document.getElementById('trend-bridge'),
+      trendDepeg: document.getElementById('trend-depeg'),
+      trendConfidence: document.getElementById('trend-confidence'),
+      trendLiquidity: document.getElementById('trend-liquidity'),
+
+      // Report details elements
+      reportSeq: document.getElementById('report-seq'),
+      reportReporter: document.getElementById('report-reporter'),
+      reportSig: document.getElementById('report-sig'),
+      reportGateState: document.getElementById('report-gate-state'),
+      reportValHash: document.getElementById('report-val-hash'),
+
+      // Hysteresis elements
+      hysteresisSteps: document.getElementById('hysteresis-steps'),
+      hysteresisMessage: document.getElementById('hysteresis-message'),
+      cooldownWrapper: document.getElementById('cooldown-wrapper'),
+      cooldownTimer: document.getElementById('cooldown-timer'),
+      cooldownBar: document.getElementById('cooldown-bar'),
       
       yieldDecayBadge: document.getElementById('yield-decay-badge'),
       opportunitySelector: document.getElementById('opportunity-selector'),
@@ -331,7 +470,15 @@
       yieldLoading: document.getElementById('yield-loading-overlay'),
       yieldError: document.getElementById('yield-error-overlay'),
       yieldRetry: document.getElementById('yield-retry-btn'),
-      logsEmpty: document.getElementById('logs-empty-overlay')
+      logsEmpty: document.getElementById('logs-empty-overlay'),
+
+      // Shock buttons
+      shockVix: document.getElementById('shock-vix'),
+      shockDiv: document.getElementById('shock-div'),
+      shockOutflow: document.getElementById('shock-outflow'),
+      shockDepeg: document.getElementById('shock-depeg'),
+      shockStale: document.getElementById('shock-stale'),
+      shockRecovery: document.getElementById('shock-recovery')
     };
 
     // Safe logger utility to prevent XSS injection
@@ -388,6 +535,46 @@
           });
         }
       });
+    }
+
+    // Render trend indicator symbols and colors
+    function renderTrends(history) {
+      if (!history || history.length < 2) return;
+      const cur = history[history.length - 1];
+      const prev = history[history.length - 2];
+
+      const setTrend = (el, curVal, prevVal, isInverse = false) => {
+        if (!el) return;
+        el.textContent = '';
+        const icon = document.createElement('i');
+        
+        const curN = typeof curVal === 'bigint' || (typeof curVal === 'string' && curVal.endsWith('n')) ? BigInt(curVal) : Number(curVal);
+        const prevN = typeof prevVal === 'bigint' || (typeof prevVal === 'string' && prevVal.endsWith('n')) ? BigInt(prevVal) : Number(prevVal);
+
+        if (curN > prevN) {
+          icon.className = 'fa-solid fa-arrow-trend-up mr-0.5';
+          el.appendChild(icon);
+          el.appendChild(document.createTextNode(' UP'));
+          el.className = `text-[10px] font-mono font-bold ${isInverse ? 'text-rose-500' : 'text-emerald-500'}`;
+        } else if (curN < prevN) {
+          icon.className = 'fa-solid fa-arrow-trend-down mr-0.5';
+          el.appendChild(icon);
+          el.appendChild(document.createTextNode(' DOWN'));
+          el.className = `text-[10px] font-mono font-bold ${isInverse ? 'text-emerald-500' : 'text-rose-500'}`;
+        } else {
+          icon.className = 'fa-solid fa-minus mr-0.5';
+          el.appendChild(icon);
+          el.appendChild(document.createTextNode(' STABLE'));
+          el.className = 'text-[10px] font-mono font-bold text-white/30';
+        }
+      };
+
+      setTrend(elements.trendVolatility, cur.volatilityBps, prev.volatilityBps, true);
+      setTrend(elements.trendDivergence, cur.priceDivergenceBps, prev.priceDivergenceBps, true);
+      setTrend(elements.trendBridge, BigInt(cur.bridgeNetOutflowUsd), BigInt(prev.bridgeNetOutflowUsd), true);
+      setTrend(elements.trendDepeg, cur.stablecoinDepegBps, prev.stablecoinDepegBps, true);
+      setTrend(elements.trendConfidence, cur.confidenceBps, prev.confidenceBps, false);
+      setTrend(elements.trendLiquidity, Number(cur.liquidityDepthUsd), Number(prev.liquidityDepthUsd), false);
     }
 
     // Main render bindings
@@ -476,8 +663,13 @@
       if (state.marketStatus.latest) {
         elements.marketVolatility.textContent = `${(state.marketStatus.latest.volatilityBps / 100).toFixed(2)}%`;
         elements.marketDivergence.textContent = `${(state.marketStatus.latest.priceDivergenceBps / 100).toFixed(2)}%`;
-        elements.marketBridge.textContent = `$${parseFloat(state.marketStatus.latest.bridgeNetOutflowUsd).toLocaleString()}`;
-        elements.marketLiquidity.textContent = `$${parseFloat(state.marketStatus.latest.liquidityDepthUsd).toLocaleString()}`;
+        elements.marketBridge.textContent = `$${(Number(state.marketStatus.latest.bridgeNetOutflowUsd) / 1e6).toFixed(2)}M`;
+        elements.marketDepeg.textContent = `${(state.marketStatus.latest.stablecoinDepegBps / 100).toFixed(2)}%`;
+        elements.marketConfidence.textContent = `${(state.marketStatus.latest.confidenceBps / 100).toFixed(1)}%`;
+        elements.marketLiquidity.textContent = `$${(Number(state.marketStatus.latest.liquidityDepthUsd) / 1e6).toFixed(1)}M`;
+        
+        // Render trend indicators
+        renderTrends(state.marketStatus.history);
       }
 
       // Safe render reasons to avoid innerHTML XSS injection
@@ -500,6 +692,78 @@
           elements.marketReasons.appendChild(li);
         });
       }
+
+      // 5.2 Hysteresis & Cooldown State Render
+      const now = Math.floor(Date.now() / 1000);
+      const hyst = computeHysteresisState(
+        state.marketStatus.history,
+        state.marketStatus.regime,
+        state.marketStatus.transitionEligibleAt || 0,
+        now
+      );
+
+      elements.hysteresisSteps.textContent = hyst.steps || 'STABLE';
+      if (hyst.steps) {
+        elements.hysteresisSteps.className = `font-mono text-[9px] font-bold px-1.5 py-0.5 rounded ${
+          state.marketStatus.regime === 'PANIC' ? 'text-amber-400 bg-amber-500/10' : 'text-brand bg-brand/10'
+        }`;
+      } else {
+        elements.hysteresisSteps.className = 'font-mono text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded';
+      }
+
+      elements.hysteresisMessage.textContent = hyst.message;
+
+      if (hyst.inCooldown) {
+        elements.cooldownWrapper.classList.remove('hidden');
+        elements.cooldownTimer.textContent = `${hyst.cooldownRemaining}s remaining`;
+        elements.cooldownBar.style.width = `${hyst.cooldownProgress}%`;
+      } else {
+        elements.cooldownWrapper.classList.add('hidden');
+        elements.cooldownBar.style.width = '0%';
+      }
+
+      // 5.3 On-Chain Report Details Render
+      const seq = 12900 + Math.floor(state.blockHeight / 3) % 1000;
+      const report = generateMockReportDetails(state.marketStatus.regime, seq);
+      elements.reportSeq.textContent = `#${report.sequenceNumber}`;
+      elements.reportReporter.textContent = `${report.reporter.slice(0, 6)}...${report.reporter.slice(-4)}`;
+      elements.reportReporter.setAttribute('title', report.reporter);
+      elements.reportSig.textContent = report.signatureStatus;
+      elements.reportSig.className = `font-bold ${report.signatureStatus === 'VERIFIED' ? 'text-emerald-400' : 'text-rose-500'}`;
+      elements.reportGateState.textContent = report.gateExecutionState;
+      if (report.gateExecutionState === 'HALTED') {
+        elements.reportGateState.className = 'font-bold text-rose-400 pulsing-text';
+      } else if (report.gateExecutionState === 'RESTRICTED') {
+        elements.reportGateState.className = 'font-bold text-amber-400';
+      } else {
+        elements.reportGateState.className = 'font-bold text-emerald-400';
+      }
+      elements.reportValHash.textContent = report.validationHash;
+      elements.reportValHash.setAttribute('title', report.validationHash);
+
+      // 5.4 Threshold Line Chart Render
+      if (marketChart) {
+        marketChart.render(state.marketStatus.history, state.marketStatus.regime);
+      }
+
+      // 5.5 Simulation Shock Active States
+      const shockButtons = [
+        { el: elements.shockVix, name: 'volatility', type: 'volatile' },
+        { el: elements.shockDiv, name: 'divergence', type: 'volatile' },
+        { el: elements.shockOutflow, name: 'outflow', type: 'panic' },
+        { el: elements.shockDepeg, name: 'depeg', type: 'panic' },
+        { el: elements.shockStale, name: 'stale', type: 'panic' },
+        { el: elements.shockRecovery, name: 'recovery', type: 'normal' }
+      ];
+
+      shockButtons.forEach(item => {
+        if (item.el) {
+          item.el.classList.remove('active-normal', 'active-volatile', 'active-panic');
+          if (state.shockScenario === item.name) {
+            item.el.classList.add(`active-${item.type}`);
+          }
+        }
+      });
 
       // 6. Yield decay details
       elements.yieldDecayBadge.textContent = state.yieldStatus.yieldState;
@@ -630,6 +894,8 @@
 
     // App Initialization
     function init() {
+      marketChart = new MarketRegimeChart('market-chart-container');
+
       stateStore.subscribe(render);
       setupCopyAddressListeners();
 
@@ -669,13 +935,34 @@
       elements.marketRetry.addEventListener('click', pollData);
       elements.yieldRetry.addEventListener('click', pollData);
 
+      // Simulation Shock Scenario Listeners
+      const bindShock = (el, scenarioName, label) => {
+        if (el) {
+          el.addEventListener('click', () => {
+            const currentScenario = stateStore.getState().shockScenario;
+            // Toggle scenario off if clicked again
+            const nextScenario = currentScenario === scenarioName ? 'none' : scenarioName;
+            stateStore.updateState({ shockScenario: nextScenario });
+            logMessage(`Simulation override: ${nextScenario === 'none' ? 'Cleared shock scenario' : label + ' activated'}`, 'warning');
+            pollData();
+          });
+        }
+      };
+
+      bindShock(elements.shockVix, 'volatility', 'VIX Volatility Shock');
+      bindShock(elements.shockDiv, 'divergence', 'DEX Price Divergence Shock');
+      bindShock(elements.shockOutflow, 'outflow', 'Bridge Net Outflow Panic');
+      bindShock(elements.shockDepeg, 'depeg', 'Stablecoin Depeg Panic');
+      bindShock(elements.shockStale, 'stale', 'Stale Oracle / Confidence Loss');
+      bindShock(elements.shockRecovery, 'recovery', 'Market Recovery Trigger');
+
       // Wallet Init
       walletHandler.checkConnection();
       walletHandler.setupListeners();
 
-      // Poll Loop
+      // Poll Loop (every 3 seconds for live security oracle updates)
       pollData();
-      setInterval(pollData, 10000);
+      setInterval(pollData, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', init);
