@@ -8,3 +8,6 @@ export * from './yield/reasons.js';
 export * from './yield/factors.js';
 export * from './yield/hysteresis.js';
 export * from './yield/scorer.js';
+export * from './policy/limits.js';
+export * from './policy/matrix.js';
+export * from './policy/evaluate.js';
