@@ -51,12 +51,15 @@
         </div>
       </div>
 
-      <!-- Right controls -->
+      <!-- Controls -->
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 bg-zinc-800 rounded-full px-3.5 py-1.5 border border-zinc-700">
-          <span class="text-xs text-zinc-400 font-mono">Gateway:</span>
-          <button id="toggle-mode" class="text-xs font-bold font-mono text-zinc-300 hover:text-white transition-colors uppercase" aria-label="Toggle simulator execution gateway mode">MOCK MODE</button>
+        <div class="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1 text-xs">
+          <span class="text-zinc-500 font-mono">Gateway:</span>
+          <span id="toggle-mode" class="font-bold text-amber-500 uppercase">Mock Mode</span>
         </div>
+        <button id="restart-tour" class="px-3 py-1.5 rounded-full border border-zinc-700 transition-all font-mono text-xs flex items-center gap-1.5 bg-zinc-900 text-zinc-100">
+          <i class="fa-solid fa-circle-question text-zinc-400"></i>Hướng dẫn
+        </button>
         <button id="connect-wallet" class="px-4 py-1.5 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-600 transition-all font-mono text-xs flex items-center gap-2 bg-zinc-900 text-zinc-100">
           <span class="w-2 h-2 rounded-full bg-rose-500" id="wallet-dot" aria-hidden="true"></span>
           <span id="wallet-text">Connect Wallet</span>
@@ -73,41 +76,7 @@
   <!-- ── Main Content ───────────────────────────────────────── -->
   <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-6 space-y-6">
 
-    <!-- Sandbox Interactive Guide (Sandbox Onboarding) -->
-    <section class="glass-panel rounded-2xl p-5 mb-6" style="background:var(--surface); border-color:var(--border); color:var(--text-primary);">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shrink-0">
-          <i class="fa-solid fa-graduation-cap text-lg"></i>
-        </div>
-        <div class="flex-grow space-y-2">
-          <h3 class="text-sm font-bold tracking-tight text-white flex items-center gap-2">
-            <span>Interactive Sandbox Guide</span>
-            <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold uppercase">Quick Start</span>
-          </h3>
-          <p class="text-xs text-zinc-400 leading-relaxed max-w-[80ch]">
-            Chào mừng bạn đến với <strong>Pharos Volatility Sentinel</strong>. Đây là hệ thống cổng bảo mật tự động giám sát rủi ro thị trường và lợi nhuận (yield) tích hợp trực tiếp trên chuỗi khối Vara.
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2">
-            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
-              <span class="font-bold text-zinc-300 block font-mono">1. Bật Mock Mode</span>
-              <span class="text-zinc-400 block font-sans">Đảm bảo chế độ <strong>MOCK MODE</strong> ở góc trên bên phải được bật để bắt đầu mô phỏng.</span>
-            </div>
-            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
-              <span class="font-bold text-zinc-300 block font-mono">2. Kích Hoạt Shock</span>
-              <span class="text-zinc-400 block font-sans">Nhấp vào các nút <strong>Shock Injectors</strong> ở dưới mỗi bảng Market Regime hoặc Yield Decay để mô phỏng rủi ro.</span>
-            </div>
-            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
-              <span class="font-bold text-zinc-300 block font-mono">3. Theo Dõi Decision</span>
-              <span class="text-zinc-400 block font-sans">Quan sát <strong>System Decision</strong> chuyển màu (Xanh: ALLOW, Vàng: RESTRICT, Đỏ: BLOCK, Tím: UNWIND).</span>
-            </div>
-            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
-              <span class="font-bold text-zinc-300 block font-mono">4. Kiểm Tra Arena</span>
-              <span class="text-zinc-400 block font-sans">Xuống phần <strong>Execution Arena</strong>, chọn một tình huống giao dịch và bấm <strong>Check Action</strong> để xem kết quả.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <!-- ════════════════════════════════════════════════════
          ① SYSTEM DECISION — Đây là trạng thái hiện tại
@@ -311,7 +280,7 @@
             <!-- Deterministic Shock Scenario Injectors -->
             <div>
               <span class="text-sm text-neutral-500 font-semibold block mb-2">Deterministic Shock Injectors (Simulator)</span>
-              <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+              <div id="market-shocks-container" class="grid grid-cols-3 md:grid-cols-6 gap-2">
                 <button id="shock-vix" class="btn-shock hover-glow" title="VIX volatility crosses 30% Volatile entry threshold">
                   <i class="fa-solid fa-wind mr-1 text-amber-600"></i>VIX Shock
                 </button>
@@ -440,7 +409,7 @@
             <!-- Deterministic Scenario Triggers -->
             <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
               <span class="text-sm text-zinc-400 font-semibold block mb-2">Deterministic Decay Scenarios (Simulator)</span>
-              <div class="grid grid-cols-2 gap-2">
+              <div id="yield-scenarios-container" class="grid grid-cols-2 gap-2">
                 <button id="yield-scenario-healthy" class="btn-scenario hover-glow text-xs" title="Normal healthy yield metrics">
                   <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Healthy
                 </button>
@@ -502,7 +471,7 @@
       </div>
 
     <!-- Execution Proof Arena -->
-    <section class="glass-panel p-6 rounded-2xl execution-proof-panel" aria-labelledby="execution-proof-title">
+    <section class="glass-panel p-6 rounded-2xl execution-proof-panel" aria-labelledby="execution-proof-title" id="execution-proof-panel">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-850 pb-4 mb-5">
         <div>
           <div class="flex items-center gap-2">
@@ -644,6 +613,7 @@
     import { YieldApyChart, YieldFactorsChart } from './js/charts/yield.js';
     import { EXECUTION_SCENARIOS, getExecutionScenario } from './js/scenarios.js';
     import { createEngineClient, evaluateMockExecution } from './js/execution.js';
+    import { initTour } from './js/tour.js';
 
     let marketChart;
     let yieldApyChart;
@@ -1484,6 +1454,9 @@
       walletHandler.checkConnection();
       walletHandler.setupListeners();
 
+      // Onboarding Tour Init
+      initTour();
+
       // Poll Loop (every 3 seconds for live security oracle updates)
       pollData();
       setInterval(pollData, 3000);
@@ -1491,5 +1464,25 @@
 
     document.addEventListener('DOMContentLoaded', init);
   </script>
+
+  <!-- ── Onboarding Tour Overlay ───────────────────────────── -->
+  <div id="tour-backdrop" class="hidden opacity-0"></div>
+  <div id="tour-popup" class="hidden flex-col justify-between">
+    <div class="space-y-3">
+      <div class="flex justify-between items-center">
+        <span id="tour-step-indicator" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">Bước 1/7</span>
+        <button id="tour-close" class="text-zinc-500 hover:text-white transition-colors p-1" title="Đóng hướng dẫn"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+      <h4 id="tour-title" class="text-sm font-bold tracking-tight text-white font-sans">Tiêu đề bước</h4>
+      <p id="tour-text" class="text-xs text-zinc-400 leading-relaxed font-sans">Nội dung hướng dẫn chi tiết từng phần hiển thị ở đây.</p>
+    </div>
+    <div class="flex items-center justify-between pt-4 border-t border-zinc-850 mt-4">
+      <button id="tour-skip" class="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors">Bỏ qua</button>
+      <div class="flex items-center gap-2">
+        <button id="tour-back" class="px-2.5 py-1 rounded text-xs font-mono bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Quay lại</button>
+        <button id="tour-next" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded text-xs font-mono transition-colors">Tiếp tục</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

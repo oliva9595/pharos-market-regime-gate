@@ -712,3 +712,43 @@ button:focus-visible, select:focus-visible, a:focus-visible {
 .border-amber-500\/30   { border-color: #fde68a !important; }
 .border-rose-500\/30    { border-color: #fca5a5 !important; }
 .border-violet-500\/30  { border-color: #ddd6fe !important; }
+
+/* ── Onboarding Tour Spotlight & Popup ─── */
+#tour-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 9998;
+  transition: opacity 0.25s ease-out;
+}
+
+#tour-popup {
+  position: absolute;
+  z-index: 10005;
+  background: var(--surface) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+  transition: all 0.25s var(--ease) !important;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  pointer-events: auto;
+}
+
+.tour-highlight {
+  position: relative !important;
+  z-index: 10000 !important;
+  box-shadow: 0 0 0 4px var(--amber), 0 0 30px rgba(255, 204, 0, 0.3) !important;
+  border-color: var(--amber) !important;
+  outline: none !important;
+}
+
+#restart-tour {
+  cursor: pointer;
+  transition: all 0.12s var(--ease);
+}
+#restart-tour:hover {
+  background: var(--surface-2) !important;
+  border-color: var(--border-strong) !important;
+}
