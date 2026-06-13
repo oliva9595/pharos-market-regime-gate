@@ -548,8 +548,28 @@
         el.textContent = '';
         const icon = document.createElement('i');
         
-        const curN = typeof curVal === 'bigint' || (typeof curVal === 'string' && curVal.endsWith('n')) ? BigInt(curVal) : Number(curVal);
-        const prevN = typeof prevVal === 'bigint' || (typeof prevVal === 'string' && prevVal.endsWith('n')) ? BigInt(prevVal) : Number(prevVal);
+        const parseValue = (val) => {
+          if (val === undefined || val === null) return 0n;
+          if (typeof val === 'bigint') return val;
+          if (typeof val === 'string') {
+            if (val.endsWith('n')) {
+              return BigInt(val.slice(0, -1));
+            }
+            try {
+              return BigInt(val);
+            } catch {
+              const num = Number(val);
+              return isNaN(num) ? 0n : BigInt(Math.floor(num));
+            }
+          }
+          if (typeof val === 'number') {
+            return BigInt(Math.floor(val));
+          }
+          return 0n;
+        };
+
+        const curN = parseValue(curVal);
+        const prevN = parseValue(prevVal);
 
         if (curN > prevN) {
           icon.className = 'fa-solid fa-arrow-trend-up mr-0.5';

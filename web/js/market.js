@@ -37,14 +37,88 @@ export function hashReasons(reasons) {
   if (!reasons || reasons.length === 0) {
     return '0x0000000000000000000000000000000000000000000000000000000000000000';
   }
+  const sorted = [...reasons].sort();
+  
+  // Try to use window.ethers if available for Keccak256
+  if (typeof window !== 'undefined' && window.ethers && typeof window.ethers.keccak256 === 'function') {
+    try {
+      const bytes = window.ethers.toUtf8Bytes(sorted.join(','));
+      return window.ethers.keccak256(bytes);
+    } catch (err) {
+      console.error('Ethers keccak256 failed, falling back:', err);
+    }
+  }
+
+  // Fallback to DJB2
   let hash = 0;
-  const sorted = [...reasons].sort().join(',');
-  for (let i = 0; i < sorted.length; i++) {
-    hash = (hash << 5) - hash + sorted.charCodeAt(i);
+  const sortedStr = sorted.join(',');
+  for (let i = 0; i < sortedStr.length; i++) {
+    hash = (hash << 5) - hash + sortedStr.charCodeAt(i);
     hash |= 0; // Convert to 32bit integer
   }
   const part = Math.abs(hash).toString(16).padStart(8, '0');
   return '0x' + part.repeat(8);
+}
+
+// Module-scope verification helper functions (DRY)
+export function checkPanicSignals(snap) {
+  const reasons = [];
+  if (!snap) return reasons;
+  if (snap.volatilityBps >= 4500) reasons.push(MarketRiskReasons.VOLATILITY_PANIC);
+  if (snap.priceDivergenceBps >= 300) reasons.push(MarketRiskReasons.DIVERGENCE_PANIC);
+  if (snap.bridgeNetOutflowUsd !== undefined && BigInt(snap.bridgeNetOutflowUsd) >= 10000000n) {
+    reasons.push(MarketRiskReasons.OUTFLOW_PANIC);
+  }
+  if (snap.stablecoinDepegBps >= 200) reasons.push(MarketRiskReasons.DEPEG_PANIC);
+  if (snap.confidenceBps < 6000) reasons.push(MarketRiskReasons.CONFIDENCE_PANIC);
+  return reasons;
+}
+
+export function checkVolatileSignals(snap) {
+  const reasons = [];
+  if (!snap) return reasons;
+  if (snap.volatilityBps >= 3000) reasons.push(MarketRiskReasons.VOLATILITY_VOLATILE);
+  if (snap.priceDivergenceBps >= 100) reasons.push(MarketRiskReasons.DIVERGENCE_VOLATILE);
+  if (snap.bridgeNetOutflowUsd !== undefined && BigInt(snap.bridgeNetOutflowUsd) >= 5000000n) {
+    reasons.push(MarketRiskReasons.OUTFLOW_VOLATILE);
+  }
+  if (snap.stablecoinDepegBps >= 50) reasons.push(MarketRiskReasons.DEPEG_VOLATILE);
+  if (snap.confidenceBps < 8000) reasons.push(MarketRiskReasons.CONFIDENCE_VOLATILE);
+  return reasons;
+}
+
+export function satisfiesPanicExit(snap) {
+  if (!snap) return false;
+  return (
+    snap.volatilityBps < 4000 &&
+    snap.priceDivergenceBps < 250 &&
+    snap.bridgeNetOutflowUsd !== undefined && BigInt(snap.bridgeNetOutflowUsd) < 8000000n &&
+    snap.stablecoinDepegBps < 150 &&
+    snap.confidenceBps >= 6500
+  );
+}
+
+export function satisfiesVolatileExit(snap) {
+  if (!snap) return false;
+  return (
+    snap.volatilityBps < 2500 &&
+    snap.priceDivergenceBps < 80 &&
+    snap.bridgeNetOutflowUsd !== undefined && BigInt(snap.bridgeNetOutflowUsd) < 4000000n &&
+    snap.stablecoinDepegBps < 40 &&
+    snap.confidenceBps >= 8500
+  );
+}
+
+export function getProposedRegime(snap) {
+  const panicReasons = checkPanicSignals(snap);
+  if (panicReasons.length > 0) {
+    return { regime: "PANIC", reasons: panicReasons };
+  }
+  const volatileReasons = checkVolatileSignals(snap);
+  if (volatileReasons.length >= 2) {
+    return { regime: "VOLATILE", reasons: volatileReasons };
+  }
+  return { regime: "NORMAL", reasons: [] };
 }
 
 // Replicates classifyMarketRegime from packages/risk-core
@@ -78,47 +152,12 @@ export function classifyMarketRegime(
 
   const prevRegime = previousResult?.regime ?? "NORMAL";
 
-  // Check if we are in cooldown
-  if (previousResult && latest.observedAt < previousResult.transitionEligibleAt) {
+  // Check if we are in cooldown (consistent calculation using currentTime)
+  if (previousResult && currentTime < previousResult.transitionEligibleAt) {
     return {
       ...previousResult
     };
   }
-
-  // Helper: check if a snapshot has panic signals
-  const checkPanicSignals = (snap) => {
-    const reasons = [];
-    if (snap.volatilityBps >= 4500) reasons.push(MarketRiskReasons.VOLATILITY_PANIC);
-    if (snap.priceDivergenceBps >= 300) reasons.push(MarketRiskReasons.DIVERGENCE_PANIC);
-    if (BigInt(snap.bridgeNetOutflowUsd) >= 10000000n) reasons.push(MarketRiskReasons.OUTFLOW_PANIC);
-    if (snap.stablecoinDepegBps >= 200) reasons.push(MarketRiskReasons.DEPEG_PANIC);
-    if (snap.confidenceBps < 6000) reasons.push(MarketRiskReasons.CONFIDENCE_PANIC);
-    return reasons;
-  };
-
-  // Helper: check if a snapshot has volatile signals
-  const checkVolatileSignals = (snap) => {
-    const reasons = [];
-    if (snap.volatilityBps >= 3000) reasons.push(MarketRiskReasons.VOLATILITY_VOLATILE);
-    if (snap.priceDivergenceBps >= 100) reasons.push(MarketRiskReasons.DIVERGENCE_VOLATILE);
-    if (BigInt(snap.bridgeNetOutflowUsd) >= 5000000n) reasons.push(MarketRiskReasons.OUTFLOW_VOLATILE);
-    if (snap.stablecoinDepegBps >= 50) reasons.push(MarketRiskReasons.DEPEG_VOLATILE);
-    if (snap.confidenceBps < 8000) reasons.push(MarketRiskReasons.CONFIDENCE_VOLATILE);
-    return reasons;
-  };
-
-  // Compute "proposed" regime for each snapshot
-  const getProposedRegime = (snap) => {
-    const panicReasons = checkPanicSignals(snap);
-    if (panicReasons.length > 0) {
-      return { regime: "PANIC", reasons: panicReasons };
-    }
-    const volatileReasons = checkVolatileSignals(snap);
-    if (volatileReasons.length >= 2) {
-      return { regime: "VOLATILE", reasons: volatileReasons };
-    }
-    return { regime: "NORMAL", reasons: [] };
-  };
 
   const proposedLatest = getProposedRegime(latest);
 
@@ -130,7 +169,7 @@ export function classifyMarketRegime(
         regime: "PANIC",
         reasons: proposedLatest.reasons,
         reasonsHash: hashReasons(proposedLatest.reasons),
-        transitionEligibleAt: latest.observedAt + config.cooldownSeconds
+        transitionEligibleAt: currentTime + config.cooldownSeconds
       };
     }
   }
@@ -142,32 +181,12 @@ export function classifyMarketRegime(
         regime: "VOLATILE",
         reasons: proposedLatest.reasons,
         reasonsHash: hashReasons(proposedLatest.reasons),
-        transitionEligibleAt: latest.observedAt + config.cooldownSeconds
+        transitionEligibleAt: currentTime + config.cooldownSeconds
       };
     }
   }
 
   // 3. Recovery / Downgrade Check (requires 3 consecutive observations satisfying exit thresholds)
-  const satisfiesPanicExit = (snap) => {
-    return (
-      snap.volatilityBps < 4000 &&
-      snap.priceDivergenceBps < 250 &&
-      BigInt(snap.bridgeNetOutflowUsd) < 8000000n &&
-      snap.stablecoinDepegBps < 150 &&
-      snap.confidenceBps >= 6500
-    );
-  };
-
-  const satisfiesVolatileExit = (snap) => {
-    return (
-      snap.volatilityBps < 2500 &&
-      snap.priceDivergenceBps < 80 &&
-      BigInt(snap.bridgeNetOutflowUsd) < 4000000n &&
-      snap.stablecoinDepegBps < 40 &&
-      snap.confidenceBps >= 8500
-    );
-  };
-
   if (prevRegime === "PANIC") {
     if (snapshots.length >= 3) {
       const snap1 = snapshots[snapshots.length - 1];
@@ -183,7 +202,7 @@ export function classifyMarketRegime(
           regime: nextRegime,
           reasons,
           reasonsHash: hashReasons(reasons),
-          transitionEligibleAt: latest.observedAt + config.cooldownSeconds
+          transitionEligibleAt: currentTime + config.cooldownSeconds
         };
       }
     }
@@ -207,7 +226,7 @@ export function classifyMarketRegime(
           regime: "NORMAL",
           reasons: [],
           reasonsHash: hashReasons([]),
-          transitionEligibleAt: latest.observedAt + config.cooldownSeconds
+          transitionEligibleAt: currentTime + config.cooldownSeconds
         };
       }
     }
@@ -238,54 +257,7 @@ export function computeHysteresisState(history, currentRegime, transitionEligibl
   const latest = history[history.length - 1];
   const cooldownDuration = 60; // cooldown config matching backend
 
-  // Helper matching classifier logic
-  const checkPanicSignals = (snap) => {
-    return (
-      snap.volatilityBps >= 4500 ||
-      snap.priceDivergenceBps >= 300 ||
-      BigInt(snap.bridgeNetOutflowUsd) >= 10000000n ||
-      snap.stablecoinDepegBps >= 200 ||
-      snap.confidenceBps < 6000
-    );
-  };
-
-  const checkVolatileSignals = (snap) => {
-    let count = 0;
-    if (snap.volatilityBps >= 3000) count++;
-    if (snap.priceDivergenceBps >= 100) count++;
-    if (BigInt(snap.bridgeNetOutflowUsd) >= 5000000n) count++;
-    if (snap.stablecoinDepegBps >= 50) count++;
-    if (snap.confidenceBps < 8000) count++;
-    return count >= 2;
-  };
-
-  const satisfiesPanicExit = (snap) => {
-    return (
-      snap.volatilityBps < 4000 &&
-      snap.priceDivergenceBps < 250 &&
-      BigInt(snap.bridgeNetOutflowUsd) < 8000000n &&
-      snap.stablecoinDepegBps < 150 &&
-      snap.confidenceBps >= 6500
-    );
-  };
-
-  const satisfiesVolatileExit = (snap) => {
-    return (
-      snap.volatilityBps < 2500 &&
-      snap.priceDivergenceBps < 80 &&
-      BigInt(snap.bridgeNetOutflowUsd) < 4000000n &&
-      snap.stablecoinDepegBps < 40 &&
-      snap.confidenceBps >= 8500
-    );
-  };
-
-  const getProposedRegime = (snap) => {
-    if (checkPanicSignals(snap)) return 'PANIC';
-    if (checkVolatileSignals(snap)) return 'VOLATILE';
-    return 'NORMAL';
-  };
-
-  // Cooldown calculation
+  // Cooldown calculation (consistent calculation using currentTime)
   const inCooldown = currentTime < transitionEligibleAt;
   const cooldownRemaining = inCooldown ? transitionEligibleAt - currentTime : 0;
   const cooldownProgress = inCooldown ? (cooldownRemaining / cooldownDuration) * 100 : 0;
@@ -300,11 +272,11 @@ export function computeHysteresisState(history, currentRegime, transitionEligibl
   }
 
   if (currentRegime === "NORMAL") {
-    const proposed = getProposedRegime(latest);
+    const proposed = getProposedRegime(latest).regime;
     if (proposed === "PANIC") {
       // Check if previous was panic
       const prevSnap = history.length >= 2 ? history[history.length - 2] : null;
-      const prevProposed = prevSnap ? getProposedRegime(prevSnap) : null;
+      const prevProposed = prevSnap ? getProposedRegime(prevSnap).regime : null;
       if (prevProposed === "PANIC") {
         steps = "Transition eligible";
         message = "Panic conditions confirmed.";
@@ -314,7 +286,7 @@ export function computeHysteresisState(history, currentRegime, transitionEligibl
       }
     } else if (proposed === "VOLATILE") {
       const prevSnap = history.length >= 2 ? history[history.length - 2] : null;
-      const prevProposed = prevSnap ? getProposedRegime(prevSnap) : null;
+      const prevProposed = prevSnap ? getProposedRegime(prevSnap).regime : null;
       if (prevProposed === "VOLATILE" || prevProposed === "PANIC") {
         steps = "Transition eligible";
         message = "Volatile conditions confirmed.";
@@ -326,10 +298,10 @@ export function computeHysteresisState(history, currentRegime, transitionEligibl
       message = "All market signals within normal parameters.";
     }
   } else if (currentRegime === "VOLATILE") {
-    const proposed = getProposedRegime(latest);
+    const proposed = getProposedRegime(latest).regime;
     if (proposed === "PANIC") {
       const prevSnap = history.length >= 2 ? history[history.length - 2] : null;
-      const prevProposed = prevSnap ? getProposedRegime(prevSnap) : null;
+      const prevProposed = prevSnap ? getProposedRegime(prevSnap).regime : null;
       if (prevProposed === "PANIC") {
         steps = "Transition eligible";
         message = "Panic conditions confirmed.";
