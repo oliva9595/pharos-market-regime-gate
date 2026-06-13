@@ -49,12 +49,13 @@ export class YieldApyChart {
 
     // Color definitions
     const colors = {
-      baseApy: 'oklch(0.82 0.21 145)',   // Vara signature green
-      rewardApy: '#888888',     // neutral gray
-      totalLine: '#000000',     // high-contrast black
-      textMuted: '#666666',
-      gridLine: 'rgba(0, 0, 0, 0.08)'
+      baseApy: '#00ff66',   // Vara signature green
+      rewardApy: '#737373',     // neutral gray
+      totalLine: '#ffffff',     // high-contrast white
+      textMuted: '#a3a3a3',
+      gridLine: 'rgba(255, 255, 255, 0.08)'
     };
+
 
     // 1. Create Defs for gradients & filters
     const defs = this.createEl('defs');
@@ -203,7 +204,7 @@ export class YieldApyChart {
         cy: y,
         r: '3',
         fill: colors.totalLine,
-        stroke: '#ffffff',
+        stroke: '#161618',
         'stroke-width': '1'
       });
 
@@ -311,7 +312,7 @@ export class YieldFactorsChart {
       const text = this.createEl('text', {
         x: leftPad - 10,
         y: y + 8,
-        fill: '#555555',
+        fill: '#a3a3a3',
         'font-size': '8px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
@@ -327,8 +328,8 @@ export class YieldFactorsChart {
         width: effWidth,
         height: '8',
         rx: '4',
-        fill: 'rgba(0, 0, 0, 0.05)',
-        stroke: 'rgba(0, 0, 0, 0.02)',
+        fill: 'rgba(255, 255, 255, 0.08)',
+        stroke: 'rgba(255, 255, 255, 0.02)',
         'stroke-width': '1'
       });
       svg.appendChild(bgBar);
@@ -338,8 +339,8 @@ export class YieldFactorsChart {
       if (fillWidth > 0) {
         // Map color semantically: green for low, amber for moderate, red for high
         const barColor = f.score >= 50 
-          ? '#d92d20' 
-          : (f.score >= 30 ? '#e47a11' : 'oklch(0.82 0.21 145)');
+          ? '#ff3366' 
+          : (f.score >= 30 ? '#ffcc00' : '#00ff66');
 
         const fillBar = this.createEl('rect', {
           x: leftPad,
@@ -357,7 +358,7 @@ export class YieldFactorsChart {
       const valText = this.createEl('text', {
         x: leftPad + effWidth + 6,
         y: y + 8,
-        fill: f.score >= 50 ? '#d92d20' : '#000000',
+        fill: f.score >= 50 ? '#ff3366' : '#ffffff',
         'font-size': '8px',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': f.score >= 50 ? 'bold' : 'normal'

@@ -46,11 +46,11 @@ export class MarketRegimeChart {
 
     // Color definitions
     const colors = {
-      normal: 'oklch(0.82 0.21 145)',   // Vara signature green
-      volatile: '#e47a11', // warning amber
-      panic: '#d92d20',    // warning red
-      textMuted: '#666666',
-      gridLine: 'rgba(0, 0, 0, 0.08)'
+      normal: '#00ff66',   // Vara signature green
+      volatile: '#ffcc00', // warning amber
+      panic: '#ff3366',    // warning red
+      textMuted: '#a3a3a3',
+      gridLine: 'rgba(255, 255, 255, 0.08)'
     };
 
     // Determine current regime color
@@ -108,9 +108,9 @@ export class MarketRegimeChart {
 
     // 3. Draw horizontal thresholds
     const thresholds = [
-      { name: 'PANIC ENTRY', val: 4500, color: colors.panic, dash: '3,3', desc: '>=45%' },
+      { name: 'PANIC ENTRY', val: 4500, color: '#ff3366', dash: '3,3', desc: '>=45%' },
       { name: 'PANIC EXIT', val: 4000, color: '#f43f5e', dash: '3,6', desc: '<40%' },
-      { name: 'VOLATILE ENTRY', val: 3000, color: colors.volatile, dash: '3,3', desc: '>=30%' },
+      { name: 'VOLATILE ENTRY', val: 3000, color: '#ffcc00', dash: '3,3', desc: '>=30%' },
       { name: 'VOLATILE EXIT', val: 2500, color: '#d97706', dash: '3,6', desc: '<25%' }
     ];
 

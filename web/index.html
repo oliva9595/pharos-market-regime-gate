@@ -12,59 +12,14 @@
       theme: {
         extend: {
           colors: {
-            brand: 'oklch(0.82 0.21 145)', // Vara signature green
-            darkest: '#fafafa', // Clean page background
-            'color-1': '#000000'
+            brand: 'oklch(0.60 0.14 145)',
+            darkest: '#f7f7f7',
+            'color-1': '#09090b'
           },
           fontFamily: {
-            sans: ['Geist', 'sans-serif'],
-            mono: ['Geist Mono', 'monospace'],
+            sans: ['Geist', 'system-ui', 'sans-serif'],
+            mono: ['Geist Mono', 'ui-monospace', 'monospace'],
             serif: ['Times New Roman', 'Times', 'serif']
-          },
-          fontSize: {
-            'xs': '12px',      /* scaled up from 11px */
-            'sm': '14px',      /* scaled up from 12px */
-            'base': '16px',    /* scaled up from 13px */
-            'lg': '18px',      /* scaled up from 15px */
-            'xl': '22px',      /* scaled up from 18px */
-            '2xl': '32px',     /* scaled up from 38px (more balanced section titles) */
-            '3xl': '40px',     /* scaled up from 42px */
-          },
-          spacing: {
-            '1': '2px',
-            '2': '3px',
-            '3': '4px',
-            '4': '5px',
-            '5': '6px',
-            '6': '7px',
-            '7': '8px',
-            '8': '9px',
-            '9': '10px',
-            '10': '11px',
-            '11': '12px',
-            '12': '13px',
-            '13': '14px',
-            '14': '15px',
-            '15': '16px',
-            '16': '18px',
-            '17': '22px',
-            '18': '23px',
-            '19': '26px',
-            '20': '30px',
-            '21': '42px',
-            '22': '45px',
-            '23': '89px',
-            '24': '149px',
-          },
-          borderRadius: {
-            'sm': '3px 3px 1px 1px',
-            'md': '33554400px',
-            'lg': '6px',
-            'xl': '8px',
-            'full': '9.25px',
-            'r6': '11.25px',
-            'r7': '15.25px',
-            'r8': '999px',
           }
         }
       }
@@ -77,65 +32,32 @@
   <!-- Ethers.js v6 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
 </head>
-<body class="bg-darkest text-color-1 min-h-screen relative overflow-x-hidden flex flex-col font-sans">
-  <!-- Background Ambient Glows -->
-  <div class="fixed w-[500px] h-[500px] rounded-full bg-brand/5 top-[-250px] left-[-200px] ambient-glow" aria-hidden="true"></div>
-  <div class="fixed w-[600px] h-[600px] rounded-full bg-indigo-500/5 bottom-[-300px] right-[-200px] ambient-glow" aria-hidden="true"></div>
+<body class="min-h-screen relative overflow-x-hidden flex flex-col font-sans">
 
-  <!-- Global Readiness Banner (Consistently Light themed) -->
-  <div id="global-readiness-banner" class="w-full py-4 px-6 border-b border-black text-center transition-colors duration-300 z-50 sticky top-0 bg-white" role="status">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <header class="w-full border-b border-zinc-800 py-3 px-6 z-50 sticky top-0" style="background:var(--surface);">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <!-- Brand -->
       <div class="flex items-center gap-3">
-        <span class="flex h-3 w-3 relative">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-brand" id="banner-ping"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-brand" id="banner-dot"></span>
-        </span>
-        <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Execution Policy:</span>
-        <span id="banner-decision-text" class="text-lg font-bold font-mono tracking-widest px-4 py-1 rounded border border-brand/30 bg-brand/10 text-brand">LOADING</span>
-      </div>
-      <div class="flex items-center gap-6 text-xs text-neutral-500 font-mono">
-        <span id="banner-report-id" class="bg-neutral-100 border border-neutral-200 px-2.5 py-1 rounded max-w-[240px] truncate">Report: 0x...</span>
-        <span id="banner-freshness"><i class="fa-regular fa-clock mr-1"></i> Freshness: --</span>
-        <span id="banner-confidence"><i class="fa-solid fa-gauge mr-1"></i> Confidence: --</span>
-      </div>
-    </div>
-    <div class="max-w-7xl mx-auto mt-3 pt-3 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center text-xs font-mono gap-3 text-neutral-800">
-      <div class="flex items-center gap-2">
-        <span class="text-neutral-500 uppercase font-semibold">Recommendation:</span>
-        <span id="banner-recommendation">LOADING...</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-neutral-500 uppercase font-semibold">On-Chain Consequence:</span>
-        <span id="banner-consequence">LOADING...</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sticky Header (Consistently Light themed) -->
-  <header class="w-full border-b border-black bg-white py-4 px-6 z-40">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="relative w-8 h-8 flex items-center justify-center rounded border border-brand bg-brand/10" aria-hidden="true">
-          <i class="fa-solid fa-shield-halved text-brand text-lg"></i>
+        <div class="w-8 h-8 flex items-center justify-center rounded-lg border border-zinc-700" style="background:#09090b;" aria-hidden="true">
+          <i class="fa-solid fa-shield-halved text-white text-sm"></i>
         </div>
         <div>
-          <h1 class="text-xl serif-title flex items-center gap-2 font-medium">
-            <span>Pharos Sentinel</span>
-            <span class="text-[10px] bg-indigo-100 text-indigo-800 border border-indigo-200 px-2 py-0.5 rounded font-mono">ATLANTIC</span>
-          </h1>
-          <p class="text-xs text-neutral-500 uppercase tracking-widest font-mono">Security Command Center</p>
+          <div class="flex items-center gap-2">
+            <span class="text-base font-bold tracking-tight text-white">Pharos Sentinel</span>
+            <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded font-mono font-bold">ATLANTIC</span>
+          </div>
+          <p class="text-xs text-zinc-400 font-mono">Volatility Shield — Security Command Center</p>
         </div>
       </div>
-      
-      <div class="flex items-center gap-4">
-        <!-- Execution Mode Controller -->
-        <div class="flex items-center gap-2 bg-neutral-100 rounded-full px-3.5 py-1 border border-black/10">
-          <span class="text-[10px] text-neutral-500 uppercase font-mono">Gateway:</span>
-          <button id="toggle-mode" class="text-[10px] font-bold font-mono text-neutral-800 hover:text-black transition-colors uppercase" aria-label="Toggle simulator execution gateway mode">MOCK MODE</button>
+
+      <!-- Right controls -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-zinc-800 rounded-full px-3.5 py-1.5 border border-zinc-700">
+          <span class="text-xs text-zinc-400 font-mono">Gateway:</span>
+          <button id="toggle-mode" class="text-xs font-bold font-mono text-zinc-300 hover:text-white transition-colors uppercase" aria-label="Toggle simulator execution gateway mode">MOCK MODE</button>
         </div>
-        
-        <!-- Wallet Connection -->
-        <button id="connect-wallet" class="px-4 py-1.5 rounded-full border border-black hover:bg-neutral-50 transition-all font-mono text-xs flex items-center gap-2 bg-white text-black">
+        <button id="connect-wallet" class="px-4 py-1.5 rounded-full border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-600 transition-all font-mono text-xs flex items-center gap-2 bg-zinc-900 text-zinc-100">
           <span class="w-2 h-2 rounded-full bg-rose-500" id="wallet-dot" aria-hidden="true"></span>
           <span id="wallet-text">Connect Wallet</span>
         </button>
@@ -143,113 +65,215 @@
     </div>
   </header>
 
-  <!-- Stale Data Warning Banner -->
-  <div id="stale-warning-banner" class="hidden w-full bg-amber-500/10 border-b border-amber-500/20 py-2 px-6 text-center text-xs text-amber-700 font-mono font-semibold" role="alert">
-    <i class="fa-solid fa-triangle-exclamation mr-2"></i> WARNING: API data is currently stale. Last successful poll was over 30s ago.
+  <!-- Stale Data Warning -->
+  <div id="stale-warning-banner" class="hidden w-full py-2 px-6 text-center text-sm font-mono font-semibold" role="alert">
+    <i class="fa-solid fa-triangle-exclamation mr-2"></i>Dữ liệu đang cũ — API không phản hồi trong 30 giây qua.
   </div>
 
-  <!-- Main Grid Layout -->
-  <main class="flex-grow max-w-7xl mx-auto w-full p-6 space-y-6">
-    
-    <!-- SECTION 1: Monitor Panels -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-      
+  <!-- ── Main Content ───────────────────────────────────────── -->
+  <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-6 space-y-6">
+
+    <!-- Sandbox Interactive Guide (Sandbox Onboarding) -->
+    <section class="glass-panel rounded-2xl p-5 mb-6" style="background:var(--surface); border-color:var(--border); color:var(--text-primary);">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shrink-0">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
+        </div>
+        <div class="flex-grow space-y-2">
+          <h3 class="text-sm font-bold tracking-tight text-white flex items-center gap-2">
+            <span>Interactive Sandbox Guide</span>
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold uppercase">Quick Start</span>
+          </h3>
+          <p class="text-xs text-zinc-400 leading-relaxed max-w-[80ch]">
+            Chào mừng bạn đến với <strong>Pharos Volatility Sentinel</strong>. Đây là hệ thống cổng bảo mật tự động giám sát rủi ro thị trường và lợi nhuận (yield) tích hợp trực tiếp trên chuỗi khối Vara.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2">
+            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
+              <span class="font-bold text-zinc-300 block font-mono">1. Bật Mock Mode</span>
+              <span class="text-zinc-400 block font-sans">Đảm bảo chế độ <strong>MOCK MODE</strong> ở góc trên bên phải được bật để bắt đầu mô phỏng.</span>
+            </div>
+            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
+              <span class="font-bold text-zinc-300 block font-mono">2. Kích Hoạt Shock</span>
+              <span class="text-zinc-400 block font-sans">Nhấp vào các nút <strong>Shock Injectors</strong> ở dưới mỗi bảng Market Regime hoặc Yield Decay để mô phỏng rủi ro.</span>
+            </div>
+            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
+              <span class="font-bold text-zinc-300 block font-mono">3. Theo Dõi Decision</span>
+              <span class="text-zinc-400 block font-sans">Quan sát <strong>System Decision</strong> chuyển màu (Xanh: ALLOW, Vàng: RESTRICT, Đỏ: BLOCK, Tím: UNWIND).</span>
+            </div>
+            <div class="bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800 text-xs space-y-1">
+              <span class="font-bold text-zinc-300 block font-mono">4. Kiểm Tra Arena</span>
+              <span class="text-zinc-400 block font-sans">Xuống phần <strong>Execution Arena</strong>, chọn một tình huống giao dịch và bấm <strong>Check Action</strong> để xem kết quả.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         ① SYSTEM DECISION — Đây là trạng thái hiện tại
+         Hệ thống đang cho phép hay chặn giao dịch?
+         ════════════════════════════════════════════════════ -->
+    <section id="global-readiness-banner" class="glass-panel rounded-2xl overflow-hidden" role="status" aria-label="System Decision">
+      <!-- Step label -->
+      <div class="px-6 pt-5 pb-3 border-b border-zinc-800">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 text-zinc-950 text-xs font-bold shrink-0">1</span>
+            <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-400">System Decision</span>
+          </div>
+          <p class="text-xs text-zinc-500">Trạng thái chính sách thực thi hiện tại — hệ thống có cho phép giao dịch không?</p>
+        </div>
+      </div>
+      <!-- Decision content -->
+      <div class="px-6 py-5 flex flex-col lg:flex-row lg:items-center gap-6">
+        <!-- Big Decision Badge -->
+        <div class="flex items-center gap-4 shrink-0">
+          <span class="flex h-3 w-3 relative shrink-0" aria-hidden="true">
+            <span id="banner-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style="background:#00ff66;"></span>
+            <span id="banner-dot" class="relative inline-flex rounded-full h-3 w-3" style="background:#00ff66;"></span>
+          </span>
+          <div>
+            <div class="text-xs font-mono text-zinc-500 mb-1.5 uppercase tracking-wider">Execution Policy</div>
+            <span id="banner-decision-text" class="font-black font-mono border">LOADING</span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden lg:block self-stretch w-px bg-zinc-800"></div>
+
+        <!-- Recommendation + Consequence -->
+        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <div class="text-xs font-mono text-zinc-500 uppercase tracking-wider">Khuyến nghị</div>
+            <div id="banner-recommendation" class="text-sm font-semibold text-zinc-200">--</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-xs font-mono text-zinc-500 uppercase tracking-wider">On-Chain Consequence</div>
+            <div id="banner-consequence" class="text-sm font-semibold text-zinc-200">--</div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden lg:block self-stretch w-px bg-zinc-800"></div>
+
+        <!-- Telemetry meta -->
+        <div class="flex flex-col gap-2 text-xs font-mono text-zinc-400 shrink-0">
+          <span id="banner-freshness"><i class="fa-regular fa-clock mr-1.5 text-zinc-500"></i>Freshness: --</span>
+          <span id="banner-confidence"><i class="fa-solid fa-gauge mr-1.5 text-zinc-500"></i>Confidence: --</span>
+          <span id="banner-report-id" class="truncate max-w-[200px] text-zinc-500">Report: 0x...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         ② & ③ WHY — Tại sao hệ thống đưa ra quyết định này?
+         ════════════════════════════════════════════════════ -->
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 text-zinc-950 text-xs font-bold shrink-0">2</span>
+        <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-400">Signal Monitors</span>
+        <div class="flex-grow h-px bg-zinc-800"></div>
+        <span class="text-sm text-zinc-500">Oracle signals &amp; vault health driving the decision above</span>
+      </div>
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
       <!-- Market Regime Monitor Section -->
-      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col xl:col-span-2" id="market-regime-panel" aria-labelledby="market-title">
+      <section class="glass-panel p-6 rounded-2xl relative overflow-hidden flex flex-col" id="market-regime-panel" aria-labelledby="market-title">
+
         <!-- Loading overlay -->
         <div class="state-overlay" id="market-loading-overlay" aria-hidden="true">
           <div class="spinner mb-2"></div>
-          <span class="text-xs text-neutral-600 font-mono">Refreshing Market Metrics...</span>
+          <span class="text-xs text-zinc-400 font-mono">Refreshing Market Metrics...</span>
         </div>
         
         <!-- Error overlay -->
         <div class="state-overlay" id="market-error-overlay" aria-hidden="true">
           <i class="fa-solid fa-circle-exclamation text-rose-500 text-3xl mb-2"></i>
-          <span class="text-xs text-rose-700 font-mono mb-4" id="market-error-msg">Connection Error</span>
-          <button class="px-4 py-1.5 border border-black rounded text-xs font-mono bg-white hover:bg-neutral-50" id="market-retry-btn">Retry Connection</button>
+          <span class="text-xs text-rose-400 font-mono mb-4" id="market-error-msg">Connection Error</span>
+          <button class="px-4 py-1.5 border border-zinc-700 rounded text-xs font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-100" id="market-retry-btn">Retry Connection</button>
         </div>
 
         <div>
-          <div class="flex items-center justify-between border-b border-black/10 pb-4 mb-4">
+          <div class="flex items-center justify-between border-b border-zinc-850 pb-4 mb-4">
             <div class="flex items-center gap-2.5">
               <i class="fa-solid fa-chart-line text-brand text-lg" aria-hidden="true"></i>
-              <h2 id="market-title" class="text-xl serif-title font-medium">Market Regime Monitor</h2>
+              <h2 id="market-title" class="text-xl serif-title font-medium text-white">Market Regime Monitor</h2>
             </div>
-            <span id="market-regime-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-100 text-emerald-800 border-emerald-300">LOADING</span>
+            <span id="market-regime-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-950/40 text-emerald-400 border-emerald-800">LOADING</span>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Left Column: Metrics & On-Chain Status -->
             <div class="space-y-5">
               <div>
-                <span class="text-sm text-neutral-500 uppercase tracking-wider font-semibold block mb-3">Live Security Oracle Signals</span>
+                <span class="text-sm text-zinc-400 font-semibold block mb-2">Live Security Oracle Signals</span>
                 <div class="grid grid-cols-2 gap-3">
                   <!-- Volatility Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Volatility Index (VIX)</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-volatility" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-volatility" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">VIX Volatility</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-volatility" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-volatility" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Entry: Volatile >=30% | Panic >=45%</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥45%</span>
                   </div>
                   <!-- Divergence Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Price Divergence</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-divergence" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-divergence" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">Price Divergence</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-divergence" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-divergence" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Entry: Volatile >=1.0% | Panic >=3.0%</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥3.0%</span>
                   </div>
                   <!-- Outflow Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Bridge Net Outflow</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-bridge" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-bridge" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">Bridge Outflow</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-bridge" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-bridge" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Entry: Volatile >=$5M | Panic >=$10M</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥$10M</span>
                   </div>
                   <!-- Stablecoin Depeg Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Stablecoin Depeg</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-depeg" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-depeg" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">Stablecoin Depeg</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-depeg" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-depeg" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Entry: Volatile >=0.5% | Panic >=2.0%</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥2.0%</span>
                   </div>
                   <!-- Confidence Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Oracle Confidence</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-confidence" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-confidence" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">Oracle Confidence</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-confidence" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-confidence" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Entry: Volatile <80% | Panic <60%</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic &lt;60%</span>
                   </div>
                   <!-- Liquidity Depth Card -->
-                  <div class="bg-neutral-50 p-3 rounded-xl border border-black/8 hover:border-black/20 transition-colors relative">
-                    <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Liquidity Depth</span>
-                    <div class="flex items-baseline justify-between mt-1">
-                      <div id="market-liquidity" class="text-lg font-bold font-mono text-black">--</div>
-                      <span id="trend-liquidity" class="text-[10px] font-mono font-bold text-neutral-400"><i class="fa-solid fa-minus mr-0.5"></i> --</span>
+                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                    <span class="text-sm text-zinc-500 font-semibold block">Liquidity Depth</span>
+                    <div class="flex items-baseline justify-between mt-1.5">
+                      <div id="market-liquidity" class="text-xl font-bold font-mono text-white">--</div>
+                      <span id="trend-liquidity" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
                     </div>
-                    <span class="text-[8px] text-neutral-400 font-mono block mt-1">Normal Range: >$20.0M depth</span>
+                    <span class="text-xs text-zinc-500 font-mono block mt-1">Normal &gt;$20M</span>
                   </div>
                 </div>
               </div>
 
               <!-- Active On-Chain Report Details -->
-              <div class="bg-neutral-50 p-4 rounded-xl border border-black/8">
-                <span class="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block mb-2">Active On-Chain Report Details</span>
-                <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] font-mono text-neutral-800">
-                  <div class="flex justify-between border-b border-black/5 pb-1.5"><span class="text-neutral-500">Sequence Number:</span> <span id="report-seq" class="font-bold text-sky-700">#--</span></div>
-                  <div class="flex justify-between border-b border-black/5 pb-1.5"><span class="text-neutral-500">Reporter:</span> <span id="report-reporter" class="font-bold truncate max-w-[80px]">0x...</span></div>
-                  <div class="flex justify-between border-b border-black/5 pb-1.5"><span class="text-neutral-500">Signature status:</span> <span id="report-sig" class="font-bold text-emerald-700">--</span></div>
-                  <div class="flex justify-between border-b border-black/5 pb-1.5"><span class="text-neutral-500">Gate State:</span> <span id="report-gate-state" class="font-bold text-indigo-700">--</span></div>
-                  <div class="col-span-2 flex justify-between pt-1"><span class="text-neutral-500">Validation Hash:</span> <span id="report-val-hash" class="font-bold truncate max-w-[200px]">0x...</span></div>
+              <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
+                <span class="text-sm text-zinc-400 font-bold block mb-3">On-Chain Report</span>
+                <div class="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs font-mono">
+                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Seq #</span> <span id="report-seq" class="font-bold text-sky-400">#--</span></div>
+                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Reporter</span> <span id="report-reporter" class="font-bold truncate max-w-[80px] text-zinc-300">0x...</span></div>
+                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Signature</span> <span id="report-sig" class="font-bold text-emerald-400">--</span></div>
+                  <div class="flex justify-between border-b border-zinc-850 pb-2"><span class="text-zinc-500">Gate State</span> <span id="report-gate-state" class="font-bold text-indigo-400">--</span></div>
+                  <div class="col-span-2 flex justify-between pt-1"><span class="text-zinc-500">Val. Hash</span> <span id="report-val-hash" class="font-bold truncate max-w-[200px] text-zinc-300">0x...</span></div>
                 </div>
               </div>
             </div>
@@ -257,17 +281,16 @@
             <!-- Right Column: Visualization, Hysteresis & Shocks -->
             <div class="space-y-5">
               <!-- Hysteresis State / Cooldown Info -->
-              <div class="bg-neutral-50 p-3.5 rounded-xl border border-black/8">
+              <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">Hysteresis Confirmation State</span>
-                  <span id="hysteresis-steps" class="font-mono text-[9px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded uppercase">STABLE</span>
+                  <span class="text-sm text-zinc-400 font-bold">Hysteresis State</span>
+                  <span id="hysteresis-steps" class="font-mono text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2 py-0.5 rounded-full uppercase">STABLE</span>
                 </div>
-                <div id="hysteresis-message" class="text-xs text-neutral-800 font-mono leading-relaxed min-h-[1.5rem] mb-3">System status stable.</div>
-                
+                <div id="hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">System status stable.</div>
                 <!-- Cooldown timer progress -->
                 <div id="cooldown-wrapper" class="hidden space-y-1.5">
-                  <div class="flex justify-between text-[8px] font-mono text-neutral-500 uppercase">
-                    <span>Transition Cooldown Active</span>
+                  <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
+                    <span>Cooldown Active</span>
                     <span id="cooldown-timer">0s remaining</span>
                   </div>
                   <div class="cooldown-container">
@@ -277,13 +300,13 @@
               </div>
 
               <!-- Horizon Threshold Chart -->
-              <div class="bg-neutral-50 rounded-xl border border-black/8 p-2 relative h-40">
+              <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-40">
                 <div id="market-chart-container" class="w-full h-full"></div>
               </div>
 
               <!-- Deterministic Shock Scenario Injectors -->
               <div>
-                <span class="text-xs text-neutral-500 uppercase tracking-wider font-semibold block mb-2.5">Deterministic Shock Injectors (Simulator)</span>
+                <span class="text-sm text-neutral-500 font-semibold block mb-2">Deterministic Shock Injectors (Simulator)</span>
                 <div class="grid grid-cols-3 gap-2">
                   <button id="shock-vix" class="btn-shock hover-glow" title="VIX volatility crosses 30% Volatile entry threshold">
                     <i class="fa-solid fa-wind mr-1 text-amber-600"></i>VIX Shock
@@ -308,10 +331,10 @@
             </div>
           </div>
 
-          <div class="space-y-2 mt-4 pt-4 border-t border-black/10">
-            <span class="text-xs text-neutral-500 uppercase tracking-wider font-semibold block">Regime Diagnostics:</span>
-            <ul id="market-reasons" class="space-y-1.5 text-xs font-mono text-neutral-800 max-h-24 overflow-y-auto bg-neutral-50 p-3.5 rounded-xl border border-black/8">
-              <li class="text-neutral-500">No diagnostics available.</li>
+          <div class="space-y-2 mt-4 pt-4 border-t border-zinc-800">
+            <span class="text-sm text-zinc-400 font-semibold block">Regime Diagnostics</span>
+            <ul id="market-reasons" class="space-y-1.5 text-sm font-mono text-zinc-400 max-h-28 overflow-y-auto bg-zinc-900/40 p-3 rounded-xl border border-zinc-800">
+              <li class="text-zinc-500">No diagnostics available.</li>
             </ul>
           </div>
         </div>
@@ -322,29 +345,29 @@
         <!-- Loading overlay -->
         <div class="state-overlay" id="yield-loading-overlay" aria-hidden="true">
           <div class="spinner mb-2"></div>
-          <span class="text-xs text-neutral-600 font-mono">Refreshing Yield Metrics...</span>
+          <span class="text-xs text-zinc-400 font-mono">Refreshing Yield Metrics...</span>
         </div>
         
         <!-- Error overlay -->
         <div class="state-overlay" id="yield-error-overlay" aria-hidden="true">
           <i class="fa-solid fa-circle-exclamation text-rose-500 text-3xl mb-2"></i>
-          <span class="text-xs text-rose-700 font-mono mb-4" id="yield-error-msg">Connection Error</span>
-          <button class="px-4 py-1.5 border border-black rounded text-xs font-mono bg-white hover:bg-neutral-50" id="yield-retry-btn">Retry Connection</button>
+          <span class="text-xs text-rose-400 font-mono mb-4" id="yield-error-msg">Connection Error</span>
+          <button class="px-4 py-1.5 border border-zinc-700 rounded text-xs font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-100" id="yield-retry-btn">Retry Connection</button>
         </div>
 
         <div>
-          <div class="flex items-center justify-between border-b border-black/10 pb-4 mb-4">
+          <div class="flex items-center justify-between border-b border-zinc-850 pb-4 mb-4">
             <div class="flex items-center gap-2.5">
-              <i class="fa-solid fa-seedling text-indigo-600 text-lg" aria-hidden="true"></i>
-              <h2 id="yield-title" class="text-xl serif-title font-medium">Yield Decay Monitor</h2>
+              <i class="fa-solid fa-seedling text-indigo-450 text-lg" aria-hidden="true"></i>
+              <h2 id="yield-title" class="text-xl serif-title font-medium text-white">Yield Decay Monitor</h2>
             </div>
-            <span id="yield-decay-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-100 text-emerald-800 border-emerald-300">LOADING</span>
+            <span id="yield-decay-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-950/40 text-emerald-400 border-emerald-800">LOADING</span>
           </div>
 
           <!-- Opportunity ID Selector -->
           <div class="mb-4">
-            <label for="opportunity-selector" class="text-xs text-neutral-500 uppercase tracking-wider font-semibold block mb-1">Target Vault Opportunity</label>
-            <select id="opportunity-selector" class="w-full bg-white border border-black rounded-lg px-3 py-2 text-xs font-mono text-black focus:border-brand focus-visible:outline-none focus:ring-1 focus:ring-brand">
+            <label for="opportunity-selector" class="text-sm text-zinc-400 font-semibold block mb-1">Target Vault Opportunity</label>
+            <select id="opportunity-selector" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:border-brand focus-visible:outline-none focus:ring-1 focus:ring-brand">
               <option value="0x809d550fca64d94Bd9F66E60752A544199cfAC3D">ProtocolRegistry Vault (0x809d...AC3D)</option>
               <option value="0x4c5859f0F772848b2D91F1D83E2Fe57935348029">SlippageGuard Vault (0x4c58...8029)</option>
             </select>
@@ -352,52 +375,51 @@
 
           <!-- Yield Metrics Details Grid -->
           <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Decay Score</span>
-              <div id="yield-decay-score" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Decay Score</span>
+              <div id="yield-decay-score" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Total APY</span>
-              <div id="yield-apy" class="text-base font-bold font-mono text-black mt-0.5">--</div>
-              <span id="yield-apy-breakdown" class="text-[8px] text-neutral-400 font-mono block">Base: -- | Rwd: --</span>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Total APY</span>
+              <div id="yield-apy" class="text-xl font-bold font-mono text-white mt-1">--</div>
+              <span id="yield-apy-breakdown" class="text-xs text-zinc-500 font-mono block mt-0.5">Base: -- | Rwd: --</span>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">TVL Assets</span>
-              <div id="yield-tvl" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">TVL Assets</span>
+              <div id="yield-tvl" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">DEX Net Flow (24h)</span>
-              <div id="yield-netflow" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Net Flow 24h</span>
+              <div id="yield-netflow" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">24h Fees</span>
-              <div id="yield-fees" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">24h Fees</span>
+              <div id="yield-fees" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Exit Slippage</span>
-              <div id="yield-slippage" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Exit Slippage</span>
+              <div id="yield-slippage" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Rwd Token 7d Trend</span>
-              <div id="yield-reward-trend" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Rwd 7d Trend</span>
+              <div id="yield-reward-trend" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
-            <div class="bg-neutral-50 p-2.5 rounded-xl border border-black/8 hover:border-black/20 transition-colors">
-              <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block">Oracle Confidence</span>
-              <div id="yield-confidence" class="text-base font-bold font-mono text-black mt-0.5">--</div>
+            <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+              <span class="text-sm text-zinc-500 font-semibold block">Oracle Confidence</span>
+              <div id="yield-confidence" class="text-xl font-bold font-mono text-white mt-1">--</div>
             </div>
           </div>
 
           <!-- Yield Hysteresis & Cooldown State -->
-          <div class="bg-neutral-50 p-3.5 rounded-xl border border-black/8 mb-4">
+          <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800 mb-4">
             <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] text-neutral-500 uppercase tracking-wider font-bold block">Yield Hysteresis Confirmation State</span>
-              <span id="yield-hysteresis-steps" class="font-mono text-[9px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded uppercase">IMMEDIATE</span>
+              <span class="text-sm text-zinc-500 font-bold">Yield Hysteresis</span>
+              <span id="yield-hysteresis-steps" class="font-mono text-xs font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900 px-2 py-0.5 rounded-full uppercase">IMMEDIATE</span>
             </div>
-            <div id="yield-hysteresis-message" class="text-xs text-neutral-800 font-mono leading-relaxed min-h-[1.5rem] mb-3">Yield metrics stable.</div>
-            
+            <div id="yield-hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">Yield metrics stable.</div>
             <!-- Cooldown timer progress -->
             <div id="yield-cooldown-wrapper" class="hidden space-y-1.5">
-              <div class="flex justify-between text-[8px] font-mono text-neutral-500 uppercase">
+              <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
                 <span>Transition Cooldown Active</span>
                 <span id="yield-cooldown-timer">0s remaining</span>
               </div>
@@ -409,23 +431,23 @@
 
           <!-- APY History Chart -->
           <div class="mb-4">
-            <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block mb-1.5">Historical APY Decomposition</span>
-            <div class="bg-neutral-50 rounded-xl border border-black/8 p-2 relative h-40">
+            <span class="text-sm text-zinc-400 font-semibold block mb-2">Historical APY Decomposition</span>
+            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-40">
               <div id="yield-chart-container" class="w-full h-full"></div>
             </div>
           </div>
 
           <!-- Factor Contributions Chart -->
           <div class="mb-4">
-            <span class="text-[9px] text-neutral-500 uppercase tracking-wider font-semibold block mb-1.5">Weighted Factor Risk Breakdown</span>
-            <div class="bg-neutral-50 rounded-xl border border-black/8 p-2 relative h-36">
+            <span class="text-sm text-zinc-400 font-semibold block mb-2">Weighted Factor Risk Breakdown</span>
+            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-36">
               <div id="yield-factors-container" class="w-full h-full"></div>
             </div>
           </div>
 
           <!-- Deterministic Scenario Triggers -->
           <div class="mb-4">
-            <span class="text-xs text-neutral-500 uppercase tracking-wider font-semibold block mb-2.5">Deterministic Decay Scenarios (Simulator)</span>
+            <span class="text-sm text-zinc-400 font-semibold block mb-2">Deterministic Decay Scenarios (Simulator)</span>
             <div class="grid grid-cols-2 gap-2">
               <button id="yield-scenario-healthy" class="btn-scenario hover-glow" title="Normal healthy yield metrics">
                 <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Healthy
@@ -446,28 +468,41 @@
           </div>
 
           <div class="space-y-2">
-            <span class="text-xs text-neutral-500 uppercase tracking-wider font-semibold block">Decay Diagnostics:</span>
-            <ul id="yield-reasons" class="space-y-2 text-xs font-mono text-neutral-800 max-h-24 overflow-y-auto bg-neutral-50 p-4 rounded-xl border border-black/8">
-              <li class="text-neutral-500">No diagnostics available.</li>
+            <span class="text-sm text-zinc-400 font-semibold block">Decay Diagnostics</span>
+            <ul id="yield-reasons" class="space-y-1.5 text-sm font-mono text-zinc-400 max-h-28 overflow-y-auto bg-zinc-900/40 p-3 rounded-xl border border-zinc-800">
+              <li class="text-zinc-500">No diagnostics available.</li>
             </ul>
           </div>
         </div>
       </section>
 
     </div>
+    <!-- / Signal Monitors wrapper -->
 
-    <!-- SECTION 2: Real Execution Proof Arena -->
+    <!-- ════════════════════════════════════════════════════
+         ③ WHAT TO DO — Mô phỏng hoặc thực thi on-chain
+         Kiểm tra chính sách và thực hiện giao dịch
+         ════════════════════════════════════════════════════ -->
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-zinc-100 text-zinc-950 text-xs font-bold shrink-0">3</span>
+        <span class="text-xs font-mono font-bold uppercase tracking-widest text-zinc-400">Execution Proof Arena</span>
+        <div class="flex-grow h-px bg-zinc-800"></div>
+        <span class="text-sm text-zinc-500">Mô phỏng chính sách hoặc thực thi trực tiếp trên blockchain</span>
+      </div>
+
+    <!-- Execution Proof Arena -->
     <section class="glass-panel p-6 rounded-2xl execution-proof-panel" aria-labelledby="execution-proof-title">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-black/10 pb-4 mb-5">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-850 pb-4 mb-5">
         <div>
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-bolt text-brand" aria-hidden="true"></i>
-            <h2 id="execution-proof-title" class="text-xl serif-title font-medium">Execution Proof Arena</h2>
+            <h2 id="execution-proof-title" class="text-xl serif-title font-medium text-white">Execution Proof Arena</h2>
           </div>
-          <p class="text-xs text-neutral-500 mt-1">Simulate policy checks in mock mode or call ExecutionEngineV2 in Web3 mode.</p>
+          <p class="text-xs text-zinc-400 mt-1">Simulate policy checks in mock mode or call ExecutionEngineV2 in Web3 mode.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <select id="execution-scenario" class="bg-white border border-black rounded-lg px-3 py-2 text-xs font-mono text-black" aria-label="Select execution proof scenario"></select>
+          <select id="execution-scenario" class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs font-mono text-white" aria-label="Select execution proof scenario"></select>
           <button id="execution-check" class="execution-action-button execution-action-button--check">
             <i class="fa-solid fa-shield mr-1"></i>Check Action
           </button>
@@ -479,35 +514,35 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <article class="execution-proof-card p-4">
-          <span class="execution-proof-label text-xs uppercase tracking-wider font-bold block">Action Context</span>
+          <span class="execution-proof-label">Action Context</span>
           <dl class="execution-proof-list mt-3 space-y-2 text-xs font-mono">
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Action</dt><dd id="execution-action-type">--</dd></div>
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Target</dt><dd id="execution-target">--</dd></div>
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Opportunity</dt><dd id="execution-opportunity">--</dd></div>
-            <div class="flex justify-between pb-1"><dt class="text-neutral-500">Position / Slippage</dt><dd id="execution-limits-requested">--</dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Action</dt><dd id="execution-action-type">--</dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Target</dt><dd id="execution-target">--</dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Opportunity</dt><dd id="execution-opportunity">--</dd></div>
+            <div class="flex justify-between pb-1"><dt class="text-zinc-500">Position / Slippage</dt><dd id="execution-limits-requested">--</dd></div>
           </dl>
         </article>
 
         <article class="execution-proof-card p-4">
-          <span class="execution-proof-label text-xs uppercase tracking-wider font-bold block">Combined Policy</span>
+          <span class="execution-proof-label">Combined Policy</span>
           <div class="flex items-center gap-2 mt-3">
             <span id="execution-decision" class="execution-decision-badge">NOT CHECKED</span>
-            <span id="execution-result" class="text-xs font-mono text-neutral-500">Awaiting simulation</span>
+            <span id="execution-result" class="text-xs font-mono text-zinc-500">Awaiting simulation</span>
           </div>
-          <p id="execution-description" class="text-xs text-neutral-600 mt-3"></p>
+          <p id="execution-description" class="text-xs text-zinc-400 mt-3"></p>
           <div class="mt-3">
-            <span class="execution-proof-label text-[10px] uppercase tracking-wider font-bold block">Reason Codes</span>
+            <span class="execution-proof-label">Reason Codes</span>
             <div id="execution-reasons" class="flex flex-wrap gap-1.5 mt-2"></div>
           </div>
         </article>
 
         <article class="execution-proof-card p-4">
-          <span class="execution-proof-label text-xs uppercase tracking-wider font-bold block">Proof & Provenance</span>
+          <span class="execution-proof-label">Proof & Provenance</span>
           <dl class="execution-proof-list mt-3 space-y-2 text-xs font-mono">
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Report ID</dt><dd id="execution-report-id">--</dd></div>
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Policy Limits</dt><dd id="execution-policy-limits">--</dd></div>
-            <div class="flex justify-between border-b border-black/5 pb-1"><dt class="text-neutral-500">Simulation</dt><dd id="execution-simulation">Not run</dd></div>
-            <div class="flex justify-between pb-1"><dt class="text-neutral-500">Transaction</dt><dd><a id="execution-tx-link" class="text-indigo-700 hover:text-black font-bold" target="_blank" rel="noopener noreferrer">--</a></dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Report ID</dt><dd id="execution-report-id">--</dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Policy Limits</dt><dd id="execution-policy-limits">--</dd></div>
+            <div class="flex justify-between border-b border-zinc-800/40 pb-1"><dt class="text-zinc-500">Simulation</dt><dd id="execution-simulation">Not run</dd></div>
+            <div class="flex justify-between pb-1"><dt class="text-zinc-500">Transaction</dt><dd><a id="execution-tx-link" class="text-indigo-400 hover:text-indigo-305 font-bold" target="_blank" rel="noopener noreferrer">--</a></dd></div>
           </dl>
         </article>
       </div>
@@ -519,34 +554,34 @@
       <!-- Contract Safety Panel -->
       <section class="glass-panel p-6 rounded-2xl flex flex-col justify-between" aria-labelledby="status-title">
         <div>
-          <div class="flex items-center gap-2 border-b border-black/10 pb-3.5 mb-4">
-            <i class="fa-solid fa-file-contract text-indigo-600 text-base" aria-hidden="true"></i>
-            <h2 id="status-title" class="text-xl serif-title font-medium">Gate Safety Deployment</h2>
+          <div class="flex items-center gap-2 border-b border-zinc-800 pb-3.5 mb-4">
+            <i class="fa-solid fa-file-contract text-indigo-400 text-base" aria-hidden="true"></i>
+            <h2 id="status-title" class="text-xl serif-title font-medium text-white">Gate Safety Deployment</h2>
           </div>
-          <div class="space-y-3 text-xs font-mono">
-            <div class="flex justify-between items-center bg-neutral-50 p-2.5 rounded-lg border border-black/8">
-              <span class="text-neutral-500">ProtocolRegistry</span>
-              <span id="addr-registry" class="text-neutral-800 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-600 transition-colors cursor-pointer" title="Copy Address">0x...</span>
+          <div class="space-y-2.5 text-sm font-mono">
+            <div class="flex justify-between items-center bg-zinc-900/40 p-3 rounded-lg border border-zinc-800">
+              <span class="text-zinc-500">ProtocolRegistry</span>
+              <span id="addr-registry" class="text-zinc-200 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-400 transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
-            <div class="flex justify-between items-center bg-neutral-50 p-2.5 rounded-lg border border-black/8">
-              <span class="text-neutral-500">SlippageGuard</span>
-              <span id="addr-slippage" class="text-neutral-800 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-600 transition-colors cursor-pointer" title="Copy Address">0x...</span>
+            <div class="flex justify-between items-center bg-zinc-900/40 p-3 rounded-lg border border-zinc-800">
+              <span class="text-zinc-500">SlippageGuard</span>
+              <span id="addr-slippage" class="text-zinc-200 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-400 transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
-            <div class="flex justify-between items-center bg-neutral-50 p-2.5 rounded-lg border border-black/8">
-              <span class="text-neutral-500">MarketRegimeGate</span>
-              <span id="addr-regime" class="text-neutral-800 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-600 transition-colors cursor-pointer" title="Copy Address">0x...</span>
+            <div class="flex justify-between items-center bg-zinc-900/40 p-3 rounded-lg border border-zinc-800">
+              <span class="text-zinc-500">MarketRegimeGate</span>
+              <span id="addr-regime" class="text-zinc-200 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-400 transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
-            <div class="flex justify-between items-center bg-neutral-50 p-2.5 rounded-lg border border-black/8">
-              <span class="text-neutral-500">ExecutionEngine</span>
-              <span id="addr-engine" class="text-neutral-800 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-600 transition-colors cursor-pointer" title="Copy Address">0x...</span>
+            <div class="flex justify-between items-center bg-zinc-900/40 p-3 rounded-lg border border-zinc-800">
+              <span class="text-zinc-500">ExecutionEngine</span>
+              <span id="addr-engine" class="text-zinc-200 font-bold truncate ml-2 max-w-[140px] hover:text-indigo-400 transition-colors cursor-pointer" title="Copy Address">0x...</span>
             </div>
           </div>
         </div>
         
-        <div class="mt-5 pt-4 border-t border-black/10 text-[10px] text-neutral-500 font-mono flex flex-wrap items-center justify-between gap-2">
-          <span>Chain ID: <span id="meta-chain-id" class="text-neutral-800 font-bold">688689</span></span>
-          <span>Block: <span id="meta-block-height" class="text-neutral-800 font-bold">#--</span></span>
-          <span class="flex items-center gap-1">RPC: <span id="meta-rpc" class="text-emerald-700 font-bold">ONLINE</span></span>
+        <div class="mt-5 pt-4 border-t border-zinc-850 text-xs text-zinc-400 font-mono flex flex-wrap items-center justify-between gap-2">
+          <span>Chain ID: <span id="meta-chain-id" class="text-zinc-200 font-bold">688689</span></span>
+          <span>Block: <span id="meta-block-height" class="text-zinc-200 font-bold">#--</span></span>
+          <span class="flex items-center gap-1">RPC: <span id="meta-rpc" class="text-emerald-450 font-bold">ONLINE</span></span>
         </div>
       </section>
 
@@ -554,20 +589,20 @@
       <section class="glass-panel p-6 rounded-2xl lg:col-span-2 flex flex-col justify-between" id="logs-panel" aria-labelledby="logs-title">
         <!-- Empty state placeholder -->
         <div class="state-overlay" id="logs-empty-overlay" aria-hidden="true">
-          <i class="fa-solid fa-list text-neutral-200 text-3xl mb-2"></i>
-          <span class="text-xs text-neutral-400 font-mono">No security logs recorded.</span>
+          <i class="fa-solid fa-list text-zinc-700 text-3xl mb-2"></i>
+          <span class="text-xs text-zinc-500 font-mono">No security logs recorded.</span>
         </div>
 
         <div>
-          <div class="flex items-center justify-between border-b border-black/10 pb-3.5 mb-4">
+          <div class="flex items-center justify-between border-b border-zinc-850 pb-3.5 mb-4">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-terminal text-brand text-base" aria-hidden="true"></i>
-              <h2 id="logs-title" class="text-xl serif-title font-medium">Live Security Logs</h2>
+              <h2 id="logs-title" class="text-xl serif-title font-medium text-white">Live Security Logs</h2>
             </div>
-            <button id="clear-logs" class="text-[10px] text-neutral-500 hover:text-black uppercase font-mono px-3 py-1 border border-black/20 rounded-lg hover:bg-neutral-50 transition-all">Clear Logs</button>
+            <button id="clear-logs" class="text-xs text-neutral-500 hover:text-black font-mono px-3 py-1 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-all">Clear Logs</button>
           </div>
           
-          <div id="logs-output" class="h-36 overflow-y-auto font-mono text-xs space-y-2 p-4 rounded-xl bg-neutral-50 border border-black/8">
+          <div id="logs-output" class="h-40 overflow-y-auto font-mono text-sm space-y-1.5 p-4 rounded-xl bg-neutral-50 border border-neutral-200">
             <div class="text-indigo-700 font-bold">[SYSTEM] Pharos Volatility Sentinel dashboard ready.</div>
           </div>
         </div>
@@ -790,7 +825,7 @@
       elements.executionReasons.textContent = '';
       scenario.reasonCodes.forEach(code => {
         const badge = document.createElement('span');
-        badge.className = 'px-2 py-0.5 text-[10px] font-mono font-bold bg-neutral-200 border border-black/10 rounded text-neutral-800';
+        badge.className = 'px-2 py-0.5 text-xs font-mono font-semibold bg-neutral-100 border border-neutral-200 rounded text-neutral-700';
         badge.textContent = code;
         elements.executionReasons.appendChild(badge);
       });
@@ -912,20 +947,20 @@
         const prevN = parseValue(prevVal);
 
         if (curN > prevN) {
-          icon.className = 'fa-solid fa-arrow-trend-up mr-0.5';
+          icon.className = 'fa-solid fa-arrow-trend-up mr-1';
           el.appendChild(icon);
           el.appendChild(document.createTextNode(' UP'));
-          el.className = `text-[10px] font-mono font-bold ${isInverse ? 'text-rose-600' : 'text-emerald-700'}`;
+          el.className = `text-xs font-mono font-semibold ${isInverse ? 'text-rose-600' : 'text-emerald-700'}`;
         } else if (curN < prevN) {
-          icon.className = 'fa-solid fa-arrow-trend-down mr-0.5';
+          icon.className = 'fa-solid fa-arrow-trend-down mr-1';
           el.appendChild(icon);
-          el.appendChild(document.createTextNode(' DOWN'));
-          el.className = `text-[10px] font-mono font-bold ${isInverse ? 'text-emerald-700' : 'text-rose-600'}`;
+          el.appendChild(document.createTextNode(' DN'));
+          el.className = `text-xs font-mono font-semibold ${isInverse ? 'text-emerald-700' : 'text-rose-600'}`;
         } else {
-          icon.className = 'fa-solid fa-minus mr-0.5';
+          icon.className = 'fa-solid fa-minus mr-1';
           el.appendChild(icon);
-          el.appendChild(document.createTextNode(' STABLE'));
-          el.className = 'text-[10px] font-mono font-bold text-neutral-400';
+          el.appendChild(document.createTextNode('STABLE'));
+          el.className = 'text-xs font-mono font-semibold text-neutral-400';
         }
       };
 
@@ -1013,12 +1048,13 @@
 
       elements.bannerDot.className = `relative inline-flex rounded-full h-3 w-3 ${bannerDotColor}`;
       elements.bannerPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${bannerDotColor}`;
-      elements.bannerDecisionText.className = `text-lg font-bold font-mono tracking-widest px-4 py-1 rounded border ${bannerBorderColor} ${bannerBgColor}`;
+      elements.bannerDecisionText.className = `text-xs font-bold font-mono tracking-widest px-3 py-1 rounded-full border ${bannerBorderColor} ${bannerBgColor}`;
 
+      // Banner recommendation â€” always neutral, no color class
       elements.bannerRecommendation.textContent = recommendation;
       elements.bannerConsequence.textContent = consequence;
-      elements.bannerRecommendation.className = textClass;
-      elements.bannerConsequence.className = textClass;
+      elements.bannerRecommendation.className = 'text-neutral-700 font-semibold';
+      elements.bannerConsequence.className = 'text-neutral-700 font-semibold';
 
       // Freshness and report ID
       const latestReportId = state.marketStatus.reasonsHash || '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -1084,11 +1120,11 @@
 
       elements.hysteresisSteps.textContent = hyst.steps || 'STABLE';
       if (hyst.steps) {
-        elements.hysteresisSteps.className = `font-mono text-[9px] font-bold px-1.5 py-0.5 rounded ${
-          state.marketStatus.regime === 'PANIC' ? 'text-amber-800 bg-amber-100' : 'text-emerald-800 bg-emerald-100'
+        elements.hysteresisSteps.className = `font-mono text-xs font-bold px-2 py-0.5 rounded-full border ${
+          state.marketStatus.regime === 'PANIC' ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-emerald-700 bg-emerald-50 border-emerald-200'
         }`;
       } else {
-        elements.hysteresisSteps.className = 'font-mono text-[9px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded';
+        elements.hysteresisSteps.className = 'font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full';
       }
 
       elements.hysteresisMessage.textContent = hyst.message;
@@ -1181,13 +1217,13 @@
 
       elements.yieldHysteresisSteps.textContent = yieldHyst.steps || 'STABLE';
       if (yieldHyst.steps) {
-        elements.yieldHysteresisSteps.className = `font-mono text-[9px] font-bold px-1.5 py-0.5 rounded ${
-          state.yieldStatus.yieldState === 'EXIT' ? 'text-rose-800 bg-rose-100' :
-          state.yieldStatus.yieldState === 'DECAYING' ? 'text-orange-800 bg-orange-100' :
-          'text-indigo-800 bg-indigo-100'
+        elements.yieldHysteresisSteps.className = `font-mono text-xs font-bold px-2 py-0.5 rounded-full border ${
+          state.yieldStatus.yieldState === 'EXIT' ? 'text-rose-700 bg-rose-50 border-rose-200' :
+          state.yieldStatus.yieldState === 'DECAYING' ? 'text-orange-700 bg-orange-50 border-orange-200' :
+          'text-indigo-600 bg-indigo-50 border-indigo-200'
         }`;
       } else {
-        elements.yieldHysteresisSteps.className = 'font-mono text-[9px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded';
+        elements.yieldHysteresisSteps.className = 'font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full';
       }
 
       elements.yieldHysteresisMessage.textContent = yieldHyst.message;
