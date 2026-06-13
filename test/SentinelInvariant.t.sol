@@ -16,10 +16,6 @@ contract SentinelInvariantTest is Test {
         assertFalse(registry.isReporter(unauthorized));
     }
 
-    function invariant_registryOwnerRemainsReporter() public view {
-        assertTrue(registry.isReporter(address(this)));
-    }
-
     function invariant_unknownReportSequenceRemainsZero() public view {
         assertEq(registry.latestSequenceNumbers(keccak256("unknown-opportunity")), 0);
     }

@@ -3,6 +3,7 @@ import { DataCollector } from '../src/collector.js';
 import { RiskEvaluator } from '../src/evaluator.js';
 import { TransactionQueue } from '../src/queue.js';
 import { SentinelKeeper } from '../src/index.js';
+import { config } from '../src/config.js';
 
 describe('SentinelKeeper components', () => {
   it('collects and evaluates snapshots', () => {
@@ -46,6 +47,12 @@ describe('SentinelKeeper components', () => {
   });
 
   it('refuses live mode without explicit keeper credentials', () => {
-    expect(() => new SentinelKeeper(false, [])).toThrow('Live keeper requires');
+    const origKey = config.keeperPrivateKey;
+    config.keeperPrivateKey = '';
+    try {
+      expect(() => new SentinelKeeper(false, [])).toThrow('Live keeper requires');
+    } finally {
+      config.keeperPrivateKey = origKey;
+    }
   });
 });
