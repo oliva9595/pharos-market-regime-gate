@@ -4,3 +4,7 @@ export * from './hashes.js';
 export * from './market/reasons.js';
 export * from './market/hysteresis.js';
 export * from './market/classifier.js';
+export * from './yield/reasons.js';
+export * from './yield/factors.js';
+export * from './yield/hysteresis.js';
+export * from './yield/scorer.js';
