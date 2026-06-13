@@ -715,6 +715,7 @@ button:focus-visible, select:focus-visible, a:focus-visible {
   width: 340px;
   max-width: calc(100vw - 32px);
   pointer-events: auto;
+  padding: 20px !important;
 }
 
 .tour-highlight {

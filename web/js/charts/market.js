@@ -30,7 +30,7 @@ export class MarketRegimeChart {
     const width = this.container.clientWidth || 500;
     const height = this.container.clientHeight || 160;
     const leftPad = 40;
-    const rightPad = 150; // Extra padding for threshold labels with larger text
+    const rightPad = 185; // Extra padding for threshold labels with larger text
     const topPad = 15;
     const bottomPad = 25;
     const effWidth = width - leftPad - rightPad;
@@ -108,10 +108,10 @@ export class MarketRegimeChart {
 
     // 3. Draw horizontal thresholds
     const thresholds = [
-      { name: 'PANIC ENTRY', val: 4500, color: '#ff3366', dash: '3,3', desc: '>=45%' },
-      { name: 'PANIC EXIT', val: 4000, color: '#f43f5e', dash: '3,6', desc: '<40%' },
-      { name: 'VOLATILE ENTRY', val: 3000, color: '#ffcc00', dash: '3,3', desc: '>=30%' },
-      { name: 'VOLATILE EXIT', val: 2500, color: '#d97706', dash: '3,6', desc: '<25%' }
+      { name: 'Panic Entry', val: 4500, color: '#ff3366', dash: '3,3', desc: '>=45%' },
+      { name: 'Panic Exit', val: 4000, color: '#f43f5e', dash: '3,6', desc: '<40%' },
+      { name: 'Volatile Entry', val: 3000, color: '#ffcc00', dash: '3,3', desc: '>=30%' },
+      { name: 'Volatile Exit', val: 2500, color: '#d97706', dash: '3,6', desc: '<25%' }
     ];
 
     thresholds.forEach(t => {

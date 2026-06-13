@@ -183,10 +183,6 @@ export function initTour() {
     }
   });
 
-  // Auto start tour on first load
-  const isTourCompleted = localStorage.getItem('pharos_tour_completed');
-  if (!isTourCompleted) {
-    // Delay slightly on startup to let charts and DOM render cleanly
-    setTimeout(startTour, 800);
-  }
+  // Auto start tour on page load
+  setTimeout(startTour, 800);
 }
