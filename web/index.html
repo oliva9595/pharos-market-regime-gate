@@ -127,13 +127,13 @@
       <!-- Decision content -->
       <div class="px-6 py-5 flex flex-col lg:flex-row lg:items-center gap-6">
         <!-- Big Decision Badge -->
-        <div class="flex items-center gap-4 shrink-0">
-          <span class="flex h-3 w-3 relative shrink-0" aria-hidden="true">
-            <span id="banner-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style="background:#00ff66;"></span>
-            <span id="banner-dot" class="relative inline-flex rounded-full h-3 w-3" style="background:#00ff66;"></span>
-          </span>
-          <div>
-            <div class="text-xs font-mono text-zinc-500 mb-1.5 uppercase tracking-wider">Execution Policy</div>
+        <div class="flex flex-col shrink-0">
+          <div class="text-xs font-mono text-zinc-500 mb-1 uppercase tracking-wider">Execution Policy</div>
+          <div class="flex items-center gap-3">
+            <span class="flex h-3 w-3 relative shrink-0" aria-hidden="true">
+              <span id="banner-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style="background:#00ff66;"></span>
+              <span id="banner-dot" class="relative inline-flex rounded-full h-3 w-3" style="background:#00ff66;"></span>
+            </span>
             <span id="banner-decision-text" class="font-black font-mono border">LOADING</span>
           </div>
         </div>
@@ -202,65 +202,87 @@
             <span id="market-regime-badge" class="font-mono text-xs font-bold px-3 py-1 rounded border bg-emerald-950/40 text-emerald-400 border-emerald-800">LOADING</span>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left Column: Metrics & On-Chain Status -->
-            <div class="space-y-5">
-              <div>
-                <span class="text-sm text-zinc-400 font-semibold block mb-2">Live Security Oracle Signals</span>
-                <div class="grid grid-cols-2 gap-3">
-                  <!-- Volatility Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">VIX Volatility</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-volatility" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-volatility" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥45%</span>
+          <div class="space-y-5">
+            <!-- Live Security Oracle Signals -->
+            <div>
+              <span class="text-sm text-zinc-400 font-semibold block mb-2">Live Security Oracle Signals</span>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <!-- Volatility Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">VIX Volatility</span>
+                  <div id="market-volatility" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-volatility" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Panic ≥45%</span>
                   </div>
-                  <!-- Divergence Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">Price Divergence</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-divergence" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-divergence" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥3.0%</span>
+                </div>
+                <!-- Divergence Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">Price Divergence</span>
+                  <div id="market-divergence" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-divergence" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Panic ≥3.0%</span>
                   </div>
-                  <!-- Outflow Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">Bridge Outflow</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-bridge" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-bridge" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥$10M</span>
+                </div>
+                <!-- Outflow Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">Bridge Outflow</span>
+                  <div id="market-bridge" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-bridge" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Panic ≥$10M</span>
                   </div>
-                  <!-- Stablecoin Depeg Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">Stablecoin Depeg</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-depeg" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-depeg" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic ≥2.0%</span>
+                </div>
+                <!-- Stablecoin Depeg Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">Stablecoin Depeg</span>
+                  <div id="market-depeg" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-depeg" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Panic ≥2.0%</span>
                   </div>
-                  <!-- Confidence Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">Oracle Confidence</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-confidence" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-confidence" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Panic &lt;60%</span>
+                </div>
+                <!-- Confidence Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">Oracle Confidence</span>
+                  <div id="market-confidence" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-confidence" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Panic &lt;60%</span>
                   </div>
-                  <!-- Liquidity Depth Card -->
-                  <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
-                    <span class="text-sm text-zinc-500 font-semibold block">Liquidity Depth</span>
-                    <div class="flex items-baseline justify-between mt-1.5">
-                      <div id="market-liquidity" class="text-xl font-bold font-mono text-white">--</div>
-                      <span id="trend-liquidity" class="text-xs font-mono font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
-                    </div>
-                    <span class="text-xs text-zinc-500 font-mono block mt-1">Normal &gt;$20M</span>
+                </div>
+                <!-- Liquidity Depth Card -->
+                <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between">
+                  <span class="text-sm text-zinc-500 font-semibold block">Liquidity Depth</span>
+                  <div id="market-liquidity" class="text-xl font-bold font-mono text-white mt-1.5">--</div>
+                  <div class="flex items-center justify-between mt-1 text-xs font-mono">
+                    <span id="trend-liquidity" class="font-bold text-zinc-500"><i class="fa-solid fa-minus mr-0.5"></i>--</span>
+                    <span class="text-zinc-500">Normal &gt;$20M</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hysteresis State & On-Chain Report Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Hysteresis State / Cooldown Info -->
+              <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-zinc-400 font-bold">Hysteresis State</span>
+                    <span id="hysteresis-steps" class="font-mono text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2 py-0.5 rounded-full uppercase">STABLE</span>
+                  </div>
+                  <div id="hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">System status stable.</div>
+                </div>
+                <!-- Cooldown timer progress -->
+                <div id="cooldown-wrapper" class="hidden space-y-1.5">
+                  <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
+                    <span>Cooldown Active</span>
+                    <span id="cooldown-timer">0s remaining</span>
+                  </div>
+                  <div class="cooldown-container">
+                    <div id="cooldown-bar" class="cooldown-bar"></div>
                   </div>
                 </div>
               </div>
@@ -278,64 +300,46 @@
               </div>
             </div>
 
-            <!-- Right Column: Visualization, Hysteresis & Shocks -->
-            <div class="space-y-5">
-              <!-- Hysteresis State / Cooldown Info -->
-              <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
-                <div class="flex justify-between items-center mb-2">
-                  <span class="text-sm text-zinc-400 font-bold">Hysteresis State</span>
-                  <span id="hysteresis-steps" class="font-mono text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-800 px-2 py-0.5 rounded-full uppercase">STABLE</span>
-                </div>
-                <div id="hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">System status stable.</div>
-                <!-- Cooldown timer progress -->
-                <div id="cooldown-wrapper" class="hidden space-y-1.5">
-                  <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
-                    <span>Cooldown Active</span>
-                    <span id="cooldown-timer">0s remaining</span>
-                  </div>
-                  <div class="cooldown-container">
-                    <div id="cooldown-bar" class="cooldown-bar"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Horizon Threshold Chart -->
-              <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-40">
+            <!-- Horizon Threshold Chart -->
+            <div>
+              <span class="text-sm text-zinc-400 font-semibold block mb-2">VIX Volatility Threshold History</span>
+              <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-48">
                 <div id="market-chart-container" class="w-full h-full"></div>
               </div>
+            </div>
 
-              <!-- Deterministic Shock Scenario Injectors -->
-              <div>
-                <span class="text-sm text-neutral-500 font-semibold block mb-2">Deterministic Shock Injectors (Simulator)</span>
-                <div class="grid grid-cols-3 gap-2">
-                  <button id="shock-vix" class="btn-shock hover-glow" title="VIX volatility crosses 30% Volatile entry threshold">
-                    <i class="fa-solid fa-wind mr-1 text-amber-600"></i>VIX Shock
-                  </button>
-                  <button id="shock-div" class="btn-shock hover-glow" title="DEX price divergence crosses 1.0% Volatile entry threshold">
-                    <i class="fa-solid fa-code-fork mr-1 text-amber-600"></i>Divergence
-                  </button>
-                  <button id="shock-outflow" class="btn-shock hover-glow" title="Bridge Net Outflow crosses $10.0M Panic entry threshold">
-                    <i class="fa-solid fa-right-from-bracket mr-1 text-rose-600"></i>Outflow
-                  </button>
-                  <button id="shock-depeg" class="btn-shock hover-glow" title="Stablecoin depeg crosses 2.0% Panic entry threshold">
-                    <i class="fa-solid fa-anchor-circle-xmark mr-1 text-rose-600"></i>Depeg
-                  </button>
-                  <button id="shock-stale" class="btn-shock hover-glow" title="Oracle confidence drops and timestamp goes stale forcing PANIC">
-                    <i class="fa-solid fa-hourglass-end mr-1 text-rose-600"></i>Stale Oracle
-                  </button>
-                  <button id="shock-recovery" class="btn-shock hover-glow" title="Returns all metrics to stable normal values">
-                    <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Recover
-                  </button>
-                </div>
+            <!-- Deterministic Shock Scenario Injectors -->
+            <div>
+              <span class="text-sm text-neutral-500 font-semibold block mb-2">Deterministic Shock Injectors (Simulator)</span>
+              <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+                <button id="shock-vix" class="btn-shock hover-glow" title="VIX volatility crosses 30% Volatile entry threshold">
+                  <i class="fa-solid fa-wind mr-1 text-amber-600"></i>VIX Shock
+                </button>
+                <button id="shock-div" class="btn-shock hover-glow" title="DEX price divergence crosses 1.0% Volatile entry threshold">
+                  <i class="fa-solid fa-code-fork mr-1 text-amber-600"></i>Divergence
+                </button>
+                <button id="shock-outflow" class="btn-shock hover-glow" title="Bridge Net Outflow crosses $10.0M Panic entry threshold">
+                  <i class="fa-solid fa-right-from-bracket mr-1 text-rose-600"></i>Outflow
+                </button>
+                <button id="shock-depeg" class="btn-shock hover-glow" title="Stablecoin depeg crosses 2.0% Panic entry threshold">
+                  <i class="fa-solid fa-anchor-circle-xmark mr-1 text-rose-600"></i>Depeg
+                </button>
+                <button id="shock-stale" class="btn-shock hover-glow" title="Oracle confidence drops and timestamp goes stale forcing PANIC">
+                  <i class="fa-solid fa-hourglass-end mr-1 text-rose-600"></i>Stale Oracle
+                </button>
+                <button id="shock-recovery" class="btn-shock hover-glow" title="Returns all metrics to stable normal values">
+                  <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Recover
+                </button>
               </div>
             </div>
-          </div>
 
-          <div class="space-y-2 mt-4 pt-4 border-t border-zinc-800">
-            <span class="text-sm text-zinc-400 font-semibold block">Regime Diagnostics</span>
-            <ul id="market-reasons" class="space-y-1.5 text-sm font-mono text-zinc-400 max-h-28 overflow-y-auto bg-zinc-900/40 p-3 rounded-xl border border-zinc-800">
-              <li class="text-zinc-500">No diagnostics available.</li>
-            </ul>
+            <!-- Regime Diagnostics -->
+            <div class="space-y-2 mt-4 pt-4 border-t border-zinc-800">
+              <span class="text-sm text-zinc-400 font-semibold block">Regime Diagnostics</span>
+              <ul id="market-reasons" class="space-y-1.5 text-sm font-mono text-zinc-400 max-h-28 overflow-y-auto bg-zinc-900/40 p-3 rounded-xl border border-zinc-800">
+                <li class="text-zinc-500">No diagnostics available.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -374,7 +378,7 @@
           </div>
 
           <!-- Yield Metrics Details Grid -->
-          <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             <div class="bg-zinc-900/40 p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
               <span class="text-sm text-zinc-500 font-semibold block">Decay Score</span>
               <div id="yield-decay-score" class="text-xl font-bold font-mono text-white mt-1">--</div>
@@ -410,21 +414,48 @@
             </div>
           </div>
 
-          <!-- Yield Hysteresis & Cooldown State -->
-          <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800 mb-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-zinc-500 font-bold">Yield Hysteresis</span>
-              <span id="yield-hysteresis-steps" class="font-mono text-xs font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900 px-2 py-0.5 rounded-full uppercase">IMMEDIATE</span>
-            </div>
-            <div id="yield-hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">Yield metrics stable.</div>
-            <!-- Cooldown timer progress -->
-            <div id="yield-cooldown-wrapper" class="hidden space-y-1.5">
-              <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
-                <span>Transition Cooldown Active</span>
-                <span id="yield-cooldown-timer">0s remaining</span>
+          <!-- Yield Hysteresis & Scenario Triggers (Side-by-side) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Yield Hysteresis & Cooldown State -->
+            <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800 flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm text-zinc-500 font-bold">Yield Hysteresis</span>
+                  <span id="yield-hysteresis-steps" class="font-mono text-xs font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900 px-2 py-0.5 rounded-full uppercase">IMMEDIATE</span>
+                </div>
+                <div id="yield-hysteresis-message" class="text-sm text-zinc-400 font-mono leading-relaxed min-h-[1.5rem] mb-3">Yield metrics stable.</div>
               </div>
-              <div class="cooldown-container">
-                <div id="yield-cooldown-bar" class="cooldown-bar"></div>
+              <!-- Cooldown timer progress -->
+              <div id="yield-cooldown-wrapper" class="hidden space-y-1.5">
+                <div class="flex justify-between text-xs font-mono text-zinc-500 uppercase">
+                  <span>Transition Cooldown Active</span>
+                  <span id="yield-cooldown-timer">0s remaining</span>
+                </div>
+                <div class="cooldown-container">
+                  <div id="yield-cooldown-bar" class="cooldown-bar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deterministic Scenario Triggers -->
+            <div class="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
+              <span class="text-sm text-zinc-400 font-semibold block mb-2">Deterministic Decay Scenarios (Simulator)</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="yield-scenario-healthy" class="btn-scenario hover-glow text-xs" title="Normal healthy yield metrics">
+                  <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Healthy
+                </button>
+                <button id="yield-scenario-subsidy" class="btn-scenario hover-glow text-xs" title="Reward APY collapse and subsidy dependency increase">
+                  <i class="fa-solid fa-chart-line-down mr-1 text-amber-600"></i>Subsidy Collapse
+                </button>
+                <button id="yield-scenario-mercenary" class="btn-scenario hover-glow text-xs" title="Large TVL outflow and negative net flow">
+                  <i class="fa-solid fa-arrow-down-up-lock mr-1 text-rose-600"></i>Mercenary TVL
+                </button>
+                <button id="yield-scenario-fees" class="btn-scenario hover-glow text-xs" title="Organic protocol fee collapse">
+                  <i class="fa-solid fa-file-invoice-dollar mr-1 text-rose-600"></i>Fee Collapse
+                </button>
+                <button id="yield-scenario-slippage" class="btn-scenario hover-glow col-span-2 text-xs" title="Exit slippage exceeds configured max">
+                  <i class="fa-solid fa-circle-exclamation mr-1 text-rose-600"></i>Exit Slippage Surge
+                </button>
               </div>
             </div>
           </div>
@@ -432,7 +463,7 @@
           <!-- APY History Chart -->
           <div class="mb-4">
             <span class="text-sm text-zinc-400 font-semibold block mb-2">Historical APY Decomposition</span>
-            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-40">
+            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-48">
               <div id="yield-chart-container" class="w-full h-full"></div>
             </div>
           </div>
@@ -440,33 +471,12 @@
           <!-- Factor Contributions Chart -->
           <div class="mb-4">
             <span class="text-sm text-zinc-400 font-semibold block mb-2">Weighted Factor Risk Breakdown</span>
-            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-36">
+            <div class="bg-zinc-900/40 rounded-xl border border-zinc-800 p-2 relative h-40">
               <div id="yield-factors-container" class="w-full h-full"></div>
             </div>
           </div>
 
-          <!-- Deterministic Scenario Triggers -->
-          <div class="mb-4">
-            <span class="text-sm text-zinc-400 font-semibold block mb-2">Deterministic Decay Scenarios (Simulator)</span>
-            <div class="grid grid-cols-2 gap-2">
-              <button id="yield-scenario-healthy" class="btn-scenario hover-glow" title="Normal healthy yield metrics">
-                <i class="fa-solid fa-heart-circle-check mr-1 text-emerald-600"></i>Healthy
-              </button>
-              <button id="yield-scenario-subsidy" class="btn-scenario hover-glow" title="Reward APY collapse and subsidy dependency increase">
-                <i class="fa-solid fa-chart-line-down mr-1 text-amber-600"></i>Subsidy Collapse
-              </button>
-              <button id="yield-scenario-mercenary" class="btn-scenario hover-glow" title="Large TVL outflow and negative net flow">
-                <i class="fa-solid fa-arrow-down-up-lock mr-1 text-rose-600"></i>Mercenary TVL
-              </button>
-              <button id="yield-scenario-fees" class="btn-scenario hover-glow" title="Organic protocol fee collapse">
-                <i class="fa-solid fa-file-invoice-dollar mr-1 text-rose-600"></i>Fee Collapse
-              </button>
-              <button id="yield-scenario-slippage" class="btn-scenario hover-glow col-span-2" title="Exit slippage exceeds configured max">
-                <i class="fa-solid fa-circle-exclamation mr-1 text-rose-600"></i>Exit Slippage Surge
-              </button>
-            </div>
-          </div>
-
+          <!-- Decay Diagnostics -->
           <div class="space-y-2">
             <span class="text-sm text-zinc-400 font-semibold block">Decay Diagnostics</span>
             <ul id="yield-reasons" class="space-y-1.5 text-sm font-mono text-zinc-400 max-h-28 overflow-y-auto bg-zinc-900/40 p-3 rounded-xl border border-zinc-800">

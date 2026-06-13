@@ -85,6 +85,29 @@ h1, h2, h3, h4 { margin: 0; color: var(--text-primary); }
    This prevents text-xs + uppercase from looking microscopic.
    ────────────────────────────────────────────────── */
 
+.text-xs {
+  font-size: 12px !important;
+}
+.text-sm {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+.text-base {
+  font-size: 16px !important;
+}
+.text-lg {
+  font-size: 18px !important;
+}
+.text-xl {
+  font-size: 22px !important;
+}
+.text-2xl {
+  font-size: 28px !important;
+}
+.text-3xl {
+  font-size: 34px !important;
+}
+
 /* All label-style spans with uppercase get minimum 12px */
 span.text-xs.uppercase,
 span.text-xs.font-mono,

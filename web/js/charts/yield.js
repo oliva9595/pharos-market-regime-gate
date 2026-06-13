@@ -31,10 +31,10 @@ export class YieldApyChart {
       return;
     }
 
-    const width = 500;
-    const height = 160;
-    const leftPad = 35;
-    const rightPad = 10;
+    const width = this.container.clientWidth || 500;
+    const height = this.container.clientHeight || 160;
+    const leftPad = 40;
+    const rightPad = 15;
     const topPad = 15;
     const bottomPad = 25;
     const effWidth = width - leftPad - rightPad;
@@ -133,8 +133,6 @@ export class YieldApyChart {
 
       if (idx === history.length - 1) {
         baseAreaD += ` L ${x} ${height - bottomPad} Z`;
-        // For stacked reward area, we go down to the base line and back to the start
-        // but to make it simple we can just draw them as separate polygons or lines
       }
     });
 
@@ -146,7 +144,6 @@ export class YieldApyChart {
     svg.appendChild(baseArea);
 
     // To make stacked areas correct, let's draw reward APY stacked on top of base
-    // Reward area path: follows base path from right to left, then reward path from left to right
     let stackedRewardD = '';
     if (history.length > 0) {
       const startX = mapX(0, history.length);
@@ -223,7 +220,7 @@ export class YieldApyChart {
         x: leftPad - 5,
         y: y + 3,
         fill: colors.textMuted,
-        'font-size': '8px',
+        'font-size': '10px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)'
       });
@@ -236,7 +233,7 @@ export class YieldApyChart {
       x: leftPad,
       y: topPad - 5,
       fill: colors.textMuted,
-      'font-size': '8px',
+      'font-size': '9px',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
     yLabel.textContent = 'APY (%)';
@@ -247,7 +244,7 @@ export class YieldApyChart {
       x: leftPad + effWidth / 2,
       y: height - 5,
       fill: colors.textMuted,
-      'font-size': '8px',
+      'font-size': '9px',
       'text-anchor': 'middle',
       'font-family': 'var(--font-mono, Geist Mono, monospace)'
     });
@@ -278,10 +275,10 @@ export class YieldFactorsChart {
     if (!this.container) return;
     this.container.textContent = '';
 
-    const width = 500;
-    const height = 140;
-    const leftPad = 110;
-    const rightPad = 40;
+    const width = this.container.clientWidth || 500;
+    const height = this.container.clientHeight || 140;
+    const leftPad = 130; // Increased padding to prevent label truncation
+    const rightPad = 45;  // Increased padding for value labels
     const topPad = 10;
     const bottomPad = 10;
     const effWidth = width - leftPad - rightPad;
@@ -313,7 +310,7 @@ export class YieldFactorsChart {
         x: leftPad - 10,
         y: y + 8,
         fill: '#a3a3a3',
-        'font-size': '8px',
+        'font-size': '10px',
         'text-anchor': 'end',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': 'semibold'
@@ -337,7 +334,6 @@ export class YieldFactorsChart {
       // Draw Fill bar
       const fillWidth = (f.score / 100) * effWidth;
       if (fillWidth > 0) {
-        // Map color semantically: green for low, amber for moderate, red for high
         const barColor = f.score >= 50 
           ? '#ff3366' 
           : (f.score >= 30 ? '#ffcc00' : '#00ff66');
@@ -359,7 +355,7 @@ export class YieldFactorsChart {
         x: leftPad + effWidth + 6,
         y: y + 8,
         fill: f.score >= 50 ? '#ff3366' : '#ffffff',
-        'font-size': '8px',
+        'font-size': '10px',
         'font-family': 'var(--font-mono, Geist Mono, monospace)',
         'font-weight': f.score >= 50 ? 'bold' : 'normal'
       });
