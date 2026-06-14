@@ -82,4 +82,21 @@ contract SlippageGuardTest is Test {
         vm.expectRevert("SlippageGuard: amountOutMin is zero");
         guard.verifySlippage(address(router), txData, 500);
     }
+
+    function testSwapExactETHForTokens() public {
+        address[] memory path = new address[](2);
+        path[0] = tokenIn;
+        path[1] = tokenOut;
+
+        bytes memory txData = abi.encodeWithSignature(
+            "swapExactETHForTokens(uint256,address[],address,uint256)",
+            195,
+            path,
+            address(this),
+            block.timestamp + 60
+        );
+
+        // This will revert if there is an ABI decoding mismatch in SlippageGuard
+        assertTrue(guard.verifySlippage(address(router), txData, 500));
+    }
 }

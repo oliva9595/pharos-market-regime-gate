@@ -135,7 +135,7 @@ contract ExecutionEngineV2 is Ownable {
         require(allowed, reason);
 
         // Run actual slippage guard check on-chain
-        try slippageGuard.verifySlippage(ctx.target, ctx.data, maxSlipBps) returns (bool ok) {
+        try slippageGuard.verifySlippage(ctx.target, ctx.data, ctx.value, maxSlipBps) returns (bool ok) {
             require(ok, "ExecutionEngine: slippage verification failed");
         } catch {
             // If slippage check reverts internally, require non-zero limits

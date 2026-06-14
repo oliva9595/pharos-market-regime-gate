@@ -15,6 +15,15 @@ contract SlippageGuard {
         bytes calldata data,
         uint256 maxSlippageBps
     ) external view returns (bool) {
+        return verifySlippage(target, data, 0, maxSlippageBps);
+    }
+
+    function verifySlippage(
+        address target,
+        bytes calldata data,
+        uint256 value,
+        uint256 maxSlippageBps
+    ) public view returns (bool) {
         if (data.length < 4) return true;
         bytes4 selector = bytes4(data[:4]);
 
@@ -37,13 +46,21 @@ contract SlippageGuard {
                 revert("SlippageGuard: amounts out fetch failed");
             }
         } else if (selector == SWAP_EXACT_ETH_FOR_TOKENS) {
-            require(data.length >= 4 + 32 * 5, "SlippageGuard: malformed swap calldata");
-            (, uint256 amountOutMin, address[] memory path, , ) = abi.decode(
+            require(data.length >= 4 + 32 * 4, "SlippageGuard: malformed swap calldata");
+            (uint256 amountOutMin, address[] memory path, , ) = abi.decode(
                 data[4:],
-                (uint256, uint256, address[], address, uint256)
+                (uint256, address[], address, uint256)
             );
             require(amountOutMin > 0, "SlippageGuard: amountOutMin is zero");
             require(path.length >= 2, "SlippageGuard: invalid route path");
+
+            try IUniswapV2Router(target).getAmountsOut(value, path) returns (uint[] memory amounts) {
+                uint256 expectedOut = amounts[amounts.length - 1];
+                uint256 minAllowed = (expectedOut * (10000 - maxSlippageBps)) / 10000;
+                require(amountOutMin >= minAllowed, "SlippageGuard: slippage too high");
+            } catch {
+                revert("SlippageGuard: amounts out fetch failed");
+            }
         } else if (selector == SWAP_EXACT_TOKENS_FOR_ETH) {
             require(data.length >= 4 + 32 * 5, "SlippageGuard: malformed swap calldata");
             (uint256 amountIn, uint256 amountOutMin, address[] memory path, , ) = abi.decode(

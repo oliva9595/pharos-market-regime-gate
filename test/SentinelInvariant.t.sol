@@ -10,6 +10,7 @@ contract SentinelInvariantTest is Test {
 
     function setUp() public {
         registry = new RiskReportRegistry();
+        registry.transferOwnership(address(0x123));
     }
 
     function invariant_unauthorizedAddressNeverBecomesReporter() public view {
