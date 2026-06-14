@@ -1,5 +1,7 @@
 export const CONFIG = {
-  API_BASE_URL: 'http://localhost:3000',
+  API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : 'https://pharos-market-regime-gate.onrender.com',
   RPC_URL: 'https://atlantic.dplabs-internal.com',
   EXPLORER_URL: 'https://atlantic.pharosscan.xyz',
   CHAIN_ID: 688689,
