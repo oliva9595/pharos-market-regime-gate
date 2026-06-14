@@ -112,4 +112,4 @@ if (process.argv[1] && process.argv[1].endsWith('server.js')) {
   start();
 }
 
-export { server, store };
+export { server, store, start };
