@@ -13,6 +13,8 @@
     "pharos-mcp": "./bin/mcp-server.js"
   },
   "scripts": {
+    "postinstall": "tsc -b tsconfig.json",
+    "start": "node services/api/dist/server.js",
     "demo-web": "npx http-server -c-1 ./",
     "build": "tsc -b tsconfig.json",
     "test": "vitest run",
