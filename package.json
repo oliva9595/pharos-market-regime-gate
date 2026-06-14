@@ -1,6 +1,7 @@
 {
   "name": "pharos-execution-engine-regime-gate",
   "version": "2.0.0",
+  "private": true,
   "description": "Pharos Market Regime Gate And Yield Decay Sentinel System",
   "main": "index.js",
   "workspaces": [
