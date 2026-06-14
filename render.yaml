@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: pharos-sentinel-api
+    runtime: node
+    region: singapore
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm run build
+    startCommand: node services/api/dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OPPORTUNITY_IDS
+        value: "0x809d550fca64d94Bd9F66E60752A544199cfAC3D,0x4c5859f0F772848b2D91F1D83E2Fe57935348029"
